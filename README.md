@@ -104,6 +104,9 @@ Notre fichier [.yaml](./docker-compose.yaml) va nous permettre de faire communiq
 ```Dockerfile:``` indique le nom du Dockerfile
 ```context:``` indique le chemin oú le trouver
 ```target:``` comme nous avons utiliser ```AS```
+
+[IN PROGRESS ...]
+
 #### Prisma <-> NestJs
 Si vous ne posséder pas de ```schema.prisma```, vous pouvez utiliser ces commandes afin de générer votre précieux 🤩
 ```
@@ -115,9 +118,13 @@ Un dossier ```prisma``` avec un .env on été générer, dans des soucis de ```b
 
 Si vous avez déjà un ```schema.prisma``` de prêt sur votre machine, il vous suffira de créer un dossier nommé ```prisma``` et d'y placer
 votre fichier
+
 ![prisma_tree](./assets/prisma_tree.png)
 
 Prochain étape va être d'effectuer une migration de votre schéma prisma
+
+[IN PROGRESS...]
+
 
 ## Commande Docker-compose
 ### Lancer l'env de dev
