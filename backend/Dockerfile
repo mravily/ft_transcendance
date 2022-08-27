@@ -34,5 +34,7 @@ EXPOSE 3000
 # Ne pas oublier de changer postgres par localhost dans ${DATABASE_URL}
 # CMD [ "npm", "run", "start:prod" ]
 
+# Deploie la migration et lance le service en dev 👇🏽 
+CMD [  "npm", "run", "start:migrate:dev" ]
 # Deploie la migration et lance le service en prod 👇🏽 
-CMD [  "npm", "run", "start:migrate:prod" ]
+# CMD [  "npm", "run", "start:migrate:prod" ]
