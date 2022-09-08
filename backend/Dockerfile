@@ -1,15 +1,16 @@
 # Multi-stage builds (permets de garder des images petites)
 # Container basé sous NodeJS v18-alpine 🔒
-FROM node:18-alpine AS builder
+FROM node:lts-alpine3.15 AS builder
 
 # Place le container dans le répertoire de travail 👨‍🔧
 WORKDIR /app
 
 # Copie les fichiers .json et Prisma 🔧
-COPY package*.json ./
+COPY *.json ./
 COPY prisma ./prisma/
 
 # Install les deps spécifiés les .json 📦
+RUN npm install -g npm@8.18.0
 RUN npm install
 
 # Copie les fichiers du projets 🔀
@@ -19,11 +20,11 @@ COPY . .
 RUN npm run build
 
 # Production step builds 🏭
-FROM node:18-alpine
+FROM node:lts-alpine3.15
 
 # Copy les fichiers de l'étape builder dans un nouveau container 🛠
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
@@ -35,6 +36,7 @@ EXPOSE 3000
 # CMD [ "npm", "run", "start:prod" ]
 
 # Deploie la migration et lance le service en dev 👇🏽 
-CMD [  "npm", "run", "start:migrate:dev" ]
+CMD [ "npm", "run", "start:migrate:dev" ]
+
 # Deploie la migration et lance le service en prod 👇🏽 
-# CMD [  "npm", "run", "start:migrate:prod" ]
+# CMD [ "npm", "run", "start:migrate:prod" ]
