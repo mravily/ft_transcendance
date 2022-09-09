@@ -1,5 +1,6 @@
 import { Controller, Get, Redirect, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { PrismaService } from 'src/prisma.service';
 
 @Controller('auth')
 export class AuthController {
@@ -8,7 +9,7 @@ export class AuthController {
   fortyTwoAuth() {
     return;
   }
-
+  
   @Get('42/return')
   @UseGuards(AuthGuard('42'))
   @Redirect('/')
