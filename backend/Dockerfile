@@ -33,7 +33,7 @@ EXPOSE 3000
 
 # Pour migrer les tables Prisma 👇🏽
 # Ne pas oublier de changer postgres par localhost dans ${DATABASE_URL}
-# CMD [ "npm", "run", "start:prod" ]
+# CMD [ "npm", "run", "start:dev" ]
 
 # Deploie la migration et lance le service en dev 👇🏽 
 CMD [ "npm", "run", "start:migrate:dev" ]
