@@ -1,0 +1,54 @@
+<header class="p-3 mb-3 border-bottom">
+	<div class="container">
+		<!-- LOGO -->
+		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+		  <a href="/" class="">
+			  <img src="../assets/logo.png" class="img-fluid align-items-center" alt="logo">
+		  </a>
+		  <!-- [a-img] d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none -->
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a routerLink="" routerLinkActive="link-secondary" [routerLinkActiveOptions]="{ exact: true }" class="nav-link px-2 link-dark">Accueil</a></li>
+          <li><a routerLink="leaderboard" routerLinkActive="link-secondary" class="nav-link px-2 link-dark">Leaderboard</a></li>
+          <li><a routerLink="join" routerLinkActive="link-secondary" class="nav-link px-2 link-dark">Join The Leagacy</a></li>
+          <li><a routerLink="about-us" routerLinkActive="link-secondary" class="nav-link px-2 link-dark">About us</a></li>
+        </ul>
+
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+        </form>
+
+        <div class="dropdown text-end">
+          <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="image-profile" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small" style="">
+			  <li><a routerLink="profile" class="dropdown-item" href="#">Profile</a></li>
+            <li><a routerLink="profile/chat" class="dropdown-item" href="#">Friends</a></li>
+            <li><a routerLink="profile/settings" class="dropdown-item" href="#">Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Sign out</button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Modal -->
+  <div class="modal modal-alert  py-5" id="exampleModal" tabindex="-3" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content rounded-3 shadow">
+		<div class="modal-body p-4 text-center">
+		  <h5 class="mb-0">Are you sure you want to disconnect?</h5>
+		  <p class="mb-0">You can always change your mind.</p>
+		</div>
+		<div class="modal-footer flex-nowrap p-0">
+		  <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-end"><strong>Yes, for sure</strong></button>
+		  <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">No thanks</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+
+
+  
+
