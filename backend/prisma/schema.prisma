@@ -68,6 +68,7 @@ model Match {
 
 model Channel {
   channelName String @id
+  is_pwd Boolean
   pwd String?
   status ChannelStatus
 // Oposit Relations:

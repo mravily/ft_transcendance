@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
+import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { configValidationSchema } from './config.schema';
       validationSchema: configValidationSchema,
     }),
     AuthModule,
+    LeaderBoardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

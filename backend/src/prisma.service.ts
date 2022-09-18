@@ -47,6 +47,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       data: {
         channelName: name,
         status: ChannelStatus.Active,
+        is_pwd: false,
       },
     });
   }
@@ -73,6 +74,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         friend1Id: login1,
         friend2Id: login2,
       },
+      include: { friend1: true, friend2: true },
     });
   }
 
@@ -146,7 +148,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   async setChannelPass(channel_name: string, pwd: string) {
     await prisma.channel.update({
       where: { channelName: channel_name },
-      data: { pwd: pwd },
+      data: { is_pwd: true, pwd: pwd },
     });
   }
 
@@ -251,5 +253,22 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: { channelName: channel_name },
     });
     return chan;
+  }
+
+  async getTopTen() {
+    const list = await prisma.user.findMany({
+      select: {
+        email: true,
+        login: true,
+        name: true,
+        photo: true,
+        winnedMatchs: true,
+        lostMatchs: true,
+        score: true,
+      },
+      orderBy: { score: 'asc' },
+      take: 10,
+    });
+    return list;
   }
 }

@@ -40,6 +40,7 @@ CREATE TABLE "Match" (
 -- CreateTable
 CREATE TABLE "Channel" (
     "channelName" TEXT NOT NULL,
+    "is_pwd" BOOLEAN NOT NULL,
     "pwd" TEXT,
     "status" "ChannelStatus" NOT NULL,
 
