@@ -14,15 +14,9 @@ export class AuthController {
   @Redirect('/')
   fortyTwoAuthRedirect(@Res() res, @Req() req) {
     const jwt = req.session.jwt;
-    console.log('jwt_lol', req.session.jwt);
-    res.set({
-      Authorization: jwt,
-    });
     res.cookie('token', jwt, {
       maxAge: 60000, // Lifetime
     });
-    res.redirect('http://localhost:4200');
-    // else res.redirect('http://localhost:4200/');
-    return;
+    return { url: process.env.FRONT_URL };
   }
 }

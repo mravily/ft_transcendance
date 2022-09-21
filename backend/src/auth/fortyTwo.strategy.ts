@@ -1,28 +1,20 @@
-import { Injectable, Res } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { UserRole } from '@prisma/client';
 import { Strategy, VerifyCallback, Profile } from 'passport-42';
-import { ExtractJwt } from 'passport-jwt';
 import { PrismaService } from '../prisma.service';
-import { jwtConstants } from './constant';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(
-    private readonly configService: ConfigService,
-    private db: PrismaService,
-    private jwtService: JwtService,
-  ) {
+  payload!: { login: string };
+  jwt!: any;
+
+  constructor(private db: PrismaService, private jwtService: JwtService) {
     super({
-      clientID: configService.get<string>('FORTYTWO_CLIENT_ID'),
-      clientSecret: configService.get<string>('FORTYTWO_CLIENT_SECRET'),
-      callbackURL: 'http://localhost:3000/auth/42/return',
+      clientID: process.env.FORTYTWO_CLIENT_ID,
+      clientSecret: process.env.FORTYTWO_CLIENT_SECRET,
+      callbackURL: process.env.CALLBACK_URI,
       passReqToCallback: true,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
     });
   }
 
@@ -32,37 +24,29 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     refreshToken: string,
     profile: Profile,
     cb: VerifyCallback,
-    @Res() res,
   ): Promise<any> {
     request.session.accessToken = accessToken;
-    console.log(
-      'accessToken',
-      accessToken,
-      'refreshToken',
-      refreshToken,
-      'profile',
-      profile,
-    );
+
+    this.payload = { login: profile.username };
+    this.jwt = this.jwtService.sign(this.payload);
+    request.session.jwt = this.jwt;
+
+    // type PayloadType = {
+    //   login: string;
+    // };
+    // console.log('myatoken', jwt);
+    // const decodeJwt = this.jwtService.decode(jwt) as PayloadType;
+    // console.log('decode', decodeJwt.login);
 
     this.db.setUser(
       profile.username,
       profile.displayName,
       profile.emails[0].value,
-      UserRole.User,
+      false,
+      refreshToken,
       accessToken,
+      profile.photos[0].value,
     );
-
-    type PayloadType = {
-      login: string;
-    };
-
-    const payload = { login: profile.username };
-    const jwt = this.jwtService.sign(payload);
-	request.session.jwt = jwt;
-    console.log('myatoken', jwt);
-    const decodeJwt = this.jwtService.decode(jwt) as PayloadType;
-    console.log('decode', decodeJwt.login);
-    // res.redirect('http://localhost:4200/' + jwt);
     return cb(null, profile);
   }
 }

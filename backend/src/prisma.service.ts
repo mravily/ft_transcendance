@@ -1,12 +1,18 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
-import {
-  ChannelStatus,
-  PrismaClient,
-  UserRole,
-  UserStatus,
-} from '@prisma/client';
+import { ChannelStatus, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+export interface accountUser {
+  score: number;
+  login: string;
+  name: string;
+  email: string;
+  photo: string;
+  online: boolean;
+  win: number;
+  lost: number;
+}
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -24,20 +30,26 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     login: string,
     name: string,
     email: string,
-    role: UserRole,
-    token: string,
+    isAdmin: boolean,
+    rtoken: string,
+    atoken: string,
+    photo: string,
   ) {
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { login: login },
+      update: { atoken: atoken, rtoken: rtoken },
+      create: {
         login: login,
         name: name,
         email: email,
         level: 0.0,
         score: 0,
-        token: token,
+        atoken: atoken,
+        rtoken: rtoken,
         twoFA: false,
-        status: UserStatus.OnLine,
-        role: role,
+        isOnline: true,
+        isAdmin: isAdmin,
+        photo: photo,
       },
     });
   }
@@ -159,10 +171,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async updateUserStatus(login: string, status: UserStatus) {
+  async updateUserStatus(login: string, status: boolean) {
     await prisma.user.update({
       where: { login: login },
-      data: { status: status },
+      data: { isOnline: status },
     });
   }
 
@@ -180,7 +192,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                 level: true,
                 score: true,
                 photo: true,
-                status: true,
+                isOnline: true,
               },
             },
           },
@@ -208,7 +220,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                 level: true,
                 score: true,
                 photo: true,
-                status: true,
+                isOnline: true,
               },
             },
           },
@@ -223,7 +235,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                 level: true,
                 score: true,
                 photo: true,
-                status: true,
+                isOnline: true,
               },
             },
           },
@@ -262,13 +274,175 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         login: true,
         name: true,
         photo: true,
-        winnedMatchs: true,
-        lostMatchs: true,
         score: true,
+        isOnline: true,
       },
-      orderBy: { score: 'asc' },
+      orderBy: { score: 'desc' },
       take: 10,
     });
-    return list;
+    const users: accountUser[] = [];
+    for (const i in list) {
+      const user: accountUser = {
+        score: list[i].score,
+        login: list[i].login,
+        name: list[i].name,
+        email: list[i].email,
+        photo: list[i].photo,
+        online: list[i].isOnline,
+        win: await this.getNoWinnedMatchs(list[i].login),
+        lost: await this.getNolostMatchs(list[i].login),
+      };
+      users.push(user);
+    }
+    return users;
+  }
+
+  async getNoWinnedMatchs(login: string) {
+    return await prisma.match.count({
+      where: { winnerid: login },
+    });
+  }
+
+  async getNolostMatchs(login: string) {
+    return await prisma.match.count({
+      where: { looserid: login },
+    });
+  }
+
+  async getMatchHistory(login: string) {
+    const list = await prisma.user.findUnique({
+      where: { login: login },
+      select: {
+        winnedMatchs: { orderBy: { createdAt: 'desc' } },
+        lostMatchs: { orderBy: { createdAt: 'desc' } },
+      },
+    });
+    return list.lostMatchs.concat(list.winnedMatchs).sort((a, b) => {
+      if (a.createdAt < b.createdAt) return -1;
+      else if (a.createdAt > b.createdAt) return 1;
+      return 0;
+    });
+  }
+
+  async getRatio(login: string) {
+    const wins = await prisma.match.count({
+      where: { winnerid: login },
+    });
+    const lost = await prisma.match.count({
+      where: { looserid: login },
+    });
+    return [wins, lost];
+  }
+
+  async getChannelUsers(channel_name: string) {
+    const channel = await prisma.channel.findUnique({
+      where: { channelName: channel_name },
+      select: {
+        userList: {
+          select: {
+            user: {
+              select: {
+                login: true,
+                name: true,
+                email: true,
+                level: true,
+                score: true,
+                photo: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return channel.userList;
+  }
+
+  async getUserAccount(login: string) {
+    const user = await prisma.user.findFirst({
+      where: { login: login },
+      select: {
+        login: true,
+        createdAt: true,
+        name: true,
+        email: true,
+        level: true,
+        score: true,
+        photo: true,
+        twoFA: true,
+        isOnline: true,
+        isAdmin: true,
+        channelList: {
+          select: {
+            channelId: true,
+          },
+        },
+        mutedChannel: {
+          select: {
+            channelId: true,
+          },
+        },
+        adminChannel: {
+          select: {
+            channelId: true,
+          },
+        },
+        winnedMatchs: {
+          select: {
+            id: true,
+            createdAt: true,
+            winnerScore: true,
+            looserScore: true,
+            looserid: true,
+          },
+        },
+        lostMatchs: {
+          select: {
+            id: true,
+            createdAt: true,
+            winnerScore: true,
+            looserScore: true,
+            winnerid: true,
+          },
+        },
+        friends: {
+          select: {
+            friend1: {
+              select: {
+                login: true,
+                name: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+        befriend: {
+          select: {
+            friend2: {
+              select: {
+                login: true,
+                name: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+        blockedUsers: {
+          select: {
+            blockedId: true,
+          },
+        },
+        blockedFrom: {
+          select: {
+            blockerId: true,
+          },
+        },
+        bannedFrom: {
+          select: {
+            channelId: true,
+          },
+        },
+      },
+    });
   }
 }

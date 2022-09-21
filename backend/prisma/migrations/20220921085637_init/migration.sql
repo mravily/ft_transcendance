@@ -1,10 +1,4 @@
 -- CreateEnum
-CREATE TYPE "UserStatus" AS ENUM ('OnLine', 'OffLine');
-
--- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('User', 'Admin');
-
--- CreateEnum
 CREATE TYPE "ChannelStatus" AS ENUM ('Active', 'Inactive');
 
 -- CreateTable
@@ -15,12 +9,13 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "level" DOUBLE PRECISION NOT NULL,
     "score" INTEGER NOT NULL,
-    "token" TEXT NOT NULL,
-    "photo" TEXT,
+    "atoken" TEXT NOT NULL,
+    "rtoken" TEXT NOT NULL,
+    "photo" TEXT NOT NULL,
     "twoFA" BOOLEAN NOT NULL,
     "twoFApwd" TEXT,
-    "status" "UserStatus" NOT NULL,
-    "role" "UserRole" NOT NULL,
+    "isOnline" BOOLEAN NOT NULL,
+    "isAdmin" BOOLEAN NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("login")
 );
@@ -39,6 +34,7 @@ CREATE TABLE "Match" (
 
 -- CreateTable
 CREATE TABLE "Channel" (
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "channelName" TEXT NOT NULL,
     "is_pwd" BOOLEAN NOT NULL,
     "pwd" TEXT,
@@ -65,6 +61,16 @@ CREATE TABLE "muteUser" (
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "muteUser_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BanUser" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "channelId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "BanUser_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -123,10 +129,19 @@ CREATE TABLE "BlockUser" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_atoken_key" ON "User"("atoken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_rtoken_key" ON "User"("rtoken");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "makeAdmin_channelId_userId_key" ON "makeAdmin"("channelId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "muteUser_channelId_userId_key" ON "muteUser"("channelId", "userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BanUser_channelId_userId_key" ON "BanUser"("channelId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "JoinChannel_channelId_userId_key" ON "JoinChannel"("channelId", "userId");
@@ -148,6 +163,12 @@ ALTER TABLE "muteUser" ADD CONSTRAINT "muteUser_channelId_fkey" FOREIGN KEY ("ch
 
 -- AddForeignKey
 ALTER TABLE "muteUser" ADD CONSTRAINT "muteUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("login") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BanUser" ADD CONSTRAINT "BanUser_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("channelName") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BanUser" ADD CONSTRAINT "BanUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("login") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "JoinChannel" ADD CONSTRAINT "JoinChannel_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("login") ON DELETE RESTRICT ON UPDATE CASCADE;

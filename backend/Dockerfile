@@ -19,7 +19,7 @@ COPY . .
 # Build le projet dans le container 🏗
 RUN npm run build
 
-# Production step builds 🏭
+# Step production builds 🏭
 FROM node:lts-alpine3.15
 
 # Copy les fichiers de l'étape builder dans un nouveau container 🛠
