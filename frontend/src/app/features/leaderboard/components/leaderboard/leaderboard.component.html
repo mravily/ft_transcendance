@@ -3,7 +3,7 @@
 		<br>
 		<br>
 
-		<div class="row">
+		<div class="row" *ngIf="usersList$ | async as usersList">
 			<div *ngIf="usersList[1]" class="col-sm-4">
 				<div class="leaderboard-card leaderboard-card--second">
 					<div class="leaderboard-card__top">
@@ -11,7 +11,7 @@
 					</div>
 					<div class="leaderboard-card__body">
 						<div class="text-center">
-							<img src="{{ usersList[1].photo }}" class="circle-img mb-2" alt="User Img">
+							<img src="{{ usersList[1].photo }}" class="circle-img mb-2" alt="user-avatar">
 							<h5 class="mb-0">{{ usersList[1].name }}</h5>
 							<p class="text-muted mb-0">@{{ usersList[1].login }}</p>
 							<hr>
@@ -22,14 +22,14 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-4">
+			<div  *ngIf="usersList[0]"class="col-sm-4">
 				<div class="leaderboard-card leaderboard-card--first">
 					<div class="leaderboard-card__top">
 						<h3 class="text-center">🥇 1st 🏆</h3>
 					</div>
 					<div class="leaderboard-card__body">
 						<div class="text-center">
-							<img src="{{ usersList[0].photo }}" class="circle-img mb-2" alt="User Img">
+							<img src="{{ usersList[0].photo }}" class="circle-img mb-2" alt="user-avatar">
 							<h5 class="mb-0">{{ usersList[0].name }}</h5>
 							<p class="text-muted mb-0">@{{ usersList[0].login }}</p>
 							<hr>
@@ -47,7 +47,7 @@
 					</div>
 					<div class="leaderboard-card__body">
 						<div class="text-center">
-							<img src="{{ usersList[2].photo }}" class="circle-img mb-2" alt="User Img">
+							<img src="{{ usersList[2].photo }}" class="circle-img mb-2" alt="user-avatar">
 							<h5 class="mb-0">{{ usersList[2].name }}</h5>
 							<p class="text-muted mb-0">@{{ usersList[2].login }}</p>
 							<hr>
@@ -71,5 +71,5 @@
 			<h5>Congratulate</h5>
 		</div>
 		<br>
-		<app-bloc-user *ngFor="let UserIt of usersList; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-user>
+		<app-bloc-user *ngFor="let UserIt of usersList$ | async; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-user>
 	</div>

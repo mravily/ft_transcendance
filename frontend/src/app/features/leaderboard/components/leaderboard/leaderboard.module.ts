@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
-import { BlocUserComponent } from './components/bloc-user/bloc-user.component';
+import { LeaderboardComponent } from './leaderboard.component';
+import { BlocUserComponent } from '../bloc-user/bloc-user.component';
 import { OrdinalPipe } from 'src/app/pipe/ordinals.pipe';
 
 @NgModule({

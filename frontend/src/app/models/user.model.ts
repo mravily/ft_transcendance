@@ -1,10 +1,16 @@
 export class User {
-	email!: string
-	login!: string
-	name!: string
-	photo!: string
+// 	email!: string
+// 	login!: string
+// 	name!: string
+// 	photo!: string
 	online?: boolean
 	win?: Number
-	loose?: Number
-	rank?: number
+	lost?: Number
+email!: string
+login!: string
+name!: string
+photo!: string 
+score!: number
+status!: string
+
 }

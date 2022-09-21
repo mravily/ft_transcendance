@@ -11,13 +11,11 @@
 	overflow: hidden;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+
 .leaderboard-card.leaderboard-card--first {
 	transform: scale(1.05);
 }
-.leaderboard-card.leaderboard-card--first .leaderboard-card__top {
-	background: linear-gradient(45deg, #61481C, #E3C770);
-	color: #fff;
-}
+
 
 .leaderboard-card.leaderboard-card--second .leaderboard-card__top {
 	background: linear-gradient(45deg, #7C99AC, #D3DEDC);
@@ -28,6 +26,12 @@
 	background: linear-gradient(90deg, #F2A65A, #772F1A);
 	color: #fff;
 }
+
+.leaderboard-card.leaderboard-card--first .leaderboard-card__top {
+	background: linear-gradient(45deg, #61481C, #E3C770);
+	color: #fff;
+}
+
 .leaderboard-card__top {
 	background: #f9f6ff;
 	padding: 20px 0 30px 0;

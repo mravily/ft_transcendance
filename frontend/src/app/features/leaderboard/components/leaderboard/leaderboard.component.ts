@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable} from 'rxjs';
 import { User } from 'src/app/models/user.model';
+import { LeaderboardService } from '../../services/leaderboard.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -9,65 +10,11 @@ import { User } from 'src/app/models/user.model';
 })
 export class LeaderboardComponent implements OnInit {
 
-	usersList!: User[];
-  constructor(private http: HttpClient) {
-	// this.getList();
-	// console.log('login_test', this.usersList[0].login);
-  }
+	usersList$!: Observable<User[]>;
 
-	getList() {
-		this.http.get<User[]>("leaderboard").subscribe(u => this.usersList = u)
+    constructor(private leaderboardService: LeaderboardService) {}
+
+	ngOnInit(): void {
+		this.usersList$ = this.leaderboardService.getList();
 	}
-
-  ngOnInit(): void {
-
-	this.usersList = [
-		{
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			name: 'Medhi Ravily',
-			photo: 'https://cdn.intra.42.fr/users/mravily.jpg',
-			win: 5,
-			loose: 2,
-			online: false
-		},
-		{
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			name: 'Medhi Ravily',
-			photo: 'https://cdn.intra.42.fr/users/mravily.jpg',
-			win: 5,
-			loose: 2,
-			online: false
-		},
-		{
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			name: 'Medhi Ravily',
-			photo: 'https://cdn.intra.42.fr/users/mravily.jpg',
-			win: 5,
-			loose: 2,
-			online: false
-		},
-		{
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			name: 'Medhi Ravily',
-			photo: 'https://cdn.intra.42.fr/users/mravily.jpg',
-			win: 5,
-			loose: 2,
-			online: false
-		},
-		{
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			name: 'Medhi Ravily',
-			photo: 'https://cdn.intra.42.fr/users/mravily.jpg',
-			win: 5,
-			loose: 2,
-			online: false
-		},
-	];
-  }
-
 }
