@@ -1,2 +1,18 @@
 @import url(https://unpkg.com/@webpixels/css@1.1.5/dist/index.css);
 @import url("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.0/font/bootstrap-icons.min.css");
+
+
+.wrapper {
+	display: flex;
+	grid-template-rows: 25% 65%;
+}
+
+.sidebar {
+	width: 16%;
+}
+
+.main {
+	width: 100%;
+	height: 100%;
+}
+

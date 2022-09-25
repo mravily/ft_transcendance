@@ -4,11 +4,11 @@ import { User } from 'src/app/features/leaderboard/model/user.model';
 import { LeaderboardService } from '../../services/leaderboard.service';
 
 @Component({
-  selector: 'app-leaderboard',
-  templateUrl: './leaderboard.component.html',
-  styleUrls: ['./leaderboard.component.css']
+  selector: 'app-old-leaderboard',
+  templateUrl: './old-leaderboard.component.html',
+  styleUrls: ['./old-leaderboard.component.css']
 })
-export class LeaderboardComponent implements OnInit {
+export class OldLeaderboardComponent implements OnInit {
 
 	usersList$!: Observable<User[]>;
 

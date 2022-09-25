@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { User } from 'src/app/models/user.model';
+import { User } from 'src/app/features/leaderboard/model/user.model';
 
 @Component({
   selector: 'app-bloc-user',
