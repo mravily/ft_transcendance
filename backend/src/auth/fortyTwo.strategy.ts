@@ -6,9 +6,6 @@ import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
-  payload!: { login: string };
-  jwt!: any;
-
   constructor(private db: PrismaService, private jwtService: JwtService) {
     super({
       clientID: process.env.FORTYTWO_CLIENT_ID,
@@ -19,24 +16,13 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(
-    request: { session: { accessToken: string; jwt: string } },
+    request: { session: { login: string } },
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     cb: VerifyCallback,
   ): Promise<any> {
-    request.session.accessToken = accessToken;
-
-    this.payload = { login: profile.username };
-    this.jwt = this.jwtService.sign(this.payload);
-    request.session.jwt = this.jwt;
-
-    // type PayloadType = {
-    //   login: string;
-    // };
-    // console.log('myatoken', jwt);
-    // const decodeJwt = this.jwtService.decode(jwt) as PayloadType;
-    // console.log('decode', decodeJwt.login);
+    request.session.login = profile.username;
 
     this.db.setUser(
       profile.username,
