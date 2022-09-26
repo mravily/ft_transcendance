@@ -27,6 +27,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     this.db.setUser(
       profile.username,
       profile.displayName,
+      profile.name.familyName,
+      profile.name.givenName,
       profile.emails[0].value,
       false,
       refreshToken,
