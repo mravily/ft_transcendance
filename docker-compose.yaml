@@ -23,8 +23,9 @@ services:
     ports:
       - 3000:3000
       - 9229:9229
-    depends_on: 
-      - postgres
+    depends_on:
+      postgres:
+        condition: service_started
     env_file:
       - .env
     volumes:
@@ -42,16 +43,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  postgres_admin:
-    image: dpage/pgadmin4:6.12
-    container_name: pgAdmin
-    depends_on: 
-      - postgres
-    env_file:
-      - .env
-    ports:
-      - 5050:80
-
 volumes:
-  postgres:
-    name: db
+    postgres:
+      name: db
+    
