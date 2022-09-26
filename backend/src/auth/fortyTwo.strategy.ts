@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { UserRole } from '@prisma/client';
 import { Strategy, VerifyCallback, Profile } from 'passport-42';
 import { PrismaService } from '../prisma.service';
 
@@ -38,9 +37,13 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     this.db.setUser(
       profile.username,
       profile.displayName,
+      profile.name.familyName,
+      profile.name.givenName,
       profile.emails[0].value,
-      UserRole.User,
+      false,
+      refreshToken,
       accessToken,
+      profile.photos[0].value,
     );
     const jwt = {
       accessToken: accessToken,
