@@ -7,14 +7,12 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { LeaderboardModule } from './features/leaderboard/leaderboard.module';
 import { CookieService } from 'ngx-cookie-service';
-import { ProfileModule } from './features/profile/profile.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
 	CoreModule,
-	ProfileModule,
 	LeaderboardModule,
     AppRoutingModule,
 	HttpClientModule
