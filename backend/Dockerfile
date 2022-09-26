@@ -31,8 +31,11 @@ COPY --from=builder /app/prisma ./prisma
 # Expose le port du container 🔌
 EXPOSE 3000
 
+# Permet la génération du client Prisma
+RUN npx prisma generate
+
 # Pour migrer les tables Prisma 👇🏽
-# # Ne pas oublier de changer postgres par localhost dans ${DATABASE_URL}
+# # Ne pas oublier de changer postgres par localhost dans les .env
 # CMD [ "npm", "run", "start:dev" ]
 
 # Deploie la migration et lance le service en dev 👇🏽 

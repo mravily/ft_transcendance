@@ -111,17 +111,6 @@ model BanUser {
   @@unique([channelId, userId])
 }
 
-model BanUser {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  // Relations:
-  channelId String
-  userId String
-  channel Channel @relation(fields: [channelId], references: [channelName])
-  user User @relation(fields: [userId], references: [login])
-  @@unique([channelId, userId])
-}
-
 model JoinChannel {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
