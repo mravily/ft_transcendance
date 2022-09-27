@@ -10,3 +10,8 @@
 	color: #fff;
 }
 
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+	color: #E3C770 !important;
+	background-color: transparent;
+	border-color: transparent transparent #E3C770 !important;
+  }
