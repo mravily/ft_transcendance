@@ -1,10 +1,10 @@
 export class User {
 	email!: string
 	login!: string
-	name!: string
-	photo!: string 
+	fullName!: string
+	imgUrl!: string 
 	score!: number
-	online?: boolean
-	win?: Number
-	lost?: Number
+	isOnline!: boolean
+	win!: Number
+	lost!: Number
 }
