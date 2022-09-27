@@ -1,4 +1,4 @@
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from "src/prisma.service";
 
 export async function setChannel(this: PrismaService, name: string) {
   await this.prisma.channel.create({

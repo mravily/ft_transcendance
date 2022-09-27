@@ -1,4 +1,4 @@
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from "src/prisma.service";
 
 export interface IAccount {
   firstName: string,

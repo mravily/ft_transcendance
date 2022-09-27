@@ -1,4 +1,4 @@
-import { PrismaService } from "../prisma.service"
+import { PrismaService } from "src/prisma.service"
 
 export async function setMatch(this: PrismaService, w_score: number, l_score: number, w_login: string, l_login: string) {
   await this.prisma.match.create({
