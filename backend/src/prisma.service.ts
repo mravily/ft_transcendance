@@ -1,6 +1,6 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { getTopTen } from './prisma/leaderboard.service';
+import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
 import {
   setUser,
   getUserAccount,
@@ -35,21 +35,10 @@ import {
 export interface accountUser {
   score: number;
   login: string;
-  name: string;
+  fullName: string;
   email: string;
-  photo: string;
-  online: boolean;
-  win: number;
-  lost: number;
-}
-
-export interface accountUser {
-  score: number;
-  login: string;
-  name: string;
-  email: string;
-  photo: string;
-  online: boolean;
+  imgUrl: string;
+  isOnline: boolean;
   win: number;
   lost: number;
 }
@@ -93,4 +82,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getChannelUsers = getChannelUsers;
   public uploadPhoto = uploadPhoto;
   public getPhotoPath = getPhotoPath;
+  public getUsersRanking = getUsersRanking;
 }
