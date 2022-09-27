@@ -1,4 +1,4 @@
-import { PrismaService, accountUser } from "src/prisma.service";
+import { PrismaService, accountUser } from "../prisma.service";
 
 export async function getTopTen(this: PrismaService) {
     const list = await this.prisma.user.findMany({

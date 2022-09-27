@@ -10,7 +10,7 @@ COPY *.json ./
 COPY prisma ./prisma/
 
 # Install les deps spécifiés les .json 📦
-RUN npm install -g npm@8.18.0
+RUN npm install -g npm
 RUN npm install
 
 # Copie les fichiers du projets 🔀
