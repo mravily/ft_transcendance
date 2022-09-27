@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Typescript Pong</title>
+        <link href='https://fonts.googleapis.com/css?family=Orbitron:900' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div class="playercolumn">
+            <div class="player" *ngFor="let p of players">
+                <img [src]="p.imgUrl">
+                <div class="playername">{{p.name}}</div>
+                <div class="playerratio">{{p.ratio}}</div>
+            </div>
+
+        </div>
+        <div class='game' style="font-family: Orbitron;">
+
+            <canvas #canvas playing-pong width=1400 height=800></canvas>
+            <button #readyButton (click)="ready()">I'm ready</button>
+            <h4>Move left paddle up and down with the arrow keys</h4>
+        </div>
+        <app-gamechat #chat style="flex: 1"></app-gamechat>
+    </body>
+</html>

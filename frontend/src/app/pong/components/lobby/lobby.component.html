@@ -1,0 +1,11 @@
+<div class="landing-block">
+    <img src="assets/logo_snapface.png" alt="Snapface logo">
+    <form #email="ngForm" (ngSubmit)="onSubmitForm(email)">
+      <label for="emailInput">Inscrivez-vous pour recevoir la newsletter</label>
+      <input type="email" name="userEmail" id="emailInput" placeholder="Votre adresse email" [(ngModel)]="userEmail">
+      <button type="submit">OK</button>
+    </form>
+    <div class="landing-links">
+      <button (click)="onMatchmaking()" #findMatch>{{buttonText}}</button>
+    </div>
+</div>

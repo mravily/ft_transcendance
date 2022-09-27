@@ -1,0 +1,15 @@
+button {
+  background-color: transparent;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  border: none;
+  box-shadow: lightgray 13px 13px 7px;
+  margin-right: 20px;
+  outline: none;
+  font-size: 20px;
+  font-weight: 500;
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: lightgray 0 0 5px;
+  }
+}
