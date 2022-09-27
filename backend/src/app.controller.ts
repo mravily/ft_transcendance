@@ -11,8 +11,8 @@ export class AppController {
     this.db.setUser(
       'jiglesia',
       'Juan Iglesias',
-	  'Juan',
-	  'Iglesias',
+      'Juan',
+      'Iglesias',
       'jiglesia@student.42.fr',
       false,
       'token jiglesia',
@@ -22,9 +22,9 @@ export class AppController {
     this.db.setUser(
       'toto',
       'titi toto',
-	  'titi',
-	  'toto',
-      'mravily@student.42.fr',
+      'titi',
+      'toto',
+      'toto@student.42.fr',
       false,
       'token toto',
       'atoken titi',
