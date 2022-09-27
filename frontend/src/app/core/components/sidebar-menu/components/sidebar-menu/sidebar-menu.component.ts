@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { ShortListContact, ShortProfile } from '../../model/sidebar.model';
 import { SidebarMenuService } from '../../services/sidebar-menu.service';
@@ -11,6 +12,7 @@ import { SidebarMenuService } from '../../services/sidebar-menu.service';
 
 export class SidebarMenuComponent implements OnInit {
 
+	constructor(private cookieService: CookieService) {}
 // A utiliser pour la r2cup2ration des infos depuis la DB
 //   contactList$!: Observable<ShortListContact[]>
 //   profile$!: ShortProfile;
@@ -22,6 +24,9 @@ export class SidebarMenuComponent implements OnInit {
 // 		this.messages$ = this.sidebarService.getmessages();
 //   }
 
+	isLogin() {
+		return this.cookieService.check('token');
+	}
 	contactList!: ShortListContact[];
 	profile!: ShortProfile;
 	messages!: number;

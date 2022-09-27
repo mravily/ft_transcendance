@@ -7,17 +7,15 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class AuthGuard implements CanActivate {
 
-	cookie!: any;
 	constructor (private cookieService: CookieService,
 				 private router: Router) {}
 	
   canActivate(): boolean {
-		if (this.cookieService.getAll()) {
+		if (this.cookieService.check('token')) {
 			return true;
 		} else {
 			this.router.navigateByUrl('/sign-in');
 			return false;
 		}
   }
-  
 }

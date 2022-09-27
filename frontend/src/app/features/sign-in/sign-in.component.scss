@@ -1,0 +1,32 @@
+.btn-login {
+	font-size: 0.9rem;
+	letter-spacing: 0.05rem;
+	padding: 0.75rem 1rem;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #04809f;
+    --bs-btn-border-color: #04809f;
+    --bs-btn-hover-color: #04809f;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #04809f;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #04809f;
+    --bs-btn-active-border-color: #04809f;
+    --bs-btn-active-shadow: inset 0 10px 10px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #04809f;
+    --bs-btn-disabled-border-color: #04809f;
+	border-width: 0.2em;
+}
+.row{
+	margin-top: 19%;
+}
+
+img {
+	padding-left: 5px;
+	width : 25px;
+	height : 25px;
+}
