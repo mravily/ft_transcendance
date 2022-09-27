@@ -8,15 +8,11 @@ import { LandingPageComponent } from './pong/landing-page/landing-page.component
 
 
 const routes: Routes = [
-<<<<<<< HEAD
+	{ path: 'sign-in', component: SignInComponent },
 	{ path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
 	{ path: 'pong', component: LandingPageComponent, canActivate: [AuthGuard] },
 	{ path: 'pong/:gameId', component: PongComponent, canActivate: [AuthGuard] }
 ];
-=======
-	{ path: 'sign-in', component: SignInComponent },
-	{ path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] }];
->>>>>>> b6dd696c23efce8dff347ad191c77aa36947b0b9
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
