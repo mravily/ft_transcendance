@@ -11,7 +11,7 @@ services:
       - ./frontend:/usr/app/
       - /usr/app/node_modules
     ports:
-      - 4200:4200
+      - $ANGULAR_PORT
     links:
       - api
 
@@ -21,11 +21,11 @@ services:
       context: ./backend
     container_name: NestJS
     ports:
-      - 3000:3000
+      - $NEST_PORT
       - 9229:9229
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
     env_file:
       - .env
     volumes:
@@ -33,17 +33,20 @@ services:
       - /app/node_modules
 
   postgres:
-    image: postgres:14.5-alpine
+    image: $POSTGRES_IMG
     container_name: PostgresSQL
     restart: always
     ports:
-      - 5432:5432
+      - $PORT_DB:$PORT_DB
     env_file:
       - .env
     volumes:
-      - postgres:/var/lib/postgresql/data
-
+      - $VOL_DB
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -h $HOST_DB -p $PORT_DB -U $POSTGRES_USER -d $POSTGRES_DB"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
 volumes:
     postgres:
       name: db
-    
