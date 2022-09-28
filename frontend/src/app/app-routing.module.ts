@@ -4,7 +4,7 @@ import { LeaderboardComponent } from './features/leaderboard/components/leaderbo
 import { SignInComponent } from './features/sign-in/sign-in.component';
 import { AuthGuard } from './guards/auth.guard';
 import { PongComponent } from './pong/components/pong/pong.component';
-import { LandingPageComponent } from './pong/landing-page/landing-page.component';
+import { LandingPageComponent } from './pong/components/lobby/landing-page.component';
 
 
 const routes: Routes = [

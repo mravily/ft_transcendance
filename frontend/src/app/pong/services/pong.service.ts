@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
-import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/models/pong.models';
+import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/pong/models/pong.models';
 import { Message } from '../models/chat.models';
 
 @Injectable({

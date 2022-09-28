@@ -2,14 +2,12 @@
     <h3>Game chat</h3>
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of messages; let i = index;">
-        <div class="message" [ngClass]="{isMine: message.sender === 'me'}">
+        <div class="message"><!-- [ngClass]="{isMine: message.sender === 'me'}"> -->
           <h4 *ngIf="i === 0 || messages[i-1].sender !== message.sender">
             {{message.sender}}
           </h4>
-          <!-- 
-            <div class="message-header-time">{{message.time}}</div>
-          -->
-          <div class="message-body" [ngClass]="{isMine: message.sender === 'me'}">
+          <!-- <div class="message-header-time">{{message.time}}</div>-->
+          <div class="message-body"><!-- [ngClass]="{isMine: message.sender === 'me'}"> -->
             <div class="message-body-text">{{message.body}}</div>
           </div>
         </div>

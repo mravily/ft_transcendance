@@ -3,7 +3,7 @@ import { ActivatedRoute, Route } from '@angular/router';
 import { map, tap, take, Subscription } from 'rxjs';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from "../../models/pong.models";
 import { PongService } from '../../services/pong.service';
-import { GamechatComponent } from './gamechat/gamechat.component';
+// import { GamechatComponent } from './gamechat/gamechat.component';
 import { Paddle, Ball, PowerUp } from './entities';
 // enum KeyBindings{
 //   UP = 38,
@@ -14,7 +14,7 @@ import { Paddle, Ball, PowerUp } from './entities';
   selector: 'app-pong',
   templateUrl: './pong.component.html',
   styleUrls: ['./pong.component.scss'],
-  providers: [PongService, GamechatComponent]
+  providers: [PongService]
 })
 export class PongComponent implements AfterViewInit {
   @HostListener('window:keydown', ['$event'])
