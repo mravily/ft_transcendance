@@ -1,4 +1,4 @@
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from "src/prisma.service";
 
 export interface IAccount {
   firstName: string,
@@ -60,6 +60,9 @@ export async function setBlockUser(this: PrismaService, login: string, block_log
         }
     })
 }
+
+// Nouvelle fonction souhaitée : unblock le user.
+// export async function setUnblockUser(this: PrismaService, login: string, block_login: string) {}
 
 export async function setFriend(this: PrismaService, login1: string, login2: string) {
     await this.prisma.addFriend.create({

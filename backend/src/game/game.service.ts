@@ -10,6 +10,7 @@ export class GameService  {
   games: Map<number, GameMatch>;
   gameidBySocketid: Map<string, number>;
   queue: Socket[];
+  PUqueue: Socket[];
 
   constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway) { 
     this.games = new Map<number, GameMatch>();
@@ -29,26 +30,27 @@ export class GameService  {
     }
   }
 
-  createGame(players: Socket[]): number {
+  createGame(players: Socket[], powerUps: boolean): number {
     var gameId = Math.floor(Math.random() * 1000000);
     while (this.games.has(gameId)) {
       gameId = Math.floor(Math.random() * 1000000);
     }
-    this.games.set(gameId, new GameMatch(this.wsg, players));
+    this.games.set(gameId, new GameMatch(this.wsg, players, powerUps));
     this.gameidBySocketid.set(players[0].id, gameId);
     this.gameidBySocketid.set(players[1].id, gameId);
     return gameId;
   }
-  getMatchmakingGame(client: Socket): void {
-    if (this.queue.length > 0) {
-      var oppo = this.queue.pop();
-      var gameId = this.createGame([client, oppo]);
+  getMatchmakingGame(client: Socket, powerUps: boolean): void {
+    let queue = (powerUps) ? this.PUqueue : this.queue;
+    if (queue.length > 0) {
+      var oppo = queue.pop();
+      var gameId = this.createGame([client, oppo], powerUps);
       this.wsg.sendMatchId(client, gameId);
       this.wsg.sendMatchId(oppo, gameId);
       console.log('creating', client.id);
     }
     else {
-      this.queue.push(client);
+      queue.push(client);
     }
   }
   removeGame(player1: Socket) {

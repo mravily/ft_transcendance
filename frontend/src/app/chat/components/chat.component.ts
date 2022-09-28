@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Message } from '../models/chat.models';
+import { MessageI } from '../models/chat.model';
 import { ChatService } from '../services/chat.service';
 
 @Component({
@@ -34,13 +34,13 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chats.getAddedMessage().subscribe((message: Message) => {
+    this.chats.getAddedMessage().subscribe((message: MessageI) => {
       this.messages.push(message);
     });
-    this.chats.getMessages().subscribe((messages: Message[]) => {
+    this.chats.getMessagesObs().subscribe((messages: MessageI[]) => {
       this.messages = messages;
     });
-    this.chats.getMyRooms().subscribe((rooms: any[]) => {
+    this.chats.getChannelsObs().subscribe((rooms: any[]) => {
       this.contacts = rooms;
     });
 

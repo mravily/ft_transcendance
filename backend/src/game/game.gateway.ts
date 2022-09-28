@@ -26,7 +26,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('findMatch')
   findMatch(client: Socket): void {
-    this.gameService.getMatchmakingGame(client);
+    this.gameService.getMatchmakingGame(client, false);
+  }
+  @SubscribeMessage('findPUMatch')
+  findPUMatch(client: Socket): void {
+    this.gameService.getMatchmakingGame(client, true);
   }
   sendMatchId(client: Socket, gameId: number): void {
     client.emit('matchId', gameId);
