@@ -30,6 +30,7 @@ export class AppController {
     //   'atoken titi',
     //   'https://cdn.intra.42.fr/users/mravily.jpg',
     // );
+    // this.db.setFriend("jiglesia", "mravily");
   }
 
   @Get()

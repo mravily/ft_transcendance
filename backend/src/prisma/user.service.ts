@@ -32,36 +32,47 @@ export async function setUser(
     rtoken: string,
     atoken: string,
     imgUrl: string) {
-    await this.prisma.user.upsert({
-        where: { login: login },
-        update: { atoken: atoken, rtoken: rtoken },
-        create: {
-            login: login,
-            fullName: name,
-            firstName: firstname,
-            lastName: lastname,
-            email: email,
-            score: 0,
-            atoken: atoken,
-            rtoken: rtoken,
-            twoFA: false,
-            isOnline: true,
-            isAdmin: isAdmin,
-            imgUrl: imgUrl
-        }
-    })
+    try {
+      await this.prisma.user.upsert({
+          where: { login: login },
+          update: { atoken: atoken, rtoken: rtoken },
+          create: {
+              login: login,
+              fullName: name,
+              firstName: firstname,
+              lastName: lastname,
+              email: email,
+              score: 0,
+              atoken: atoken,
+              rtoken: rtoken,
+              twoFA: false,
+              isOnline: true,
+              isAdmin: isAdmin,
+              imgUrl: imgUrl
+          }
+      })
+    }
+    catch (error) {
+      console.log(error);
+    }
 }
 
 export async function setBlockUser(this: PrismaService, login: string, block_login: string) {
+  try {
     await this.prisma.blockUser.create({
         data: {
             blockerId: login,
             blockedId: block_login,
         }
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function setFriend(this: PrismaService, login1: string, login2: string) {
+  try {
     await this.prisma.addFriend.create({
         data: {
             friend1Id: login1,
@@ -69,30 +80,50 @@ export async function setFriend(this: PrismaService, login1: string, login2: str
         },
         include: {friend1: true, friend2: true}
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function set2FA(this: PrismaService,login: string, twoFA: string) {
+  try {
     await this.prisma.user.update({
         where: { login: login },
         data: { twoFA: true, twoFApwd: twoFA },
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
-export async function updateUserScore(this: PrismaService,login: string, score: number) {
+export async function updateUserScore(this: PrismaService,login: string, points: number) {
+  try {
     await this.prisma.user.update({
         where: {login: login},
-        data: {score: score},
+        data: {score:{increment: points}},
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function updateUserStatus(this: PrismaService,login: string, status: boolean) {
+  try {
     await this.prisma.user.update({
         where: { login: login },
         data: { isOnline: status },
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function getBlockedUsers(this: PrismaService,login: string) {
+  try {
     const blockedList = await this.prisma.user.findUnique({
         where: { login: login },
         select: { blockedUsers: {
@@ -109,30 +140,43 @@ export async function getBlockedUsers(this: PrismaService,login: string) {
                 }
             }
         }},
-    })
+    });
     let list;
     for (let i = 0; blockedList.blockedUsers[i]; i++) {
-        list[i] = blockedList.blockedUsers[i];
+      list[i] = blockedList.blockedUsers[i];
+    }
+    return list;
   }
-  return list;
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function getUser(this: PrismaService, login: string) {
-    const usr = await this.prisma.user.findUnique({
-        where: {login: login}
-        })
+  try {
+    const usr = await this.prisma.user.findUnique({where:{login:login}});
     return usr;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function uploadPhoto(this: PrismaService, login: string, filename:string) {
-  await this.photos.upsert({
-    where: {userId: login},
-    update: {filename: filename},
-    create: {filename: filename, userId: login}
-  })
+  try {
+    await this.photos.upsert({
+      where: {userId: login},
+      update: {filename: filename},
+      create: {filename: filename, userId: login}
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function getFriends(this: PrismaService, login: string) {
+  try {
     const friends = await this.prisma.user.findUnique({
         where: { login: login },
         select: { 
@@ -165,7 +209,7 @@ export async function getFriends(this: PrismaService, login: string) {
             }
           },
         }
-      })
+      });
     let friendlist;
     let a = 0;
     for (let i = 0; friends.friends[i] ; i++) {
@@ -175,17 +219,27 @@ export async function getFriends(this: PrismaService, login: string) {
       friendlist[a++] = friends.befriend[i];
     }
     return friendlist;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function getPhotoPath(this: PrismaService, login: string) {
-  const tmp = await this.prisma.user.findUnique({
-    where: { login: login },
-    select: { photo: { select : { filename: true } } }
-  });
-  return tmp.photo.filename;
+  try {
+    const tmp = await this.prisma.user.findUnique({
+      where: { login: login },
+      select: { photo: { select : { filename: true } } }
+    });
+    return tmp.photo.filename;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
 
 export async function getUserAccount(this: PrismaService, login: string) {
+  try {
     const user = await this.prisma.user.findFirst({
       where: { login: login },
       select: {
@@ -255,7 +309,7 @@ export async function getUserAccount(this: PrismaService, login: string) {
           }
         },
       }
-    })
+    });
     let userAccount = {} as IAccount;
     if (user) {
       userAccount.firstName = user.firstName;
@@ -294,4 +348,8 @@ export async function getUserAccount(this: PrismaService, login: string) {
       }
     }
     return userAccount;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
 }
