@@ -17,7 +17,7 @@ export class ChatComponent implements OnInit {
   contacts: string[] = ["John Potter", "Jane McGiller", "Joe Froster", "Jill Smith", "Jenny Smith", "Henry Colmard", "Stuart Little", "John Doe", "Jane Doe", "Joe Doe", "Jill Doe", "Jenny Doe", "Henry Doe", "Stuart Doe"];
   selectedContact: string = this.contacts[0];
   curMessage!: string;
-  messages: Message[] = [
+  messages: MessageI[] = [
   ];
 
   constructor(private chats: ChatService) { }
