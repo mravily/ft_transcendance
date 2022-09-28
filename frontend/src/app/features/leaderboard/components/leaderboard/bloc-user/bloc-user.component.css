@@ -3,7 +3,7 @@
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	border-radius: 5px;
 	display: grid;
-	grid-template-columns: 30% 20% 10% 20% 20%;
+	grid-template-columns: repeat(5, 20%);
 }
 
 img.circle-img.circle-img--small {
@@ -13,13 +13,17 @@ img.circle-img.circle-img--small {
 	border-radius: 55px;
 }
 
-.two {
+.two{
 	display: grid;
-	grid-template-columns: repeat(3, 33.3%);	
+	grid-template-columns: repeat(3, auto);
+	grid-gap: 5px;
+	align-items: center;
+	justify-content: center;
+	justify-items: center;
 }
 
-.three {
-	
+.three, .four {
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	justify-items: center;
@@ -36,12 +40,6 @@ img.circle-img.circle-img--small {
     padding-left: 0px;
 }
 
-.four {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	justify-items: center;
-}
 .status-badge	{
 	height: 27px;
 	width: 27px;

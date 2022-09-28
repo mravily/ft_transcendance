@@ -6,8 +6,8 @@ import { OrdinalPipe } from 'src/app/pipe/ordinals.pipe';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { RouterModule } from '@angular/router';
 import { LeaderboardRoutingModule } from './leaderboard-routing.module';
-import { AllUsersComponent } from './components/all-users/components/all-users/all-users.component';
-import { BlocAllUserComponent } from './components/all-users/components/bloc-all-user/bloc-all-user.component';
+import { BlocAllUserComponent } from './components/all-users/bloc-all-user/bloc-all-user.component';
+import { AllUsersComponent } from './components/all-users/all-users.component';
 
 @NgModule({
   declarations: [
