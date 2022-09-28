@@ -20,7 +20,7 @@ export class PongService {
   endEvent: Observable<Results>;
 
   constructor() { 
-    this.socket = new Socket({ url: 'ws://localhost:3000/pong', options: {
+    this.socket = new Socket({ url: 'localhost:3000/pong', options: {
       withCredentials: false,
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');
@@ -36,6 +36,9 @@ export class PongService {
 
   getNewMatchmaking(): void {
     this.socket.emit('findMatch');
+  }
+  getNewPUMatchmaking(): void {
+    this.socket.emit('findPUMatch');
   }
 
   sendPaddlePos(y: number, yVel: number): void {

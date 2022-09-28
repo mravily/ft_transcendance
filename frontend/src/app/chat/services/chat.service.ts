@@ -9,7 +9,7 @@ export class ChatService {
   socket!: Socket;
 
   constructor() { 
-    this.socket = new Socket({ url: 'ws://localhost:3000/chat', options: {
+    this.socket = new Socket({ url: 'ws://api/chat', options: {
       withCredentials: false,
     } });
   }

@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { Message } from 'src/app/pong/models/chat.models';
-import { PongService } from '../../../services/pong.service';
+import { PongService } from '../../services/pong.service';
 
 @Component({
   selector: 'app-gamechat',
@@ -15,7 +16,7 @@ export class GamechatComponent implements OnInit {
   messages: Message[] = [
   ];
   
-  constructor(private wss: PongService) { }
+  constructor(private wss: PongService, builer: FormBuilder) { }
 
   onSendMessage() {
     this.wss.sendMessage(this.curMessage);
@@ -27,7 +28,6 @@ export class GamechatComponent implements OnInit {
       this.messages.push(message);
     });
   }
-
 
   ngAfterViewChecked() {
     this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;

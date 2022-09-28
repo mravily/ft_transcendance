@@ -1,0 +1,30 @@
+
+.form-card {
+box-sizing: border-box;
+width: 100%;
+padding: 10px 20px;
+box-shadow: lightgray 4px 4px 20px;
+}
+
+
+.form-group {
+    color: #BBB;
+    margin: 10px 0;
+    width: 90%;
+    display: flex;
+    align-items: center;   
+    justify-content: space-between;
+}
+
+input, textarea {
+    width: 70%;
+}
+
+.action-buttons {
+    width: 100%;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+}

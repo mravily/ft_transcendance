@@ -3,7 +3,6 @@ import { ActivatedRoute, Route } from '@angular/router';
 import { map, tap, take, Subscription } from 'rxjs';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from "../../models/pong.models";
 import { PongService } from '../../services/pong.service';
-// import { GamechatComponent } from './gamechat/gamechat.component';
 import { Paddle, Ball, PowerUp } from './entities';
 // enum KeyBindings{
 //   UP = 38,

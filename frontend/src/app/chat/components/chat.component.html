@@ -1,0 +1,104 @@
+<div class="body">
+
+  
+  <div class="contacts">
+    
+    <div class="contact" (click)="create = !create">Create new room</div>
+    <app-newroom *ngIf="create"></app-newroom>
+
+    <div class="contact" *ngFor="let contact of contacts" (click)="onContactClick(contact)">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Head_Odysseus_MAR_Sperlonga.jpg">
+      
+      <div class="contactW">
+        {{contact}}
+        <div class="contact-status">Online</div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <div class="messagezone">
+    <h3>{{selectedContact}} - Online</h3>
+    <div class="inboxContainer" #messageContainer>
+      <div *ngFor="let message of messages; let i = index;">
+        <div class="message" [ngClass]="{isMine: message.sender === 'me'}">
+          <h4 *ngIf="i === 0 || messages[i-1].sender !== message.sender">
+            {{message.sender}}
+          </h4>
+          <!-- 
+            <div class="message-header-time">{{message.time}}</div>
+          -->
+          <div class="message-body" [ngClass]="{isMine: message.sender === 'me'}">
+            <div class="message-body-text">{{message.body}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="inputbar">
+      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage">hey</textarea>
+      <button (click)="onSendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+<!-- 
+<div class="center">
+
+  <div class="contacts">
+    <i class="fas fa-bars fa-2x"></i>
+    <h2>
+      Contacts
+    </h2>
+    <div class="contact">
+      <div class="pic rogers"></div>
+      <div class="badge">
+        14
+      </div>
+      <div class="name">
+        Steve Rogers
+      </div>
+      <div class="message">
+        That is America's ass 🇺🇸🍑
+      </div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="contact bar">
+      <div class="pic stark"></div>
+      <div class="name">
+        Tony Stark
+      </div>
+      <div class="seen">
+        Today at 12:56
+      </div>
+    </div>
+    <div class="messages" id="chat">
+      <div class="time">
+        Today at 11:41
+      </div>
+      <div class="message parker">
+        Hey, man! What's up, Mr Stark? 👋
+      </div>
+      <div class="message stark">
+        Kid, where'd you come from? 
+      </div>
+      <div class="message parker">
+        Field trip! 🤣
+      </div>
+      <div class="message parker">
+        Uh, what is this guy's problem, Mr. Stark? 🤔
+      </div>
+      <div class="message stark">
+        Uh, he's from space, he came here to steal a necklace from a wizard.
+      </div>
+      <div class="message stark">
+        <div class="typing typing-1"></div>
+        <div class="typing typing-2"></div>
+        <div class="typing typing-3"></div>
+      </div>
+    </div>
+    <div class="input">
+      <i class="fas fa-camera"></i><i class="far fa-laugh-beam"></i><input placeholder="Type your message here!" type="text" /><i class="fas fa-microphone"></i>
+    </div>
+  </div>
+</div> -->

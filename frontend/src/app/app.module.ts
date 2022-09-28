@@ -7,15 +7,21 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { LeaderboardModule } from './features/leaderboard/leaderboard.module';
 import { CookieService } from 'ngx-cookie-service';
+import { CommonModule } from '@angular/common';
+import { PongModule } from './pong/pong.module';
+import { ChatModule } from './chat/chat.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-	CoreModule,
-	LeaderboardModule,
+	  CoreModule,
+	  LeaderboardModule,
     AppRoutingModule,
-	HttpClientModule
+	  HttpClientModule,
+    CommonModule,
+    PongModule,
+    ChatModule,
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
