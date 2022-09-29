@@ -1,9 +1,31 @@
 <div class="body">
 
-  
+  <div class="messagezone">
+    <h3>{{selectedContact}} - Online</h3>
+    <div class="inboxContainer" #messageContainer>
+      <div *ngFor="let message of messages; let i = index;">
+        <div class="message" [ngClass]="{isMine: message.user === 'me'}">
+          <h4 *ngIf="i === 0 || messages[i-1].user !== message.user">
+            {{message.user}}
+          </h4>
+          <!-- 
+            <div class="message-header-time">{{message.time}}</div>
+          -->
+          <div class="message-body" [ngClass]="{isMine: message.user === 'me'}">
+            <div class="message-body-text">{{message.text}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="inputbar">
+      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage">hey</textarea>
+      <button (click)="onSendMessage()">Send</button>
+    </div>
+  </div>
+
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create">Create new room</div>
+    <div class="contact" (click)="create = !create"><span class="glyphicon glyphicon-plus"></span> Create new room</div>
     <app-newroom *ngIf="create"></app-newroom>
 
     <div class="contact" *ngFor="let contact of contacts" (click)="onContactClick(contact)">
@@ -15,29 +37,6 @@
       </div>
     </div>
     
-  </div>
-  
-  <div class="messagezone">
-    <h3>{{selectedContact}} - Online</h3>
-    <div class="inboxContainer" #messageContainer>
-      <div *ngFor="let message of messages; let i = index;">
-        <div class="message" [ngClass]="{isMine: message.sender === 'me'}">
-          <h4 *ngIf="i === 0 || messages[i-1].sender !== message.sender">
-            {{message.sender}}
-          </h4>
-          <!-- 
-            <div class="message-header-time">{{message.time}}</div>
-          -->
-          <div class="message-body" [ngClass]="{isMine: message.sender === 'me'}">
-            <div class="message-body-text">{{message.body}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="inputbar">
-      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage">hey</textarea>
-      <button (click)="onSendMessage()">Send</button>
-    </div>
   </div>
 </div>
 <!-- 

@@ -1,31 +1,31 @@
 <div class="landing-block">
-    <img src="assets/logo.png" alt="Snapface logo">
-    <!-- <form #email="ngForm" (ngSubmit)="onSubmitForm(email)">
-      <label for="emailInput">Inscrivez-vous pour recevoir la newsletter</label>
-      <input type="email" name="userEmail" id="emailInput" placeholder="Votre adresse email" [(ngModel)]="userEmail">
-      <button type="submit">OK</button>
-    </form> -->
-    <h2 style="margin: 20px;">Join the Leagacy</h2>
-    <div class="leagacy">
+  <img src="assets/logo.png" alt="Snapface logo">
+  <!-- <form #email="ngForm" (ngSubmit)="onSubmitForm(email)">
+    <label for="emailInput">Inscrivez-vous pour recevoir la newsletter</label>
+    <input type="email" name="userEmail" id="emailInput" placeholder="Votre adresse email" [(ngModel)]="userEmail">
+    <button type="submit">OK</button>
+  </form> -->
+  <h2 style="margin: 20px;">Join the Leagacy</h2>
+  <div class="leagacy">
 
-      <div class="matchmakinglink">
-        <h2>Get old school 1v1</h2>
-        <button (click)="onMatchmaking()" #findMatch>{{buttonText}}</button>
-      </div>
-      <div class="matchmakinglink">
-        <h2>Get PowerUps Trouble 1v1</h2>
-        <button (click)="onPUMatchmaking()" #findMatch>{{PUbuttonText}}</button>
-      </div>
+    <div class="matchmakinglink">
+      <h2>Get old school 1v1</h2>
+      <button (click)="onMatchmaking()" #findMatch>{{buttonText}}</button>
     </div>
-    <h2 style="margin: 20px;">Invite Friend</h2>
-    <div class="friends">
-      <input id="search" type="text" placeholder="Search..." formControlName="search">
-      <div class="friend" *ngFor="let user of friends">
-        <img [src]="user.imgUrl">
-        <div class="friendname">{{user.name}}</div>
-        <div class="friendratio">{{user.ratio}}</div>
-        <button (click)="onInvite(user)">Invite</button>
-      </div>
-        
+    <div class="matchmakinglink">
+      <h2>Get PowerUps Trouble 1v1</h2>
+      <button (click)="onPUMatchmaking()" #findPUMatch>{{PUbuttonText}}</button>
     </div>
   </div>
+  <h2 style="margin: 20px;">Invite Friend</h2>
+  <div class="friends" [formGroup]="searchForm">
+    <input id="search" type="text" placeholder="Search..." formControlName="search">
+    <div class="friend" *ngFor="let user of friends">
+      <img [src]="user.imgUrl">
+      <div class="friendname">{{user.name}}</div>
+      <div class="friendratio">{{user.ratio}}</div>
+      <button (click)="onInvite(user)">Invite</button>
+    </div>
+      
+  </div>
+</div>

@@ -19,8 +19,8 @@ export class PongService {
   powerUpEvent: Observable<PowerUpEvent>;
   endEvent: Observable<Results>;
 
-  constructor() { 
-    this.socket = new Socket({ url: 'localhost:3000/pong', options: {
+  constructor() {
+    this.socket = new Socket({ url: 'localhost:4200/pong', options: {
       withCredentials: false,
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');

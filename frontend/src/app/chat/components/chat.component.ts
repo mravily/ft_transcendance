@@ -24,13 +24,16 @@ export class ChatComponent implements OnInit {
   
   onSendMessage() {
     this.chats.sendMessage(this.curMessage);
-    this.messages.push({sender: "me", body: this.curMessage}); // suppr
+    this.messages.push({user: "me",
+                      text: this.curMessage,
+                      channel : this.selectedContact, 
+                      createdAt: new Date(),
+                     }); // suppr
     this.curMessage = "";
   }
   
   onContactClick(contact: string) {
     this.selectedContact = contact;
-    this.messages.push({sender: contact, body: "Hello"});
   }
 
   ngOnInit(): void {

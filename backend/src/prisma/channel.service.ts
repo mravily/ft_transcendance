@@ -1,4 +1,5 @@
-import { PrismaService } from "src/prisma.service";
+import { channelI } from "../chat/model/channel.interface";
+import { PrismaService } from "../prisma.service";
 
 // Hello Juan, 
 // Tu trouveras dans ce fichier une nouvelle liste de services pour le chat, avec :
@@ -9,10 +10,10 @@ import { PrismaService } from "src/prisma.service";
 
 // Modification souhaitée : lors de la création de la channel, le front va remplir la classe ChannelI, et il faudrait enregistrer toutes ces informations dans le back.
 // export async function setChannel(this: PrismaService, channelI: channel) {
-export async function setChannel(this: PrismaService, name: string) {
+export async function setChannel(this: PrismaService, channel: channelI) {
   await this.prisma.channel.create({
     data: {
-      channelName: name,
+      channelName: channel.name,
       isActive: true,
       is_pwd: false,
     },
@@ -131,46 +132,46 @@ export async function getChannelUsers(this: PrismaService, channel_name: string)
 // Nouvelle fonction souhaitée : une fonction qui save les messages dans la database
 // export async function setMessage(this: PrismaService, message :MessageI){}
 
+// rajouter getChannel qui renvoie les attribut de base, pas les listes
 
-
-// Modification souhaitée : Rajouter les nouveaux éléments suivants duschéma prisma : isDirect?: boolean; creator: string; 
-export async function getChannel(this: PrismaService, channel_name: string) {
-    const chan = await this.prisma.channel.findUnique({
-      where: { channelName: channel_name },
-      select: {
-        channelName: true,
-        createdAt: true,
-        is_pwd: true,
-        pwd: true,
-        isActive: true,
-        userList: {
-            select: {
-                userId: true,
-            }
-        },
-        userAdminList: {
-            select: {
-                userId: true,
-            }
-        },
-        mutedUserList: {
-            select: {
-                userId: true,
-            }
-        },
-        bannedUsers: {
-            select: {
-                userId: true,
-            }
-        },
-        messages: {
-            select: {
-                createdAt: true,
-                message: true,
-                fromId: true,
-            }
-        }
-      }
-    })
-    return chan;
-}
+// renommer getChannelInfo, Modification souhaitée : Rajouter les nouveaux éléments suivants duschéma prisma : isDirect?: boolean; creator: string; 
+// export async function getChannel(this: PrismaService, channel_name: string): Promise<channelI> {
+//     const chan = await this.prisma.channel.findUnique({
+//       where: { channelName: channel_name },
+//       select: {
+//         channelName: true,
+//         createdAt: true,
+//         is_pwd: true,
+//         pwd: true,
+//         isActive: true,
+//         userList: {
+//             select: {
+//                 userId: true,
+//             }
+//         },
+//         userAdminList: {
+//             select: {
+//                 userId: true,
+//             }
+//         },
+//         mutedUserList: {
+//             select: {
+//                 userId: true,
+//             }
+//         },
+//         bannedUsers: {
+//             select: {
+//                 userId: true,
+//             }
+//         },
+//         messages: {
+//             select: {
+//                 createdAt: true,
+//                 message: true,
+//                 fromId: true,
+//             }
+//         }
+//       }
+//     })
+//     return chan;
+// }

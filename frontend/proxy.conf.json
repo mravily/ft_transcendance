@@ -1,8 +1,13 @@
 {
 	"/api": {
+		"target": "http://api:3000",
+		"secure": false,
+		"logLevel": "debug",
+		"changeOrigin": true
+	},
+	"/socket.io/": {
 	  "target": "http://api:3000",
 	  "secure": false,
-	  "logLevel": "debug",
 	  "changeOrigin": true
 	}
-  }
+}

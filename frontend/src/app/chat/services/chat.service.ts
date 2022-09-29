@@ -11,7 +11,7 @@ export class ChatService {
   socket!: Socket;
   
   constructor() { 
-    this.socket = new Socket({ url: 'ws://api/chat', options: {
+    this.socket = new Socket({ url: 'localhost:4200/chat', options: {
       withCredentials: false,
     } });
   }

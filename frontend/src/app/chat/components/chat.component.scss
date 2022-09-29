@@ -7,15 +7,17 @@ html	{
 	display: flex;
 	flex-direction: row;
 	height: 100%;
+	width: 100%;
 }
 
 
 .contacts	{
-	height: 100%;
-	background-color: #333;
+	height: max-content;
+	background-color: #fff;
+	color: #333;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	width: 30%;
 	border-radius: 10px 0 0 10px;
-	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 	overflow: auto;
 	scrollbar-color: dark;
 	scrollbar-width: thin;
@@ -26,8 +28,7 @@ html	{
 		height: 10%;
 		padding: 2%;
 		width: 100%;
-		color: #CCC;
-		border: #666 1px solid;
+		border: #eee 1px solid;
 		display: flex;
 		flex-direction: row;
 		
@@ -43,7 +44,7 @@ html	{
 			color: #888;
 		}
 		&:hover {
-			background-color: #444;
+			background-color: #eee;
 			cursor: pointer;
 		}
 	}
@@ -56,25 +57,28 @@ html	{
 		margin: 5px;
 		height: 5%;
 		text-align: center;
+		color: #333;
+		text-shadow: #FFF 0 10px 10px;
 	}
 	width: 70%;
 	border: black;
 	height: 100%;
-	border-radius: 0 10px 10px 0;
+	border-radius: 0 10px 10px 10px;
 	padding: 0px;
 	margin: 0px;
-	background-color: rgb(214, 181, 34);
-	
+	background-color: rgb(197, 130, 31);
 }
 
 .inboxContainer {
-	height: 85%;
+	min-height: 85%;
 	width: 100%;
-    border: 1px solid #333;
+    border: 1px solid #ddd;
     border-radius: 10px 10px 0 0;
     margin: 0px;
 	padding: 2%;
-	background-color: #222;
+	background-color: #fff;
+	color: #333;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: auto;
 }
 
@@ -124,27 +128,29 @@ html	{
 	width: 100%;
 	border: none;
 	outline: none;
-	top: 0;
 	
 	textarea	{
 		border: none;
-		width: 80%;
+		flex: 5;
 		resize: none;
 		color: white;
 		font-size: medium;
 		padding: 2px;
-		background-color: #333;
+		background-color: #fff;
+		color: #333;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		border-radius: 0 0 0 10px;
+		margin: auto;
 	}
 	button {
 		height: 100%;
-		width: 20%;
+		flex: 1;
 		border: none;
 		border-radius: 0 0 10px 0;
 		color: #FFF;
-		margin: 0;
-		padding: 0;
 		background-color: rgb(214, 181, 34);
+		padding: auto;
+		margin: auto;
 		&:hover	{
 			background-color: rgb(128, 107, 40);
 			cursor: pointer;

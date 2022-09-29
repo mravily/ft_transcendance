@@ -1,15 +1,16 @@
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { AuthService } from 'src/auth/service/auth.service';
+// import { AuthService } from 'src/auth/service/auth.service';
 import { Socket, Server } from 'socket.io';
-import { UserI } from 'src/chat/model/user.interface';
+import { UserI } from '../model/user.interface';
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
-import { channelI, eventI } from 'src/chat/model/channel.interface';
+import { channelI, eventI } from '../model/channel.interface';
 import { MessageI } from '../model/message.interface';
 import { PrismaService } from '../../prisma.service';
-import { hashPassword, comparePasswords } from 'src/chat/utils/bcrypt';
+import { hashPassword, comparePasswords } from '../utils/bcrypt';
 
-@WebSocketGateway({ cors: { origin: ['http://localhost:3000', 'http://localhost:4200'] } })
+@WebSocketGateway({ namespace: '/chat',
+             cors: { origin: [ 'localhost:4200']  }})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
 
   @WebSocketServer()
@@ -18,15 +19,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   connectedUsers: Map<string, Set<string>> = new Map();
 
   constructor(
-private db: PrismaService) { }
+        private db: PrismaService) { }
 
   async onModuleInit() {
+    console.log('ChatGateway initialized');
   }
 
   async handleConnection(socket: Socket) {
     try {
-      const decodedToken = await this.authService.verifyJwt(socket.handshake.headers.authorization);
-      const user: UserI = await this.userService.getUser(decodedToken.user.id);
+      let user: UserI = null;
+      // const decodedToken = await this.authService.verifyJwt(socket.handshake.headers.authorization);
+      // const user: UserI = await this.userService.getUser(decodedToken.user.id);
       if (!user) {
         return this.disconnect(socket);
       } else {
@@ -90,15 +93,15 @@ private db: PrismaService) { }
     if ("password" in channel) {
       channel.password = hashPassword(channel.password);
     }
-    const createdchannel: channelI = await this.db.setChannel(channel); // A intégrer aux proto de Juan
+    this.db.setChannel(channel); // A intégrer aux proto de Juan
 
-    for (const user of createdchannel.users) {
+    for (const user of channel.users) {
       const socketIds: Set<string> = this.connectedUsers.get(user);
       const channels = await this.db.getChannelsForUser(user, { page: 1, limit: 10 });
-      // substract page -1 to match the angular material paginator
-      channels.meta.currentPage = channels.meta.currentPage - 1;
+      // // substract page -1 to match the angular material paginator
+      // channels.meta.currentPage = channels.meta.currentPage - 1;
       for (const socketId of socketIds) {
-        await this.server.to(socketId).emit('channels', channels);
+        this.server.to(socketId).emit('channels', channels);
       }
     }
   }
@@ -106,8 +109,8 @@ private db: PrismaService) { }
   @SubscribeMessage('getMyChannels')
   async onPaginatechannel(socket: Socket, page: PageI) {
     const channels = await this.db.getChannelsForUser(socket.data.user.login, this.handleIncomingPageRequest(page));
-    // substract page -1 to match the angular material paginator
-    channels.meta.currentPage = channels.meta.currentPage - 1;
+    // // substract page -1 to match the angular material paginator
+    // channels.meta.currentPage = channels.meta.currentPage - 1;
     return this.server.to(socket.id).emit('channels', channels);
   }
 
@@ -123,7 +126,7 @@ private db: PrismaService) { }
       let mute : eventI = this.db.getBanInfo(socket.data.user.login, channel.name);
       if (mute.eventDate.getDate() + mute.eventDuration > Date.now())
       {
-        this.db.unBanUser(socket.data.user.login, channel.name);
+        this.db.unbanUser(socket.data.user.login, channel.name);
       }
       else
         return socket.emit('Error', new UnauthorizedException());      
@@ -132,19 +135,19 @@ private db: PrismaService) { }
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     await this.db.setJoinChannel(socket.data.user.login, channel.name);
-    const createdMessage: MessageI = await this.db.setMessage({
+    const createdMessage: MessageI = await this.db.createMessage({
       isNotif: true,
       text: socket.data.user.login + " a rejoint le channel",
-      user: channelName,
-      channel: channelName,
-      createdAt: Date.now()
+      user: channelInfo.name,
+      channel: channelInfo.name,
+      createdAt: new Date()
     });
     this.sendToChan(channel.name, 'message', createdMessage);
     const messages = await this.db.getMessagesForchannel(channel, { limit: 10, page: 1 }); //
-    messages.meta.currentPage = messages.meta.currentPage - 1;
+    // messages.meta.currentPage = messages.meta.currentPage - 1;
     await this.server.to(socket.id).emit('messages', messages);
-    channel.users = await this.db.getChannelUsers(channel.name);
-    this.sendToChan(channel.name, 'channelMembers', channel.users);
+    let users = await this.db.getChannelUsers(channel.name);
+    this.sendToChan(channel.name, 'channelMembers', users);
   }
   
   @SubscribeMessage('updatePassword')
@@ -153,7 +156,7 @@ private db: PrismaService) { }
     const channel: channelI = await this.db.getChannel(channelInfo.name);
     if (!channel || !this.db.isCreator(socket.data.user.login))
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-    if (password in channelInfo) {
+    if ("password" in channelInfo) {
       channel.password = hashPassword(channelInfo.password);
       this.db.setChannelPass(channel.name, channel.password);
     }
@@ -230,27 +233,27 @@ private db: PrismaService) { }
       else
         return socket.emit('Error', new UnauthorizedException());      
     }
-    const createdMessage: MessageI = await this.db.setMessage({...message, user: socket.data.user.login, isNotif: false});
+    const createdMessage: MessageI = await this.db.createMessage({...message, user: socket.data.user.login, isNotif: false});
     this.sendToChan(createdMessage.channel, 'message', createdMessage);
   }
 
   async sendToChan(channelName: string, command: string, data: any) {
     const users = await this.db.getChannelUsers(channelName);
     for (const user of users) {
-      const socketids: Set<string> = this.connectedUsers.get(user.login);
+      const socketids: Set<string> = this.connectedUsers.get(user.user.login);
       for (const socketId of socketids) {
-        await this.server.to(socketId).emit(command, data);
+        this.server.to(socketId).emit(command, data);
       }
     }
   }
 
   sendNotif(text: string, channelName: string) {
-    const createdMessage: MessageI = await this.db.setMessage({
+    const createdMessage: MessageI = this.db.createMessage({
       isNotif: true,
       text: text,
       user: channelName,
       channel: channelName,
-      createdAt: Date.now()
+      createdAt: new Date()
     });
     this.sendToChan(channelName, 'message', createdMessage);
   }
@@ -265,11 +268,12 @@ private db: PrismaService) { }
     if (!this.db.isAdmin(socket.data.user.login, muteEvent.from)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    this.db.setMuteUser(muteEvent.from, muteEvent.to, muteEvent.eventDate, muteEvent.eventDuration)
+    this.db.setMuteUser(muteEvent.from, muteEvent.to);
+    //, muteEvent.eventDate, muteEvent.eventDuration) !!
     this.sendNotif(muteEvent.to + " a ete mute", muteEvent.from);
     this.connectedUsers.get(muteEvent.to).forEach(socketId => {
       this.server.to(socketId).emit('muted', muteEvent);
-    }
+    });
   }
 
   @SubscribeMessage('unmuteUser') // OK

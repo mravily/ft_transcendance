@@ -5,15 +5,15 @@ import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
 import { GameService } from './game.service';
 
-@WebSocketGateway( { namespace: '/pong' })
+@WebSocketGateway( { namespace: '/pong',
+                      cors: { origin: [ 'localhost:4200']  } } ) 
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
   
   constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService) {
   }
-  
   afterInit(server: Server) {
-    console.log('Gateway initialized');
+    console.log('GameGateway initialized');
     this.wss = server;
   }
   
