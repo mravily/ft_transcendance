@@ -16,25 +16,25 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(
-    request: { session: { login: string; jwt: any } },
+    request: { session: { userid: string; jwt: any } },
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     cb: VerifyCallback,
   ): Promise<any> {
-    request.session.login = profile.username;
     request.session.jwt = this.jwtService.sign({ login: profile.username });
-    this.db.setUser(
+    const id = await this.db.setUser(
       profile.username,
       profile.displayName,
-      profile.name.familyName,
       profile.name.givenName,
+      profile.name.familyName,
       profile.emails[0].value,
       false,
       refreshToken,
       accessToken,
       profile.photos[0].value,
-    );
+      );
+    request.session.userid = id;
     return cb(null, profile);
   }
 }
