@@ -13,7 +13,7 @@ const routes: Routes = [
 	{ path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
 	{ path: 'messages', component: ChatComponent},
 	{ path: 'play', component: LandingPageComponent},
-	{ path: 'play/:gameId', component: PongComponent, canActivate: [AuthGuard] },
+	{ path: 'play/:gameId', component: PongComponent,},
 ];
 
 @NgModule({

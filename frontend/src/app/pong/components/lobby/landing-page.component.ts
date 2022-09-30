@@ -53,7 +53,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     
     this.pongServ.getNewMatchmaking();
     this.pongServ.gameFoundEvent.subscribe((id: number) => {
-      this.router.navigateByUrl('/pong/' + id);
+      this.router.navigateByUrl('/play/' + id);
     });
   }
   onPUMatchmaking() {
@@ -62,7 +62,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     
     this.pongServ.getNewPUMatchmaking();
     this.pongServ.gameFoundEvent.subscribe((id: number) => {
-      this.router.navigateByUrl('/pong/' + id);
+      this.router.navigateByUrl('/play/' + id);
     });
   }
   onInvite(user: any) {

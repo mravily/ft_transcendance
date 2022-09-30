@@ -34,6 +34,7 @@ export class ChatComponent implements OnInit {
   
   onContactClick(contact: string) {
     this.selectedContact = contact;
+    this.create = false;
   }
 
   ngOnInit(): void {
@@ -51,7 +52,9 @@ export class ChatComponent implements OnInit {
 
 
   ngAfterViewChecked() {
-    this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
+    if (this.mContainer) {
+      this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
+    }
   }
 
 }

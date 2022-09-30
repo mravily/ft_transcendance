@@ -1,7 +1,20 @@
 <div class="body">
 
-  <div class="messagezone">
-    <h3>{{selectedContact}} - Online</h3>
+  <app-newroom *ngIf="create"></app-newroom>
+  <div class="messagezone" *ngIf="!create">
+    <h3>{{selectedContact}}</h3>
+    <div class="dropdown">
+      <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+    </div>
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of messages; let i = index;">
         <div class="message" [ngClass]="{isMine: message.user === 'me'}">
@@ -25,8 +38,7 @@
 
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create"><span class="glyphicon glyphicon-plus"></span> Create new room</div>
-    <app-newroom *ngIf="create"></app-newroom>
+    <div class="contact" (click)="create = !create"><span class="plus"></span> Add new room</div>
 
     <div class="contact" *ngFor="let contact of contacts" (click)="onContactClick(contact)">
       <img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Head_Odysseus_MAR_Sperlonga.jpg">
