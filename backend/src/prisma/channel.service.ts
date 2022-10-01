@@ -1,29 +1,41 @@
 import { INSTANCE_METADATA_SYMBOL } from "@nestjs/core/injector/instance-wrapper";
+import { channelI } from "src/chat/model/channel.interface";
+import { MessageI } from "src/chat/model/message.interface";
 import { PrismaService } from "../prisma.service";
 
-export interface channelI {
-  // basic info
-  name: string;
-  isDirect: boolean; // à rajouter dans le schéma Prisma
-  isPrivate: boolean;
-  creator: string; // à rajouter dans le schéma Prisma
-  password?: string;
+// export interface channelI {
+//   // basic info
+//   channelName: string;
+//   isDirect: boolean; // à rajouter dans le schéma Prisma
+//   isPrivate: boolean;
+//   creator: string; // à rajouter dans le schéma Prisma
+//   is_pwd: boolean;
+//   pwd: string;
   
-  // advanced info
-  createdAt?: Date;
-  users?: string[];
-  admins?: string[];
-  mutedUsers?: string[];
-  bannedUsers?: string[];
+//   // advanced info
+//   createdAt?: Date;
+//   users?: string[];
+//   userAdminList?: string[];
+//   mutedUserList?: string[];
+//   bannedUsers?: string[];
   
-  // description?: string; // à rajouter par Juan
+//   messages?: MessageI[];
+//   // description?: string; // à rajouter par Juan
+// }
+
+
+export interface eventI {
+  from: string;
+  to: string;
+  eventDate?: Date;
+  eventDuration?: number;
 }
 
 export async function setChannel(this: PrismaService, channel: channelI, creatorId: string) {
   try {
     await this.prisma.channel.create({
       data: {
-        channelName: channel.name,
+        channelName: channel.channelName,
         creatorId: creatorId,
         isDirect: channel.isDirect,
         isPrivate: channel.isPrivate,
@@ -127,7 +139,13 @@ export async function getMuteInfo(this: PrismaService, channel_name: string, log
         duration: true,
       },
     });
-    return mute;
+    let res: eventI = {
+      from: login ; // à valider
+      to: channel_name ; // à valider
+      eventDate?: mute.createdAt ;
+      eventDuration?: mute.duration ;
+    };
+    return res;
   }
   catch (error) {
     console.log(error.message);
@@ -316,7 +334,7 @@ export async function getchannelsForUser(this: PrismaService, userid: string, sk
   }
 }
 
-export async function getChannelInfo(this: PrismaService, channel_name: string) {
+export async function getChannelInfo(this: PrismaService, channel_name: string): Promise<channelI> {
   try {
     const chan = await this.prisma.channel.findUnique({
       where: { channelName: channel_name },
@@ -361,7 +379,24 @@ export async function getChannelInfo(this: PrismaService, channel_name: string) 
         }
       }
     });
-    return chan;
+    let res: channelI;
+    res.bannedUsers = chan.bannedUsers.map((user) => user.userId);
+    res.channelName = chan.channelName;
+    res.createdAt = chan.createdAt;
+    res.creator = chan.creator.login;
+    res.is_pwd = chan.is_pwd;
+    res.isPrivate = chan.isPrivate;
+    res.isDirect = chan.isDirect;
+    res.messages = chan.messages.map((message) => {
+      let res: MessageI;
+      res.createdAt = message.createdAt;
+      res.user = message.from.login;
+      res.text = message.message;
+      res.channel = chan.channelName;
+      return res;
+    });
+
+    return res;
   }
   catch (error) {
     console.log(error.message);

@@ -24,57 +24,57 @@ export interface accountUser {
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  async getPublicChannels(): Promise<string[]> {
-    throw new Error('Method not implemented.');
-  }
-  setUnblockUser(from: string, to: string) {
-    throw new Error('Method not implemented.');
-  }
-  setBlockUser(from: string, to: string) {
-    throw new Error('Method not implemented.');
-  }
-  setUnbanUser(from: string, to: string) {
-    throw new Error('Method not implemented.');
-  }
-  setBanUser(from: string, to: string, eventDate: Date, eventDuration: number) {
-    throw new Error('Method not implemented.');
-  }
-  setUnmuteUser(from: string, to: string, eventDate: Date, eventDuration: number) {
-    throw new Error('Method not implemented.');
-  }
-  getMessagesForchannel(channel: channelI, arg1: { limit: number; page: number; }): MessageI[] {
-    throw new Error('Method not implemented.');
-  }
-  unbanUser(login: any, name: string) {
-    throw new Error('Method not implemented.');
-  }
-  getBanInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
-    throw new Error('Method not implemented.');
-  }
-  async getChannelsForUser(login: any, arg1: PageI): Promise<string[]> {
-    throw new Error('Method not implemented.');
-  }
-  unMuteUser(login: any, name: string) {
-    throw new Error('Method not implemented.');
-  }
-  getMuteInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
-    throw new Error('Method not implemented.');
-  }
-  isAdmin(login: any, channelName: string): boolean {
-    throw new Error('Method not implemented.');
-  }
-  setLeaveChannel(login: any, channelName: string) {
-    throw new Error('Method not implemented.');
-  }
-  removeChannelPass(name: string) {
-    throw new Error('Method not implemented.');
-  }
-  createMessage(message: { isNotif: boolean; text: string; user: string; channel: string; createdAt: Date; }): MessageI {
-    throw new Error('Method not implemented.');
-  }
-  isCreator(login: string): boolean {
-    throw new Error('Method not implemented.');
-  }
+  // async getPublicChannels(): Promise<string[]> {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setUnblockUser(from: string, to: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setBlockUser(from: string, to: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setUnbanUser(from: string, to: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setBanUser(from: string, to: string, eventDate: Date, eventDuration: number) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setUnmuteUser(from: string, to: string, eventDate: Date, eventDuration: number) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getMessagesForchannel(channel: channelI, arg1: { limit: number; page: number; }): MessageI[] {
+  //   throw new Error('Method not implemented.');
+  // }
+  // unbanUser(login: any, name: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getBanInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
+  //   throw new Error('Method not implemented.');
+  // }
+  // async getChannelsForUser(login: any, arg1: PageI): Promise<string[]> {
+  //   throw new Error('Method not implemented.');
+  // }
+  // unMuteUser(login: any, name: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // getMuteInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
+  //   throw new Error('Method not implemented.');
+  // }
+  // isAdmin(login: any, channelName: string): boolean {
+  //   throw new Error('Method not implemented.');
+  // }
+  // setLeaveChannel(login: any, channelName: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // removeChannelPass(name: string) {
+  //   throw new Error('Method not implemented.');
+  // }
+  // createMessage(message: { isNotif: boolean; text: string; user: string; channel: string; createdAt: Date; }): MessageI {
+  //   throw new Error('Method not implemented.');
+  // }
+  // isCreator(login: string): boolean {
+  //   throw new Error('Method not implemented.');
+  // }
   async onModuleInit() {
     await this.$connect();
   }
@@ -90,7 +90,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getTopTen = getTopTen;
   public setUser = setUser;
   public getUserAccount = getUserAccount;
-  public createchannel = setChannel;
+  public setChannel = setChannel;
   public sendFriendReq = sendFriendReq;
   public setMatch = setMatch;
   public setChannelMessage = setChannelMessage;
