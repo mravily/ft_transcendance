@@ -169,6 +169,7 @@ model BlockUser {
   blockedId String
   blocker User @relation(name: "blocker", fields: [blockerId], references: [id])
   blocked User @relation(name: "blocked", fields: [blockedId], references: [login])
+  @@unique([blockedId, blockerId])
 }
 
 model Photos {
