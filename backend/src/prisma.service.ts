@@ -6,6 +6,9 @@ import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, get
 import { getChannel, getChannelUsers, sendChannelMessage, setChannel, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
 import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
 import { getSidebar } from './prisma/sidebar.service';
+import { channelI } from './chat/model/channel.interface';
+import { MessageI } from './chat/model/message.interface';
+import { PageI } from './chat/model/page.interface';
 
 
 export interface accountUser {
@@ -21,9 +24,6 @@ export interface accountUser {
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  async getChannel(channel: string): Promise<channelI> {
-    throw new Error('Method not implemented.');
-  }
   async getPublicChannels(): Promise<string[]> {
     throw new Error('Method not implemented.');
   }
@@ -104,7 +104,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getBlockedUsers = getBlockedUsers;
   public getFriends = getFriends;
   public getUser = getUser;
-  // public getChannel = getChannel;
+  public getChannel = getChannel;
   public getNoWinnedMatchs = getNoWinnedMatchs;
   public getNolostMatchs = getNolostMatchs;
   public getMatchHistory = getMatchHistory;

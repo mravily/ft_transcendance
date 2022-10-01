@@ -1,4 +1,4 @@
-import { forwardRef, Inject } from '@nestjs/common';
+import { forwardRef, Inject, Session } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { PowerUp } from './entities';
@@ -17,8 +17,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.wss = server;
   }
   
-  handleConnection(client: Socket, ...args: any[]): void {
-    console.log('Client connected', client.id);
+  handleConnection(@Session() session: Record<string, any>, client: Socket, ...args: any[]): void {
+    console.log('Client connected', client.id, session );
   }
   handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
