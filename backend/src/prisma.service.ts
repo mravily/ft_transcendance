@@ -1,60 +1,22 @@
+
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { getTopTen } from './prisma/leaderboard.service';
-import {
-  setUser,
-  getUserAccount,
-  setFriend,
-  set2FA,
-  updateUserScore,
-  updateUserStatus,
-  getBlockedUsers,
-  getFriends,
-  getUser,
-  uploadPhoto,
-  getPhotoPath,
-} from './prisma/user.service';
-import {
-  // getChannel,
-  getChannelUsers,
-  sendChannelMessage,
-  setChannel,
-  setChannelPass,
-  setJoinChannel,
-  setMakeAdmin,
-  setMuteUser,
-} from './prisma/channel.service';
-import {
-  getMatchHistory,
-  getNolostMatchs,
-  getNoWinnedMatchs,
-  getRatio,
-  setMatch,
-} from './prisma/match.service';
-import { PageI } from './chat/model/page.interface';
-import { channelI } from './chat/model/channel.interface';
-import { MessageI } from './chat/model/message.interface';
+import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
+import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath } from './prisma/user.service';
+import { getChannel, getChannelUsers, sendChannelMessage, setChannel, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
+import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
+import { getSidebar } from './prisma/sidebar.service';
+
 
 export interface accountUser {
-  score: number;
-  login: string;
-  name: string;
-  email: string;
-  photo: string;
-  online: boolean;
-  win: number;
-  lost: number;
-}
-
-export interface accountUser {
-  score: number;
-  login: string;
-  name: string;
-  email: string;
-  photo: string;
-  online: boolean;
-  win: number;
-  lost: number;
+  score: number,
+  login: string,
+  name: string,
+  email: string,
+  photo: string,
+  online: boolean,
+  win: number,
+  lost: number,
 }
 
 @Injectable()
@@ -116,20 +78,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
   }
-
+  
   async enableShutdownHooks(app: INestApplication) {
     this.$on('beforeExit', async () => {
       await app.close();
     });
   }
-
+  
   protected prisma = new PrismaClient();
 
   public getTopTen = getTopTen;
   public setUser = setUser;
   public getUserAccount = getUserAccount;
-  public setChannel = setChannel;
-  public setFriend = setFriend;
+  public createchannel = setChannel;
+  public sendFriendReq = sendFriendReq;
   public setMatch = setMatch;
   public sendChannelMessage = sendChannelMessage;
   public setJoinChannel = setJoinChannel;
@@ -149,5 +111,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getRatio = getRatio;
   public getChannelUsers = getChannelUsers;
   public uploadPhoto = uploadPhoto;
-  public getPhotoPath = getPhotoPath;
+  public getLastPhotoPath = getLastPhotoPath;
+  public getUsersRanking = getUsersRanking;
+  public getSidebar = getSidebar;
 }
