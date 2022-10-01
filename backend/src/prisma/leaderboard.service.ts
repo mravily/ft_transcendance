@@ -5,10 +5,11 @@ export async function getTopTen(this: PrismaService) {
       select: {
         email: true,
         login: true,
-        fullName: true,
+        nickName: true,
         imgUrl: true,
         score: true,
         isOnline: true,
+        _count: { select: { winnedMatchs: true, lostMatchs: true}},
       },
       orderBy: { score: 'desc' },
       take: 10,
@@ -18,14 +19,44 @@ export async function getTopTen(this: PrismaService) {
       const user: accountUser = {
         score: list[i].score,
         login: list[i].login,
-        name: list[i].fullName,
+        name: list[i].nickName,
         email: list[i].email,
         photo: list[i].imgUrl,
         online: list[i].isOnline,
-        win: await this.getNoWinnedMatchs(list[i].login),
-        lost: await this.getNolostMatchs(list[i].login),
+        win: list[i]._count.winnedMatchs,
+        lost: list[i]._count.lostMatchs,
       }
       users.push(user);
     }
     return users;    
+}
+
+export async function getUsersRanking(this: PrismaService) {
+  const list = await this.prisma.user.findMany({
+    select: {
+      email: true,
+      login: true,
+      nickName: true,
+      imgUrl: true,
+      score: true,
+      isOnline: true,
+      _count: { select: { winnedMatchs: true, lostMatchs: true}}
+    },
+    orderBy: { score: 'desc' },
+  })
+  let users: accountUser[] = [];
+  for (let i in list) {
+    const user: accountUser = {
+      score: list[i].score,
+      login: list[i].login,
+      name: list[i].nickName,
+      email: list[i].email,
+      photo: list[i].imgUrl,
+      online: list[i].isOnline,
+      win: list[i]._count.winnedMatchs,//await this.getNoWinnedMatchs(list[i].login),
+      lost: list[i]._count.lostMatchs,//await this.getNolostMatchs(list[i].login),
+    }
+    users.push(user);
+  }
+  return users;    
 }
