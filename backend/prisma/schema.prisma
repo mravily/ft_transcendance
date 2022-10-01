@@ -110,6 +110,7 @@ model muteUser {
 model BanUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
+  duration Int
 
   // Relations:
 
