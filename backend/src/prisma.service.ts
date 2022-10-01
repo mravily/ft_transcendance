@@ -2,8 +2,8 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
-import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath } from './prisma/user.service';
-import { getChannel, getChannelUsers, sendChannelMessage, setChannel, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
+import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser } from './prisma/user.service';
+import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
 import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
 import { getSidebar } from './prisma/sidebar.service';
 import { channelI } from './chat/model/channel.interface';
@@ -93,7 +93,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public createchannel = setChannel;
   public sendFriendReq = sendFriendReq;
   public setMatch = setMatch;
-  public sendChannelMessage = sendChannelMessage;
+  public setChannelMessage = setChannelMessage;
   public setJoinChannel = setJoinChannel;
   public setMuteUser = setMuteUser;
   public setMakeAdmin = setMakeAdmin;
@@ -104,7 +104,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getBlockedUsers = getBlockedUsers;
   public getFriends = getFriends;
   public getUser = getUser;
-  public getChannel = getChannel;
+  public getChannelInfo = getChannelInfo;
   public getNoWinnedMatchs = getNoWinnedMatchs;
   public getNolostMatchs = getNolostMatchs;
   public getMatchHistory = getMatchHistory;
@@ -114,4 +114,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getLastPhotoPath = getLastPhotoPath;
   public getUsersRanking = getUsersRanking;
   public getSidebar = getSidebar;
+  public leaveChannel = leaveChannel;
+  public deleteMuteUser = deleteMuteUser;
+  public getMuteInfo = getMuteInfo;
+  public setBanUser = setBanUser;
+  public deleteBan = deleteBan;
+  public isAdmin = isAdmin;
+  public isCreator = isCreator;
+  public removeChannelPass = removeChannelPass;
+  public getPublicChannels = getPublicChannels;
+  public getChannelsForUser = getchannelsForUser;
+  public deleteBlockUser = deleteBlockUser;
 }

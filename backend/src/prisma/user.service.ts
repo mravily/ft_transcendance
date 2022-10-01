@@ -73,6 +73,22 @@ export async function setBlockUser(this: PrismaService, login: string, block_log
   }
 }
 
+export async function deleteBlockUser(this: PrismaService, userId: string, login: string) {
+  try {
+    await this.prisma.blockUser.delete({
+      where: {
+        blockedId_blockerId: {
+          blockedId: login,
+          blockerId: userId,
+        }
+      }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function sendFriendReq(this: PrismaService, requester: string, requested: string) {
   try {
     await this.prisma.addFriend.create({
