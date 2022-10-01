@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { SidebarModule } from './sidebar/sidebar.module';
+import { StreamModule } from './stream/stream.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { SidebarModule } from './sidebar/sidebar.module';
     LeaderBoardModule,
     AccountModule,
     SidebarModule,
+    UploadsModule,
+    StreamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

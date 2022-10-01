@@ -22,7 +22,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     profile: Profile,
     cb: VerifyCallback,
   ): Promise<any> {
-    request.session.jwt = this.jwtService.sign({ login: profile.username });
     const id = await this.db.setUser(
       profile.username,
       profile.displayName,
@@ -35,6 +34,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       profile.photos[0].value,
       );
     request.session.userid = id;
+    request.session.jwt = this.jwtService.sign({ userid: id });
     return cb(null, profile);
   }
 }

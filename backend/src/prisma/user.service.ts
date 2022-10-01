@@ -165,10 +165,10 @@ export async function getUser(this: PrismaService, login: string) {
   }
 }
 
-export async function uploadPhoto(this: PrismaService, login: string, filename:string, path: string) {
+export async function uploadPhoto(this: PrismaService, userId: string, filename:string, path: string) {
   try {
     await this.photos.create({
-      data: {filename: filename, userId: login, path: path},
+      data: {filename: filename, userId: userId, path: path},
     });
   }
   catch (error) {
@@ -276,23 +276,32 @@ export async function getFriendsById(this: PrismaService, id: string) {
   }
 }
 
-export async function getPhotoPath(this: PrismaService, id: string) {
+export async function getLastPhotoPath(this: PrismaService, id: string) {
   try {
     const tmp = await this.prisma.user.findUnique({
       where: { id: id },
-      select: { photo: { select : { path: true } } }
+      select: {
+        photo: {
+          orderBy: {
+            createdAt: 'desc'
+          },
+          select: {
+            path: true
+          }
+        },
+      },
     });
-    return tmp.photo;
+    return tmp.photo[0].path;
   }
   catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getUserAccount(this: PrismaService, login: string) {
+export async function getUserAccount(this: PrismaService, userId: string) {
   try {
     const user = await this.prisma.user.findFirst({
-      where: { login: login },
+      where: { id: userId },
       select: {
         login: true,
         createdAt: true,

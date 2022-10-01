@@ -19,17 +19,17 @@ export class AppController {
     //   'atoken jiglesia',
     //   'https://cdn.intra.42.fr/users/jiglesia.jpg',
     // );
-    // this.db.setUser(
-    //   'toto',
-    //   'titi toto',
-    //   'titi',
-    //   'toto',
-    //   'toto@student.42.fr',
-    //   false,
-    //   'token toto',
-    //   'atoken titi',
-    //   'https://cdn.intra.42.fr/users/mravily.jpg',
-    // );
+    this.db.setUser(
+      'mravily',
+      'titi toto',
+      'titi',
+      'toto',
+      'toto@student.42.fr',
+      false,
+      'token toto',
+      'atoken titi',
+      'https://cdn.intra.42.fr/users/mravily.jpg',
+    );
     // this.db.setFriend("jiglesia", "mravily");
   }
 

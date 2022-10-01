@@ -7,6 +7,6 @@ export class AccountController {
 
     @Get()
     getUserAccount(@Session() session: Record<string, any>) {
-        return this.db.getUserAccount(session.login);
+        return this.db.getUserAccount(session.userid);
     }
 }
