@@ -11,6 +11,7 @@ import { LeaderboardService } from 'src/app/features/leaderboard/services/leader
 export class AllUsersComponent implements OnInit {
 
 	usersList$!: Observable<User[]>;
+	
 	constructor(private leaderboardService: LeaderboardService) { }
 
 	ngOnInit(): void {
