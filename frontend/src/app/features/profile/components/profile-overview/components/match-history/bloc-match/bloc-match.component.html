@@ -1,0 +1,31 @@
+<div class="wrapper d-flex container-fluid">
+	<div class="one">
+		<img alt="..." src="{{ match.usrAvatar }}" class="avatar avatar-sm rounded-circle me-2">
+		<a class="text-heading font-semibold" href="#">
+		  {{ match.usrDisplayName }}
+		</a>
+	</div>
+	<div class="two">
+		<div *ngIf="match.usrScore > match.opScore" class="text-success">
+			{{ match.usrScore }}
+		</div>
+		<div *ngIf="match.usrScore < match.opScore" class="text-danger">
+			{{ match.usrScore }}
+		</div>
+			- 
+			<div *ngIf="match.usrScore < match.opScore" class="text-success">
+				{{ match.opScore }}
+			</div>
+			<div *ngIf="match.usrScore > match.opScore" class="text-danger">
+				{{ match.opScore }}
+			</div>
+	</div>
+	<div class="three">
+		<a class="text-heading font-semibold" href="#">
+			{{ match.opDisplayName }}
+		</a>
+		<img alt="opposant-avatar" src="{{ match.opAvatar }}" class="avatar avatar-sm rounded-circle me-2">
+	</div>
+</div>
+
+
