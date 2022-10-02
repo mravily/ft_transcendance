@@ -1,0 +1,31 @@
+<div class="h-screen flex-grow-1 overflow-y-lg-auto">
+	<!-- Header -->
+	<header class="bg-surface-primary border-bottom pt-6">
+	  <div class="container-fluid">
+		<div class="mb-npx">
+		  <div class="row align-items-center">
+			<div class="col-sm-6 col-12 mb-4 mb-sm-0">
+			  <!-- Title -->
+			  <h1 class="h2 mb-0 ls-tight">Leaderboard</h1>
+			</div>
+		  </div>
+		  <!-- Nav -->
+		  <ul class="nav nav-tabs mt-4 overflow-x border-0">
+			<li class="nav-item ">
+			  <a routerLink="../view" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">TOP 10</a>
+			</li>
+			<li class="nav-item">
+			  <a routerLink="users" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" class="nav-link font-regular">All Users</a>
+			</li>
+			<li class="nav-item">
+			  <a routerLink="matches" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" class="nav-link font-regular">Current Match</a>
+			</li>
+		  </ul>
+		</div>
+	  </div>
+	</header>
+	<!-- Main -->
+	<main class="py-6 bg-surface-secondary">
+	  <router-outlet></router-outlet>
+	</main>
+  </div>

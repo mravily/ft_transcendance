@@ -15,6 +15,6 @@ export class LeaderboardComponent implements OnInit {
     constructor(private leaderboardService: LeaderboardService) {}
 
 	ngOnInit(): void {
-		this.usersList$ = this.leaderboardService.getList();
+		this.usersList$ = this.leaderboardService.getTopTen();
 	}
 }

@@ -1,0 +1,25 @@
+<div class="list-group list-group-flush" style="min-width: 730px">
+	<div class="list-group-item px-0 position-relative hstack flex-wrap">
+		<div class="me-3 text-white">
+			<div class="position-relative d-inline-block text-current">
+				<div class="avatar rounded-circle">
+					<img alt="avatar" src="{{ activity.avatar }}">
+				</div>
+				<span
+					class="position-absolute bottom-2 end-2 transform translate-x-1/2 translate-y-1/2 border-2 border-solid border-current w-3 h-3 bg-success rounded-circle"></span>
+			</div>
+		</div>
+		<div class="flex-1">
+			<div class="d-flex align-items-center mb-1">
+				<a href="#" class="d-block h6 stretched-link">{{ activity.displayName }}</a>
+				<span class="text-muted text-xs ms-2">{{ activity.createdAt | agoDate }}</span>
+				<!-- <span class="text-muted text-xs ms-2">{{ activity.createdAt | prettyDate }}</span> -->
+			</div>
+			<div class="d-flex align-items-center">
+				<div class="w-3/4 text-sm text-muted line-clamp-1 me-auto">
+					{{ activity.message }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
