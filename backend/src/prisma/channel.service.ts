@@ -433,71 +433,31 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
   }
 }
 
-export async function getChannelsForUser(this: PrismaService, channel_name: string): Promise<channelI> {
-  try {
-    const chan = await this.prisma.channel.findUnique({
-      where: { channelName: channel_name },
-      select: {
-        channelName: true,
-        createdAt: true,
-        is_pwd: true,
-        pwd: true,
-        isPrivate: true,
-        isDirect: true,
-        creator: {
+// Fonction ajoutée par Ulysse : OK pour toi Juan ?
+export async function getMessagesForChannel(this: PrismaService, channel_name: string, skip: number, take: number) {
+try { 
+  const last_10_messages = await this.prisma.channel.findUnique({
+    where: { channelName: channel_name },
+        select: {
+        messages: {
           select: {
-            login: true,
+              createdAt: true,
+              message: true,
+              from: {select : {login: true}},
+         }          
+        orderBy: {
+          channel: {
+            messages: {
+              createdAt: 'desc',
+            }
           }
         },
-        userList: {
-            select: {
-                userId: true,
-            }
-        },
-        userAdminList: {
-            select: {
-                userId: true,
-            }
-        },
-        mutedUserList: {
-            select: {
-                userId: true,
-            }
-        },
-        bannedUsers: {
-            select: {
-                userId: true,
-            }
-        },
-        messages: {
-            select: {
-                createdAt: true,
-                message: true,
-                from: {select : {login: true}},
-            }
-        }
-      }
-    });
-    let res: channelI;
-    res.bannedUsers = chan.bannedUsers.map((user) => user.userId);
-    res.channelName = chan.channelName;
-    res.createdAt = chan.createdAt;
-    res.creator = chan.creator.login;
-    res.is_pwd = chan.is_pwd;
-    res.isPrivate = chan.isPrivate;
-    res.isDirect = chan.isDirect;
-    res.messages = chan.messages.map((message) => {
-      let res: MessageI;
-      res.createdAt = message.createdAt;
-      res.user = message.from.login;
-      res.text = message.message;
-      res.channel = chan.channelName;
-      return res;
-    });
-
-    return res;
+        skip: skip,
+        take: take,
+  });
+  return last_10_messages;
   }
   catch (error) {
     console.log(error.message);
   }
-}
+  }

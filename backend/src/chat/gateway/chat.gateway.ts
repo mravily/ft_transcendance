@@ -143,7 +143,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channelInfo.name,
       socket.data.user.login + " a rejoint le channel");
     this.sendToChan(channel.channelName, 'message', createdMessage);
-    const messages = await this.db.getMessagesForchannel(channel, { limit: 10, page: 1 }); //
+    const messages = await this.db.getMessagesForChannel(channel.channelName, 1, 10); //
     // messages.meta.currentPage = messages.meta.currentPage - 1;
     await this.server.to(socket.id).emit('messages', messages);
     let users = await this.db.getChannelUsers(channel.channelName);
