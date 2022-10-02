@@ -3,7 +3,7 @@ import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
 import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser } from './prisma/user.service';
-import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
+import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo,  getBanInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
 import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
 import { getSidebar } from './prisma/sidebar.service';
 import { channelI } from './chat/model/channel.interface';
@@ -117,6 +117,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public leaveChannel = leaveChannel;
   public deleteMuteUser = deleteMuteUser;
   public getMuteInfo = getMuteInfo;
+  public getBanInfo = getBanInfo;
   public setBanUser = setBanUser;
   public deleteBan = deleteBan;
   public isAdmin = isAdmin;
