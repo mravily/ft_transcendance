@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
-import { LeaderBoardController } from "./leaderboard.controller";
+import { SidebarController } from "./sidebar.controller";
 
 @Module({
     imports: [],
-    controllers: [LeaderBoardController],
+    controllers: [SidebarController],
     providers: [PrismaService],
 })
-export class LeaderBoardModule {}
+export class SidebarModule {}

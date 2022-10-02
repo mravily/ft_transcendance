@@ -5,25 +5,26 @@ export async function getTopTen(this: PrismaService) {
     select: {
       email: true,
       login: true,
-      fullName: true,
+      nickName: true,
       imgUrl: true,
       score: true,
       isOnline: true,
+      _count: { select: { winnedMatchs: true, lostMatchs: true } },
     },
     orderBy: { score: 'desc' },
     take: 10,
   });
-  const users: accountUser[] = [];
-  for (const i in list) {
+  let users: accountUser[] = [];
+  for (let i in list) {
     const user: accountUser = {
       score: list[i].score,
       login: list[i].login,
-      fullName: list[i].fullName,
+      fullName: list[i].nickName,
       email: list[i].email,
-      imgUrl: list[i].imgUrl,
+      avatar: list[i].imgUrl,
       isOnline: list[i].isOnline,
-      win: await this.getNoWinnedMatchs(list[i].login),
-      lost: await this.getNolostMatchs(list[i].login),
+      win: list[i]._count.winnedMatchs,
+      lost: list[i]._count.lostMatchs,
     };
     users.push(user);
   }
@@ -35,24 +36,25 @@ export async function getUsersRanking(this: PrismaService) {
     select: {
       email: true,
       login: true,
-      fullName: true,
+      nickName: true,
       imgUrl: true,
       score: true,
       isOnline: true,
+      _count: { select: { winnedMatchs: true, lostMatchs: true } },
     },
     orderBy: { score: 'desc' },
   });
-  const users: accountUser[] = [];
-  for (const i in list) {
+  let users: accountUser[] = [];
+  for (let i in list) {
     const user: accountUser = {
       score: list[i].score,
       login: list[i].login,
-      fullName: list[i].fullName,
+      fullName: list[i].nickName,
       email: list[i].email,
-      imgUrl: list[i].imgUrl,
+      avatar: list[i].imgUrl,
       isOnline: list[i].isOnline,
-      win: await this.getNoWinnedMatchs(list[i].login),
-      lost: await this.getNolostMatchs(list[i].login),
+      win: list[i]._count.winnedMatchs, //await this.getNoWinnedMatchs(list[i].login),
+      lost: list[i]._count.lostMatchs, //await this.getNolostMatchs(list[i].login),
     };
     users.push(user);
   }

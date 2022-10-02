@@ -24,7 +24,7 @@ export class ProfileFriendsComponent implements OnInit {
 	ngOnInit(): void {
 		this.friendsList$ = [
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -34,7 +34,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -44,7 +44,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -54,7 +54,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -64,7 +64,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -74,7 +74,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -84,7 +84,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -94,7 +94,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -104,7 +104,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -114,7 +114,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -124,7 +124,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -134,7 +134,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -144,7 +144,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -154,7 +154,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -164,7 +164,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -174,7 +174,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -184,7 +184,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -194,7 +194,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -204,7 +204,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -214,7 +214,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -224,7 +224,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -234,7 +234,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -244,7 +244,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -254,7 +254,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -264,7 +264,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -274,7 +274,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -284,7 +284,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -294,7 +294,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -304,7 +304,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -314,7 +314,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -324,7 +324,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -334,7 +334,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -344,7 +344,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -354,7 +354,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -364,7 +364,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -374,7 +374,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -384,7 +384,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -394,7 +394,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -404,7 +404,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -414,7 +414,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -424,7 +424,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -434,7 +434,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -444,7 +444,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -454,7 +454,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -464,7 +464,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -474,7 +474,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -484,7 +484,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,
@@ -494,7 +494,7 @@ export class ProfileFriendsComponent implements OnInit {
 				email: 'jiglesias@student.42.fr'
 			},
 			{
-				imgUrl: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
+				avatar: 'https://cdn.intra.42.fr/users/jiglesia.jpg',
 				fullName: 'Juan Iglesias',
 				login: 'jiglesia',
 				win: 150,

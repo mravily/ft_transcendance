@@ -4,7 +4,6 @@ import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
 import {
   setUser,
   getUserAccount,
-  setFriend,
   set2FA,
   updateUserScore,
   updateUserStatus,
@@ -12,13 +11,25 @@ import {
   getFriends,
   getUser,
   uploadPhoto,
-  getPhotoPath,
+  sendFriendReq,
+  getLastPhotoPath,
+  deleteBlockUser,
 } from './prisma/user.service';
 import {
-  getChannel,
+  deleteBan,
+  deleteMuteUser,
+  getChannelInfo,
+  getchannelsForUser,
   getChannelUsers,
-  sendChannelMessage,
+  getMuteInfo,
+  getPublicChannels,
+  isAdmin,
+  isCreator,
+  leaveChannel,
+  removeChannelPass,
+  setBanUser,
   setChannel,
+  setChannelMessage,
   setChannelPass,
   setJoinChannel,
   setMakeAdmin,
@@ -31,13 +42,14 @@ import {
   getRatio,
   setMatch,
 } from './prisma/match.service';
+import { getSidebar } from './prisma/sidebar.service';
 
 export interface accountUser {
-  score: number;
+  email: string;
   login: string;
   fullName: string;
-  email: string;
-  imgUrl: string;
+  avatar: string;
+  score: number;
   isOnline: boolean;
   win: number;
   lost: number;
@@ -60,10 +72,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getTopTen = getTopTen;
   public setUser = setUser;
   public getUserAccount = getUserAccount;
-  public setChannel = setChannel;
-  public setFriend = setFriend;
+  public createchannel = setChannel;
+  public sendFriendReq = sendFriendReq;
   public setMatch = setMatch;
-  public sendChannelMessage = sendChannelMessage;
+  public setChannelMessage = setChannelMessage;
   public setJoinChannel = setJoinChannel;
   public setMuteUser = setMuteUser;
   public setMakeAdmin = setMakeAdmin;
@@ -74,13 +86,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getBlockedUsers = getBlockedUsers;
   public getFriends = getFriends;
   public getUser = getUser;
-  public getChannel = getChannel;
+  public getChannelInfo = getChannelInfo;
   public getNoWinnedMatchs = getNoWinnedMatchs;
   public getNolostMatchs = getNolostMatchs;
   public getMatchHistory = getMatchHistory;
   public getRatio = getRatio;
   public getChannelUsers = getChannelUsers;
   public uploadPhoto = uploadPhoto;
-  public getPhotoPath = getPhotoPath;
+  public getLastPhotoPath = getLastPhotoPath;
   public getUsersRanking = getUsersRanking;
+  public getSidebar = getSidebar;
+  public leaveChannel = leaveChannel;
+  public deleteMuteUser = deleteMuteUser;
+  public getMuteInfo = getMuteInfo;
+  public setBanUser = setBanUser;
+  public deleteBan = deleteBan;
+  public isAdmin = isAdmin;
+  public isCreator = isCreator;
+  public removeChannelPass = removeChannelPass;
+  public getPublicChannels = getPublicChannels;
+  public getChannelsForUser = getchannelsForUser;
+  public deleteBlockUser = deleteBlockUser;
 }

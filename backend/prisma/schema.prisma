@@ -11,24 +11,25 @@ datasource db {
 }
 
 model User {
-  // id  Int @id @default(autoincrement())
-  login String @id
+  id  String @id @default(uuid())
+  login String @unique
   createdAt DateTime @default(now())
-  fullName String
+  nickName String
   firstName String
   lastName String
   email String @unique
   score Int
-  atoken String @unique
-  rtoken String @unique
-  imgUrl String
-  photo Photos?
-  twoFA Boolean
-  twoFApwd String?
   isOnline Boolean
   isAdmin Boolean
+  atoken String @unique
+  rtoken String @unique
+  twoFA Boolean
+  twoFApwd String?
+  imgUrl String
+  n_messages Int
 // Oposit Relations:
 
+  photo Photos[]
   channelList JoinChannel[]
   mutedChannel muteUser[]
   adminChannel makeAdmin[]
@@ -40,28 +41,35 @@ model User {
   blockedUsers BlockUser[] @relation(name: "blocker")
   blockedFrom BlockUser[] @relation(name: "blocked")
   bannedFrom BanUser[]
+  channelsOwned Channel[]
 }
 
 model Match {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
-  winnerScore Int
-  looserScore Int
+  winnerScore Int?
+  looserScore Int?
 
 // Relations:
 
-  winnerid String
-  looserid String
-  winner User @relation(name: "win", fields: [winnerid], references: [login])
-  looser User @relation(name: "lost", fields: [looserid], references: [login])
+  winnerid String?
+  looserid String?
+  winner User? @relation(name: "win", fields: [winnerid], references: [id])
+  looser User? @relation(name: "lost", fields: [looserid], references: [id])
 }
 
 model Channel {
-  createdAt DateTime @default(now())
   channelName String @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
   is_pwd Boolean
   pwd String?
-  isActive Boolean
+  isDirect Boolean
+  isPrivate Boolean
+
+// Relations: 
+  creatorId String
+  creator User @relation(fields: [creatorId], references: [id])
 
 // Oposit Relations:
 
@@ -88,6 +96,7 @@ model makeAdmin {
 model muteUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
+  duration Int
 
 // Relations:
 
@@ -101,6 +110,7 @@ model muteUser {
 model BanUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
+  duration Int
 
   // Relations:
 
@@ -119,7 +129,7 @@ model JoinChannel {
 
   userId String
   channelId String
-  user User @relation(fields: [userId], references: [login])
+  user User @relation(fields: [userId], references: [id])
   channel Channel @relation(fields: [channelId], references: [channelName])
   @@unique([channelId, userId])
 }
@@ -128,24 +138,26 @@ model ChannelMessage {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   message String
+  isRead Boolean
 
 // Relations:
 
   fromId  String
   channelId String
-  from User @relation(fields: [fromId], references: [login])
+  from User @relation(fields: [fromId], references: [id])
   channel Channel @relation(fields: [channelId], references: [channelName])
 }
 
 model AddFriend {
   id Int @id @default(autoincrement())
   createdAd DateTime @default(now())
+  isAccepted Boolean
 
 // Relations:
-  friend1Id String
-  friend2Id String
-  friend1 User @relation(name: "befriend", fields: [friend1Id], references: [login])
-  friend2 User @relation(name: "friend", fields: [friend2Id], references: [login])
+  requesterId String
+  requestedId String
+  requester User @relation(name: "befriend", fields: [requesterId], references: [id])
+  requested User @relation(name: "friend", fields: [requestedId], references: [login])
 }
 
 model BlockUser {
@@ -155,16 +167,19 @@ model BlockUser {
 // Relations:
   blockerId String
   blockedId String
-  blocker User @relation(name: "blocker", fields: [blockerId], references: [login])
+  blocker User @relation(name: "blocker", fields: [blockerId], references: [id])
   blocked User @relation(name: "blocked", fields: [blockedId], references: [login])
+  @@unique([blockedId, blockerId])
 }
 
 model Photos {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
-  filename String
+  filename String @unique
+  path String @unique
 
 // Relations:
-  userId String @unique
-  user User @relation(fields: [userId], references: [login])
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  @@unique([userId, path])
 }
