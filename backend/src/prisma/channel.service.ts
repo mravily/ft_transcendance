@@ -24,6 +24,8 @@ import { PrismaService } from "../prisma.service";
 // }
 
 
+// Juan serait-il possible dans message de remplacer la variable booleenne isRead par la variable booleene isNotif ? 
+
 export interface eventI {
   from: string;
   to: string;
@@ -49,12 +51,13 @@ export async function setChannel(this: PrismaService, channel: channelI, creator
 }
 
 // Fonction modifiée par Ulysse
-export async function setChannelMessage(this: PrismaService, id: string, channel_name: string, message: string) {
+// Juan est-ce que la base de donnée complète toute seul le paramètre createdAt ?
+export async function setChannelMessage(this: PrismaService, user: string, channel_name: string, message: string) {
   try {
     await this.prisma.channelMessage.create({
       data: {
         message: message,
-        fromId: id,
+        fromId: user,
         channelId: channel_name,
         isRead: false,
       },

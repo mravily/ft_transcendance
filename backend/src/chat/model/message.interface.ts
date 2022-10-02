@@ -1,9 +1,9 @@
 
 export interface MessageI {
-  // id?: number;
+  id?: number;
   isNotif?: boolean;
-  text: string;
+  message: string;
   user: string;
   channel: string;
-  createdAt: Date;
+  createdAt?: Date;
 }
