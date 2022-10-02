@@ -105,12 +105,26 @@ export async function sendFriendReq(this: PrismaService, requester: string, requ
   }
 }
 
-export async function set2FA(this: PrismaService,login: string, twoFA: string) {
+export async function set2FA(this: PrismaService, userId: string, twoFA: string) {
   try {
     await this.prisma.user.update({
-        where: { login: login },
+        where: { id: userId },
         data: { twoFA: true, twoFApwd: twoFA },
     })
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function delete2FA(this: PrismaService, userId: string) {
+  try {
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {twoFA: false, twoFApwd: null}
+    });
   }
   catch (error) {
     console.log(error.message);
