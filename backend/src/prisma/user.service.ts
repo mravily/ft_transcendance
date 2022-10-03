@@ -195,11 +195,50 @@ export async function getUser(this: PrismaService, login: string) {
   }
 }
 
-export async function uploadPhoto(this: PrismaService, userId: string, filename:string, path: string) {
+export async function uploadPhoto(this: PrismaService, userId: string, file: any) {
   try {
-    await this.photos.create({
-      data: {filename: filename, userId: userId, path: path},
+    await this.prisma.photos.create({
+      data: {
+        filename: file.filename,
+        userId: userId,
+        path: file.path,
+        mimetype: file.mimetype,
+        size: file.size,
+      },
     });
+    const usr = await this.prisma.user.findUnique({
+      where: {id: userId},
+      select: {login: true},
+    });
+    await this.prisma.user.update({
+      where: {id: userId},
+      data: { imgUrl: 'localhost:3000/api/stream/' + usr.login }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function getLastPhotoPath(this: PrismaService, login: string) {
+  try {
+    const tmp = await this.prisma.user.findUnique({
+      where: { login: login },
+      select: {
+        photo: {
+          orderBy: {
+            createdAt: 'desc'
+          },
+          select: {
+            filename: true,
+            path: true,
+            mimetype: true,
+            size: true,
+          }
+        },
+      },
+    });
+    return tmp.photo[0];
   }
   catch (error) {
     console.log(error.message);
@@ -300,28 +339,6 @@ export async function getFriendsById(this: PrismaService, id: string) {
       friendlist[a++] = friends.befriend[i];
     }
     return friendlist;
-  }
-  catch (error) {
-    console.log(error.message);
-  }
-}
-
-export async function getLastPhotoPath(this: PrismaService, id: string) {
-  try {
-    const tmp = await this.prisma.user.findUnique({
-      where: { id: id },
-      select: {
-        photo: {
-          orderBy: {
-            createdAt: 'desc'
-          },
-          select: {
-            path: true
-          }
-        },
-      },
-    });
-    return tmp.photo[0].path;
   }
   catch (error) {
     console.log(error.message);

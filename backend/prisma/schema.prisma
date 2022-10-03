@@ -177,9 +177,11 @@ model Photos {
   createdAt DateTime @default(now())
   filename String @unique
   path String @unique
+  mimetype String
+  size Int
 
 // Relations:
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [login])
   @@unique([userId, path])
 }

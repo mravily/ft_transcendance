@@ -8,17 +8,17 @@ export class AppController {
     private readonly appService: AppService,
     private db: PrismaService,
   ) {
-    // this.db.setUser(
-    //   'jiglesia',
-    //   'Juan Iglesias',
-    //   'Juan',
-    //   'Iglesias',
-    //   'jiglesia@student.42.fr',
-    //   false,
-    //   'token jiglesia',
-    //   'atoken jiglesia',
-    //   'https://cdn.intra.42.fr/users/jiglesia.jpg',
-    // );
+    this.db.setUser(
+      'jiglesia',
+      'Juan Iglesias',
+      'Juan',
+      'Iglesias',
+      'jiglesia@student.42.fr',
+      false,
+      'token jiglesia',
+      'atoken jiglesia',
+      'https://cdn.intra.42.fr/users/jiglesia.jpg',
+    );
     this.db.setUser(
       'mravily',
       'titi toto',
