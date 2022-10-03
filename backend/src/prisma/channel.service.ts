@@ -29,8 +29,8 @@ import { PrismaService } from "../prisma.service";
 export interface eventI {
   from: string;
   to: string;
-  eventDate?: Date;
-  eventDuration?: number;
+  date?: Date;
+  duration?: number;
 }
 
 export async function setChannel(this: PrismaService, channel: channelI, creatorId: string) {
@@ -51,7 +51,7 @@ export async function setChannel(this: PrismaService, channel: channelI, creator
 }
 
 // Fonction modifiée par Ulysse
-// Juan est-ce que la base de donnée complète toute seul le paramètre createdAt ?
+// Juan est-ce que la base de donnée complète toute seul le paramètre createdAt ? // Changement sur u
 export async function setChannelMessage(this: PrismaService, user: string, channel_name: string, message: string) {
   try {
     await this.prisma.channelMessage.create({
@@ -144,10 +144,10 @@ export async function getMuteInfo(this: PrismaService, channel_name: string, log
       },
     });
     let res: eventI = {
-      from: login ; // à valider
-      to: channel_name ; // à valider
-      eventDate?: mute.createdAt ;
-      eventDuration?: mute.duration ;
+      from: login, // à valider
+      to: channel_name, // à valider
+      date: mute.createdAt,
+      duration: mute.duration,
     };
     return res;
   }
@@ -173,10 +173,10 @@ export async function getBanInfo(this: PrismaService, channel_name: string, logi
       },
     });
     let res: eventI = {
-      from: login ; // à valider
-      to: channel_name ; // à valider
-      eventDate?: ban.createdAt ;
-      eventDuration?: ban.duration ;
+      from: login, // à valider
+      to: channel_name, // à valider
+      date: ban.createdAt,
+      duration: ban.duration,
     };
     return res;
   }
@@ -424,7 +424,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
       let res: MessageI;
       res.createdAt = message.createdAt;
       res.user = message.from.login;
-      res.text = message.message;
+      res.message = message.message;
       res.channel = chan.channelName;
       return res;
     });
@@ -441,22 +441,24 @@ export async function getMessagesForChannel(this: PrismaService, channel_name: s
 try { 
   const last_10_messages = await this.prisma.channel.findUnique({
     where: { channelName: channel_name },
+    select: {
+      messages: {
         select: {
-        messages: {
-          select: {
-              createdAt: true,
-              message: true,
-              from: {select : {login: true}},
-         }          
-        orderBy: {
-          channel: {
-            messages: {
-              createdAt: 'desc',
-            }
-          }
-        },
+            createdAt: true,
+            message: true,
+            from: {select : {login: true}},
+        },        
+        // orderBy: {
+        //   channel: {
+        //     messages: {
+        //       createdAt: 'desc',
+        //     }
+        //   }  
+        // },
         skip: skip,
         take: take,
+      }
+    }
   });
   return last_10_messages;
   }

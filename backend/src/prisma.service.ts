@@ -2,8 +2,8 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
-import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser, getMessagesForChannel, setBlockUser } from './prisma/user.service';
-import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo,  getBanInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
+import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser, setBlockUser } from './prisma/user.service';
+import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo,  getBanInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, getMessagesForChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
 import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
 import { getSidebar } from './prisma/sidebar.service';
 import { channelI } from './chat/model/channel.interface';
