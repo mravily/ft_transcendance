@@ -1,118 +1,130 @@
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from '../prisma.service';
 
 export interface IAccount {
-  firstName: string,
-  lastName: string,
-  fullName: string,
-  email: string,
-  login: string,
-  imgUrl: string,
-  win?: number,
-  lost?: number,
-  winnedMatch?: any[],
-  lostMatch?: any[],
-  friends?: any[],
-  blockUsers?: any[],
-  beFriends?: any[],
-  createdAt?: Date,
-  twoFA?: boolean,
-  isAdmin?: boolean,
-  channelList?: any[],
-  channelAdmin?: any[],
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  login: string;
+  imgUrl: string;
+  win?: number;
+  lost?: number;
+  winnedMatch?: any[];
+  lostMatch?: any[];
+  friends?: any[];
+  blockUsers?: any[];
+  beFriends?: any[];
+  createdAt?: Date;
+  twoFA?: boolean;
+  isAdmin?: boolean;
+  channelList?: any[];
+  channelAdmin?: any[];
 }
 
 export async function setUser(
-    this: PrismaService,
-    login: string,
-    name: string,
-    firstname: string,
-    lastname: string,
-    email: string,
-    isAdmin: boolean,
-    rtoken: string,
-    atoken: string,
-    imgUrl: string) {
-    try {
-      const user = await this.prisma.user.upsert({
-          where: { login: login },
-          update: { atoken: atoken, rtoken: rtoken },
-          create: {
-              login: login,
-              nickName: name,
-              firstName: firstname,
-              lastName: lastname,
-              email: email,
-              score: 0,
-              atoken: atoken,
-              rtoken: rtoken,
-              twoFA: false,
-              isOnline: true,
-              isAdmin: isAdmin,
-              imgUrl: imgUrl,
-              n_messages: 0,
-          }
-      });
-      return (user.id);
-    }
-    catch (error) {
-      console.log(error);
-    }
+  this: PrismaService,
+  login: string,
+  name: string,
+  firstname: string,
+  lastname: string,
+  email: string,
+  isAdmin: boolean,
+  rtoken: string,
+  atoken: string,
+  imgUrl: string,
+) {
+  try {
+    const user = await this.prisma.user.upsert({
+      where: { login: login },
+      update: { atoken: atoken, rtoken: rtoken },
+      create: {
+        login: login,
+        nickName: name,
+        firstName: firstname,
+        lastName: lastname,
+        email: email,
+        score: 0,
+        atoken: atoken,
+        rtoken: rtoken,
+        twoFA: false,
+        isOnline: true,
+        isAdmin: isAdmin,
+        imgUrl: imgUrl,
+        n_messages: 0,
+      },
+    });
+    return user.id;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-export async function setBlockUser(this: PrismaService, login: string, block_login: string) {
+export async function setBlockUser(
+  this: PrismaService,
+  login: string,
+  block_login: string,
+) {
   try {
     await this.prisma.blockUser.create({
-        data: {
-            blockerId: login,
-            blockedId: block_login,
-        }
+      data: {
+        blockerId: login,
+        blockedId: block_login,
+      },
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function deleteBlockUser(this: PrismaService, userId: string, login: string) {
+export async function deleteBlockUser(
+  this: PrismaService,
+  userId: string,
+  login: string,
+) {
   try {
     await this.prisma.blockUser.delete({
       where: {
         blockedId_blockerId: {
           blockedId: login,
           blockerId: userId,
-        }
-      }
+        },
+      },
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function sendFriendReq(this: PrismaService, requester: string, requested: string) {
+export async function sendFriendReq(
+  this: PrismaService,
+  requester: string,
+  requested: string,
+) {
   try {
     await this.prisma.addFriend.create({
-        data: {
-            requestedId: requested,
-            requesterId: requester,
-            isAccepted: false,
-        },
-        // include: {requesterId: true, requestedId: true}
+      data: {
+        requestedId: requested,
+        requesterId: requester,
+        isAccepted: false,
+      },
+      // include: {requesterId: true, requestedId: true}
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function set2FA(this: PrismaService, userId: string, twoFA: string) {
+export async function set2FA(
+  this: PrismaService,
+  userId: string,
+  twoFA: string,
+) {
   try {
     await this.prisma.user.update({
-        where: { id: userId },
-        data: { twoFA: true, twoFApwd: twoFA },
-    })
-  }
-  catch (error) {
+      where: { id: userId },
+      data: { twoFA: true, twoFApwd: twoFA },
+    });
+  } catch (error) {
     console.log(error.message);
   }
 }
@@ -123,74 +135,79 @@ export async function delete2FA(this: PrismaService, userId: string) {
       where: {
         id: userId,
       },
-      data: {twoFA: false, twoFApwd: null}
+      data: { twoFA: false, twoFApwd: null },
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function updateUserScore(this: PrismaService,login: string, points: number) {
+export async function updateUserScore(
+  this: PrismaService,
+  login: string,
+  points: number,
+) {
   try {
     await this.prisma.user.update({
-        where: {login: login},
-        data: {score:{increment: points}},
-    })
-  }
-  catch (error) {
+      where: { login: login },
+      data: { score: { increment: points } },
+    });
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function updateUserStatus(this: PrismaService,login: string, status: boolean) {
+export async function updateUserStatus(
+  this: PrismaService,
+  login: string,
+  status: boolean,
+) {
   try {
     await this.prisma.user.update({
-        where: { login: login },
-        data: { isOnline: status },
-    })
-  }
-  catch (error) {
+      where: { login: login },
+      data: { isOnline: status },
+    });
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getBlockedUsers(this: PrismaService,login: string) {
+export async function getBlockedUsers(this: PrismaService, login: string) {
   try {
     const blockedList = await this.prisma.user.findUnique({
-        where: { login: login },
-        select: { blockedUsers: {
-            select: {
-                blocked: {
-                    select: {
-                        login: true,
-                        nickName: true,
-                        email: true,
-                        score: true,
-                        imgUrl: true,
-                        isOnline: true,
-                    }
-                }
-            }
-        }},
+      where: { login: login },
+      select: {
+        blockedUsers: {
+          select: {
+            blocked: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+      },
     });
     let list;
     for (let i = 0; blockedList.blockedUsers[i]; i++) {
       list[i] = blockedList.blockedUsers[i];
     }
     return list;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
 export async function getUser(this: PrismaService, login: string) {
   try {
-    const usr = await this.prisma.user.findUnique({where:{login:login}});
+    const usr = await this.prisma.user.findUnique({ where: { login: login } });
     return usr;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
@@ -248,49 +265,48 @@ export async function getLastPhotoPath(this: PrismaService, login: string) {
 export async function getFriends(this: PrismaService, login: string) {
   try {
     const friends = await this.prisma.user.findUnique({
-        where: { login: login },
-        select: { 
-          friends: {
-            select: {
-              requested: {
-                select: {
-                  login: true,
-                  nickName: true,
-                  email: true,
-                  score: true,
-                  imgUrl: true,
-                  isOnline: true,
-                }
+      where: { login: login },
+      select: {
+        friends: {
+          select: {
+            requested: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
               },
-            }
+            },
           },
-          befriend: {
-            select: {
-              requester: {
-                select: {
-                  login: true,
-                  nickName: true,
-                  email: true,
-                  score: true,
-                  imgUrl: true,
-                  isOnline: true,
-                }
+        },
+        befriend: {
+          select: {
+            requester: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
               },
-            }
+            },
           },
-        }
-      });
+        },
+      },
+    });
     let friendlist;
     let a = 0;
-    for (let i = 0; friends.friends[i] ; i++) {
+    for (let i = 0; friends.friends[i]; i++) {
       friendlist[a++] = friends.friends[i];
     }
-    for (let i = 0; friends.befriend[i] ; i++) {
+    for (let i = 0; friends.befriend[i]; i++) {
       friendlist[a++] = friends.befriend[i];
     }
     return friendlist;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
@@ -298,49 +314,48 @@ export async function getFriends(this: PrismaService, login: string) {
 export async function getFriendsById(this: PrismaService, id: string) {
   try {
     const friends = await this.prisma.user.findUnique({
-        where: { id: id },
-        select: { 
-          friends: {
-            select: {
-              requested: {
-                select: {
-                  login: true,
-                  nickName: true,
-                  email: true,
-                  score: true,
-                  imgUrl: true,
-                  isOnline: true,
-                }
+      where: { id: id },
+      select: {
+        friends: {
+          select: {
+            requested: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
               },
-            }
+            },
           },
-          befriend: {
-            select: {
-              requester: {
-                select: {
-                  login: true,
-                  nickName: true,
-                  email: true,
-                  score: true,
-                  imgUrl: true,
-                  isOnline: true,
-                }
+        },
+        befriend: {
+          select: {
+            requester: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
               },
-            }
+            },
           },
-        }
-      });
+        },
+      },
+    });
     let friendlist;
     let a = 0;
-    for (let i = 0; friends.friends[i] ; i++) {
+    for (let i = 0; friends.friends[i]; i++) {
       friendlist[a++] = friends.friends[i];
     }
-    for (let i = 0; friends.befriend[i] ; i++) {
+    for (let i = 0; friends.befriend[i]; i++) {
       friendlist[a++] = friends.befriend[i];
     }
     return friendlist;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
@@ -358,17 +373,17 @@ export async function getUserAccount(this: PrismaService, userId: string) {
         email: true,
         score: true,
         imgUrl: true,
-        twoFA: true,  
+        twoFA: true,
         isAdmin: true,
         channelList: {
           select: {
             channelId: true,
-          }
+          },
         },
         adminChannel: {
           select: {
             channelId: true,
-          }
+          },
         },
         winnedMatchs: {
           select: {
@@ -377,7 +392,7 @@ export async function getUserAccount(this: PrismaService, userId: string) {
             winnerScore: true,
             looserScore: true,
             looserid: true,
-          }
+          },
         },
         lostMatchs: {
           select: {
@@ -386,7 +401,7 @@ export async function getUserAccount(this: PrismaService, userId: string) {
             winnerScore: true,
             looserScore: true,
             winnerid: true,
-          }
+          },
         },
         friends: {
           select: {
@@ -395,9 +410,9 @@ export async function getUserAccount(this: PrismaService, userId: string) {
                 login: true,
                 nickName: true,
                 isOnline: true,
-              }
+              },
             },
-          }
+          },
         },
         befriend: {
           select: {
@@ -406,16 +421,16 @@ export async function getUserAccount(this: PrismaService, userId: string) {
                 login: true,
                 nickName: true,
                 isOnline: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         blockedUsers: {
           select: {
             blockedId: true,
-          }
+          },
         },
-      }
+      },
     });
     let userAccount = {} as IAccount;
     if (user) {
@@ -455,8 +470,7 @@ export async function getUserAccount(this: PrismaService, userId: string) {
       }
     }
     return userAccount;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }

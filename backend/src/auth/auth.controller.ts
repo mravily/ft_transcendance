@@ -13,7 +13,7 @@ export class AuthController {
   @UseGuards(AuthGuard('42'))
   @Redirect('/')
   fortyTwoAuthRedirect(@Res() res, @Req() req) {
-    res.cookie('token', req.session.jwt, { maxAge: 60000 });
+    res.cookie('token', req.session.jwt, { maxAge: 86400 });
     return { url: process.env.FRONT_URL };
   }
 }

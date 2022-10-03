@@ -1,0 +1,15 @@
+<div class="card ">
+	<div class="table-responsive">
+	<div class="wrapper container-fluid">
+		<div >NAME</div>
+		<div class="text">LOGIN</div>
+		<div class="text">WIN/LOST</div>
+		<div class="text">RANK</div>
+		<div class="text">STATUS</div>
+		<div class="text">ACTION</div>
+	</div>
+	<div class="card-body py-0 position-relative scrollable-y" style="min-height: 70vh; max-height: 70vh">
+		<!-- <app-bloc-all-user *ngFor="let UserIt of usersList$; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-all-user> -->
+		<app-bloc-all-user *ngFor="let UserIt of usersList$ | async; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-all-user>
+	</div>
+</div>

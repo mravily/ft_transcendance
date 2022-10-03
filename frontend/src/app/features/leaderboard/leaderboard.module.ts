@@ -1,18 +1,33 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
-import { BlocUserComponent } from './components/bloc-user/bloc-user.component';
-import { OrdinalPipe } from 'src/app/pipe/ordinals.pipe';
-import { OldLeaderboardComponent } from './components/old-leaderboard/old-leaderboard.component';
+import { BlocUserComponent } from './components/leaderboard/bloc-user/bloc-user.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { RouterModule } from '@angular/router';
+import { LeaderboardRoutingModule } from './leaderboard-routing.module';
+import { BlocAllUserComponent } from './components/all-users/bloc-all-user/bloc-all-user.component';
+import { AllUsersComponent } from './components/all-users/all-users.component';
+import { SharingModule } from 'src/app/pipe/sharing.module';
+
 
 @NgModule({
   declarations: [
+	NavBarComponent,
 	LeaderboardComponent,
-	OldLeaderboardComponent,
 	BlocUserComponent,
-	OrdinalPipe],
-  imports: [CommonModule],
-  exports: [BlocUserComponent,
-LeaderboardComponent]
+	AllUsersComponent,
+	BlocAllUserComponent
+],
+  imports: [
+	RouterModule,
+	LeaderboardRoutingModule,
+	SharingModule
+],
+  exports: [
+	NavBarComponent,
+	LeaderboardComponent,
+	BlocUserComponent,
+	AllUsersComponent,
+	BlocAllUserComponent
+]
 })
 export class LeaderboardModule { }

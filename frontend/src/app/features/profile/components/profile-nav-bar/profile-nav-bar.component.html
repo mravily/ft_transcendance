@@ -1,0 +1,33 @@
+<div class="h-screen flex-grow-1 overflow-y-lg-auto">
+	<!-- Header -->
+	<header class="bg-surface-primary border-bottom pt-6">
+		<div class="container-fluid">
+			<div class="mb-npx">
+				<div class="row align-items-center">
+					<div class="col-sm-6 col-12 mb-4 mb-sm-0">
+						<!-- Title -->
+						<h1 class="h2 mb-0 ls-tight">Profile</h1>
+					</div>
+				</div>
+				<!-- Nav -->
+				<ul class="nav nav-tabs mt-4 overflow-x border-0">
+					<li class="nav-item ">
+						<a routerLink="../profile" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link font-regular">Overview</a>
+					</li>
+					<li class="nav-item">
+						<a routerLink="friends" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link font-regular">Friends</a>
+					</li>
+					<li class="nav-item">
+						<a routerLink="settings" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link font-regular">Settings</a>
+					</li>
+					<li class="nav-item">
+						<a routerLink="security" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link font-regular">Security</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+	<main class="py-6 bg-surface-secondary">
+		<router-outlet></router-outlet>
+	</main>
+</div>

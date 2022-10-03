@@ -1,0 +1,19 @@
+<div class="card">
+	<div class="card-header">
+		<div class="d-flex align-items-center">
+			<h5 class="mb-0">Last Match</h5>
+		</div>
+	</div>
+				
+	<div class="wrapper container-fluid">
+		<div class="text"></div>
+		<div class="text">SCORE</div>
+		<div class="text"></div>
+	</div>
+		<div class="card-body py-0 position-relative scrollable-y" style="min-height: 500px; max-height: 500px">
+			<app-bloc-match *ngFor="let matchIt of matches" [match]="matchIt"></app-bloc-match>
+		</div>
+			<!-- <app-bloc-all-user *ngFor="let UserIt of usersList$; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-all-user> -->
+		<!-- <app-bloc-all-user *ngFor="let UserIt of usersList$ | async; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-all-user> -->
+	<!-- End of Match Request -->
+</div>

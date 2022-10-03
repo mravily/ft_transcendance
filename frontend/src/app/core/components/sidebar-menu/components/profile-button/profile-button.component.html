@@ -17,17 +17,17 @@
 				  <span class="d-block text-heading font-semibold">{{ profile.fullName }}</span>
 				</div>
 				<div class="dropdown-divider"></div>
-				<a class="dropdown-item" href="#">
+				<a class="dropdown-item" routerLink="" >
 				  <i class="bi bi-house me-3"></i>Home
 				</a>
-				<a class="dropdown-item" href="#">
+				<a class="dropdown-item" routerLink="profile">
 				  <i class="bi bi-pencil me-3"></i>Profile
 				</a>
-				<a class="dropdown-item" href="#">
+				<a class="dropdown-item" routerLink="profile/settings">
 				  <i class="bi bi-gear me-3"></i>Settings
 				</a>
 				<div class="dropdown-divider"></div>
-				<a class="dropdown-item" href="#">
+				<a class="dropdown-item" (click)="isLogout()">
 				  <i class="bi bi-box-arrow-left me-3"></i>Logout
 				</a>
 			  </div>

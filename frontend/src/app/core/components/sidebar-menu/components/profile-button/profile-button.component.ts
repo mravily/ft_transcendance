@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ShortProfile } from '../../model/sidebar.model';
+import { SideBarData } from '../../model/sidebar.model';
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-button',
@@ -8,11 +10,16 @@ import { ShortProfile } from '../../model/sidebar.model';
 })
 export class ProfileButtonComponent implements OnInit {
 
-  @Input() profile!: ShortProfile;
+  @Input() profile!: SideBarData;
   
-  constructor() { }
+  constructor(private cookieService: CookieService,
+			  private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  isLogout() {
+	this.cookieService.delete('token');
+	this.router.navigateByUrl('/');
+  }
 }
