@@ -7,9 +7,11 @@ import {
     UseGuards,
     Req,
     Session,
+    Get,
 } from '@nestjs/common';
 import { IUser2FA, TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
+import { PrismaService } from '../prisma.service';
 // import { AuthGuard } from '@nestjs/passport';
  
 @Controller('2fa')
@@ -17,6 +19,7 @@ import { Response } from 'express';
 export class TwoFactorAuthenticationController {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private db: PrismaService,
   ) {}
  
   @Post('generate')
@@ -29,5 +32,10 @@ export class TwoFactorAuthenticationController {
     const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(user);
  
     return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+  }
+
+  @Get('verify')
+  async verify(@Session() session: Record<string, any>): Promise<boolean> {
+    return this.db.is2FA(session.userid);
   }
 }

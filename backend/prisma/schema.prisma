@@ -182,6 +182,6 @@ model Photos {
 
 // Relations:
   userId String
-  user User @relation(fields: [userId], references: [login])
+  user User @relation(fields: [userId], references: [id])
   @@unique([userId, path])
 }

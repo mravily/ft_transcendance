@@ -142,6 +142,19 @@ export async function delete2FA(this: PrismaService, userId: string) {
   }
 }
 
+export async function is2FA(this: PrismaService, userId: string): Promise<boolean> {
+  try {
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { twoFA: true }
+    });
+    return user.twoFA;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function updateUserScore(
   this: PrismaService,
   login: string,
