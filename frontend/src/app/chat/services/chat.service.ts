@@ -39,6 +39,10 @@ export class ChatService {
   createChannel(room: channelI) {
     this.socket.emit('createChannel', room);
   }
+  createDM(login1: string, login2: string) {
+    let room : channelI = {name: login1 + login2, password: "", isDirect: true, userList: [login1, login2], isPrivate: true, creator: "DM"};
+    this.socket.emit('createChannel', room);
+  }
   getChannelsObs(): Observable<string[]> {
     return this.socket.fromEvent<any>('channels');
   }

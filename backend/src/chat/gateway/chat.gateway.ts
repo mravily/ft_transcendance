@@ -7,7 +7,9 @@ import { PageI } from '../model/page.interface';
 import { channelI, eventI } from '../model/channel.interface';
 import { MessageI } from '../model/message.interface';
 import { PrismaService } from '../../prisma.service';
+import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
+import { AuthService } from '../../auth/auth.service';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
@@ -21,36 +23,58 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   connectedUsers: Map<string, Set<string>> = new Map();
 
   constructor(
+        private authService: AuthService,
         private db: PrismaService) { }
 
   async onModuleInit() {
     console.log('ChatGateway initialized');
   }
 
-  async handleConnection(socket: Socket) {
+  async handleConnection(client: Socket) {
     try {
-      let user: UserI = null;
+      const cookie = parse(client.handshake.headers.cookie);
+      const token = cookie['token'];
+      if (!token) {
+        console.log('token not found');
+        client.disconnect();
+        return;
+      }
+      const userId = await this.authService.getUseridFromToken(token);
+      if (!userId) {
+        console.log('User not found');
+        client.disconnect();
+        return;
+      }
+      client.data.userId = userId;
+    }
+    catch (e) {
+      console.log('Error', e);
+      client.disconnect();
+    }
+    console.log('Client connected', client.id, client.data);
+    try {
       // const decodedToken = await this.authService.verifyJwt(socket.handshake.headers.authorization);
-      // const user: UserI = await this.userService.getUser(decodedToken.user.id);
+      const user: UserI = await this.db.getUserById(client.data.userId);
       if (!user) {
-        return this.disconnect(socket);
+        return this.disconnect(client);
       } else {
-        socket.data.user = user; // save user in socket 
+        client.data.user = user; // save user in client
+        console.log('User', user);
         // Save connection
         if (!this.connectedUsers.has(user.login)) {
           this.connectedUsers.set(user.login, new Set());
         }
-        this.connectedUsers.get(user.login).add(socket.id);
+        this.connectedUsers.get(user.login).add(client.id);
         // Only emit channels to the specific connected client
-        this.onPaginatechannel(socket, { page: 1, limit: 10 });
+        this.onPaginatechannel(client, { page: 1, limit: 10 });
       }
     } catch {
-      return this.disconnect(socket);
+      return this.disconnect(client);
     }
   }
 
   async handleDisconnect(socket: Socket) {
-    // remove connection from DB
+    // remove connection
     this.connectedUsers.get(socket.data.user.login).delete(socket.id);
     if (this.connectedUsers.get(socket.data.user.login).size === 0) {
       this.connectedUsers.delete(socket.data.user.login);
@@ -89,7 +113,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     this.db.setChannel(channel, user); // A intégrer aux proto de Juan
 
-    for (const user of channel.users) {
+    for (const user of channel.userList) {
       const socketIds: Set<string> = this.connectedUsers.get(user);
       const channels = await this.db.getChannelsForUser(user, 1, 10 );
       // // substract page -1 to match the angular material paginator
@@ -204,7 +228,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!(socket.data.user.login in channel.users)) {
+    if (!(socket.data.user.login in channel.userList)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     socket.emit('channelInfo', channel);
@@ -216,7 +240,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!(socket.data.user.login in channel.users)) {
+    if (!(socket.data.user.login in channel.userList)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     if (socket.data.user.login in channel.mutedUserList)

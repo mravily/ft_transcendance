@@ -20,10 +20,10 @@ export class ChatComponent implements OnInit {
   messages: MessageI[] = [
   ];
 
-  constructor(private chats: ChatService) { }
+  constructor(private chatServ: ChatService) { }
   
   onSendMessage() {
-    this.chats.sendMessage(this.curMessage);
+    this.chatServ.sendMessage(this.curMessage);
     this.messages.push({user: "me",
                       text: this.curMessage,
                       channel : this.selectedContact, 
@@ -38,16 +38,17 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chats.getAddedMessage().subscribe((message: MessageI) => {
-      this.messages.push(message);
+    this.chatServ.getAddedMessage().subscribe((message: MessageI) => {
+      if (message.channel == this.selectedContact) {
+        this.messages.push(message);
+      }
     });
-    this.chats.getMessagesObs().subscribe((messages: MessageI[]) => {
+    this.chatServ.getMessagesObs().subscribe((messages: MessageI[]) => {
       this.messages = messages;
     });
-    this.chats.getChannelsObs().subscribe((rooms: any[]) => {
+    this.chatServ.getChannelsObs().subscribe((rooms: any[]) => {
       this.contacts = rooms;
     });
-
   }
 
 

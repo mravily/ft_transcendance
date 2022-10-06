@@ -2,7 +2,7 @@
 import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { getTopTen, getUsersRanking } from './prisma/leaderboard.service';
-import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser, setBlockUser } from './prisma/user.service';
+import { setUser, getUserAccount, set2FA, updateUserScore, updateUserStatus, getBlockedUsers, getFriends, getUser, getUserById, uploadPhoto, sendFriendReq, getLastPhotoPath, deleteBlockUser, setBlockUser } from './prisma/user.service';
 import { deleteBan, deleteMuteUser, getChannelInfo, getchannelsForUser, getChannelUsers, getMuteInfo,  getBanInfo, getPublicChannels, isAdmin, isCreator, leaveChannel, getMessagesForChannel, removeChannelPass, setBanUser, setChannel, setChannelMessage, setChannelPass, setJoinChannel, setMakeAdmin, setMuteUser } from './prisma/channel.service';
 import { getMatchHistory, getNolostMatchs, getNoWinnedMatchs, getRatio, setMatch } from './prisma/match.service';
 import { getSidebar } from './prisma/sidebar.service';
@@ -24,57 +24,7 @@ export interface accountUser {
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  // async getPublicChannels(): Promise<string[]> {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setUnblockUser(from: string, to: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setBlockUser(from: string, to: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setUnbanUser(from: string, to: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setBanUser(from: string, to: string, eventDate: Date, eventDuration: number) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setUnmuteUser(from: string, to: string, eventDate: Date, eventDuration: number) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // getMessagesForchannel(channel: channelI, arg1: { limit: number; page: number; }): MessageI[] {
-  //   throw new Error('Method not implemented.');
-  // }
-  // unbanUser(login: any, name: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // getBanInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
-  //   throw new Error('Method not implemented.');
-  // }
-  // async getChannelsForUser(login: any, arg1: PageI): Promise<string[]> {
-  //   throw new Error('Method not implemented.');
-  // }
-  // unMuteUser(login: any, name: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // getMuteInfo(login: any, name: string): import("./chat/model/channel.interface").eventI {
-  //   throw new Error('Method not implemented.');
-  // }
-  // isAdmin(login: any, channelName: string): boolean {
-  //   throw new Error('Method not implemented.');
-  // }
-  // setLeaveChannel(login: any, channelName: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // removeChannelPass(name: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // createMessage(message: { isNotif: boolean; text: string; user: string; channel: string; createdAt: Date; }): MessageI {
-  //   throw new Error('Method not implemented.');
-  // }
-  // isCreator(login: string): boolean {
-  //   throw new Error('Method not implemented.');
-  // }
+
   async onModuleInit() {
     await this.$connect();
   }
@@ -104,6 +54,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getBlockedUsers = getBlockedUsers;
   public getFriends = getFriends;
   public getUser = getUser;
+  public getUserById = getUserById;
   public getChannelInfo = getChannelInfo;
   public getMessagesForChannel = getMessagesForChannel;
   public getNoWinnedMatchs = getNoWinnedMatchs;

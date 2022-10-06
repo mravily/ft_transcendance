@@ -180,6 +180,15 @@ export async function getUser(this: PrismaService, login: string) {
     console.log(error.message);
   }
 }
+export async function getUserById(this: PrismaService, userId: string) {
+  try {
+    const usr = await this.prisma.user.findUnique({where:{id:userId}});
+    return usr;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
 
 export async function uploadPhoto(this: PrismaService, userId: string, filename:string, path: string) {
   try {

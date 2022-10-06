@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { map, Subscription } from 'rxjs';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-newroom',
@@ -15,7 +16,7 @@ export class NewroomComponent implements OnInit {
   publicChannels: any[];
   password: string = "";
 
-  constructor(private builder: FormBuilder) {
+  constructor(private builder: FormBuilder, private chatService: ChatService) {
     this.publicChannels = [
       { name: "general", nbUsers : 21},
       { name: "random", nbUsers : 12},
@@ -29,7 +30,7 @@ export class NewroomComponent implements OnInit {
       description: [null, [Validators.required]],
       members: [null, [Validators.required]],
       ispublic: [null, [Validators.required]],
-      password: [{value: null, disabled: true}]
+      password: [{value: null}]
     },
     {
       updateOn: 'blur'
@@ -41,16 +42,23 @@ export class NewroomComponent implements OnInit {
     this.searchSubcription = this.searchForm.valueChanges.pipe(
       map((form) => form.search)
     ).subscribe((search) => {
-      // this.searchResult = api.getSearch();
+      this.chatService.searchPublicChannels(search);
+    });
+    this.chatService.getPublicChannelsObs().subscribe((channels: any[]) => {
+      this.publicChannels = channels;
     });
   }
   ngOnDestroy() {
     this.searchSubcription.unsubscribe();
   }
 
-  onSubmitForm()  {}
+  onSubmitForm()  {
+    console.log(this.roomForm.value);
+    this.chatService.createChannel(this.roomForm.value);
+  }
   onJoin(channelName: string) {
     console.log(channelName, this.password);
+    this.chatService.joinChannel(channelName, this.password);
   }
 
 }

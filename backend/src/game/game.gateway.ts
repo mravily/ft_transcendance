@@ -1,43 +1,74 @@
-import { forwardRef, Inject, Session } from '@nestjs/common';
+import { forwardRef, Inject, Req, Session, Sse } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
+import { session } from 'passport';
 import { Socket, Server } from 'socket.io';
 import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
 import { GameService } from './game.service';
+// import type { Request } from 'express';
+import { AuthService } from '../auth/auth.service';
+import { parse } from 'cookie';
+
 
 @WebSocketGateway( { namespace: '/pong',
-                      cors: { origin: [ 'localhost:4200']  } } ) 
+                      cors: { origin: [ 'localhost:4200', '*'],},
+                      // allowRequest: async (req, callback) => {
+                      //   callback(null, true);
+                      // }
+                    } ) 
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
   
-  constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService) {
+  constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService, private authService: AuthService ) {
   }
   afterInit(server: Server) {
     console.log('GameGateway initialized');
     this.wss = server;
   }
-  
-  handleConnection(@Session() session: Record<string, any>, client: Socket, ...args: any[]): void {
-    console.log('Client connected', client.id, session );
+
+  // , @Session() session: Record<string, any>,
+  async handleConnection(client: Socket)  {
+    try {
+      const cookie = parse(client.handshake.headers.cookie);
+      const token = cookie['token'];
+      if (!token) {
+        console.log('token not found');
+        client.disconnect();
+        return;
+      }
+      const userId = await this.authService.getUseridFromToken(token);
+      if (!userId) {
+        console.log('User not found');
+        client.disconnect();
+        return;
+      }
+      client.data.userId = userId;
+    }
+    catch (e) {
+      console.log('Error', e);
+      client.disconnect();
+    }
+    console.log('Client connected', client.id, client.data);
   }
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
   }
 
   @SubscribeMessage('findMatch')
-  findMatch(client: Socket): void {
+  async findMatch(client: Socket) {
     this.gameService.getMatchmakingGame(client, false);
+    console.log('find', client.id );
   }
   @SubscribeMessage('findPUMatch')
-  findPUMatch(client: Socket): void {
+  async findPUMatch(client: Socket) {
     this.gameService.getMatchmakingGame(client, true);
   }
-  sendMatchId(client: Socket, gameId: number): void {
+  async sendMatchId(client: Socket, gameId: number) {
     client.emit('matchId', gameId);
   }
 
   @SubscribeMessage('startGame')
-  handleStart(client: Socket, gameId: number): void {
+  async handleStart(client: Socket, gameId: number) {
     this.gameService.startGame(gameId, client);
   }
   sendStart(clients: Socket[], compteur: number) {
@@ -45,17 +76,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       clients[i].emit('startGame', compteur);
     }
   }
-  sendSpecMode(client: Socket): void {
+  async sendSpecMode(client: Socket)  {
     client.emit('specMode');
     client.emit('startGame', 0);
   }
   
   @SubscribeMessage('paddle')
-  handlePaddle(client: Socket, payload: GamePaddle): void {
+  async handlePaddle(client: Socket, payload: GamePaddle) {
     this.gameService.setPlayerPos(client, payload);
   }
   
-  sendPaddlePos(numPlayer: number, client: Socket, specs: Socket[], payload: GamePaddle): void {
+  async sendPaddlePos(numPlayer: number, client: Socket, specs: Socket[], payload: GamePaddle)  {
     if (client)
       client.emit('paddle', payload);
     if (specs)  {
@@ -68,7 +99,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
-  sendGameStatus(client: Socket, payload: GameStatus): void {
+  async sendGameStatus(client: Socket, payload: GameStatus) {
     client.emit('gameState', payload);
   }
   powForPlayer2(powerUp: PowerUp): PowerUp {
@@ -109,9 +140,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.gameService.removeGame(playerSockets[0]);
   }
   @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: string): void {
+  async handleMessage(client: Socket, payload: string)  {
     this.wss.emit('message', {sender: client.id, body: payload});
   }
 
 }
+
+// function fetchSession(req: Request) {
+//   return new Promise((resolve, reject) => {
+//     session(req, {} as Response, () => {
+//       resolve(req.session);
+//     });
+//   }
+// }
 

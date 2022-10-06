@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/pong/models/pong.models';
@@ -19,9 +20,12 @@ export class PongService {
   powerUpEvent: Observable<PowerUpEvent>;
   endEvent: Observable<Results>;
 
-  constructor() {
-    this.socket = new Socket({ url: 'localhost:4200/pong', options: {
-      withCredentials: false,
+  constructor(private cookieService: CookieService) {
+    this.socket = new Socket({ url: '/pong', options: {
+      // withCredentials: false,
+      extraHeaders: {
+        'set-cookie' : this.cookieService.get('token'),
+      }
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');
     this.paddleEvent = this.socket.fromEvent<PaddlePos>('paddle');

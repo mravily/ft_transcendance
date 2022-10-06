@@ -1,6 +1,6 @@
 import { INSTANCE_METADATA_SYMBOL } from "@nestjs/core/injector/instance-wrapper";
-import { channelI } from "src/chat/model/channel.interface";
-import { MessageI } from "src/chat/model/message.interface";
+import { channelI } from "../chat/model/channel.interface";
+import { MessageI } from "../chat/model/message.interface";
 import { PrismaService } from "../prisma.service";
 
 // export interface channelI {
