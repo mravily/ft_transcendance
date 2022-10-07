@@ -1,12 +1,12 @@
 import { PrismaService } from '../prisma.service';
 
 export interface IAccount {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
   login: string;
-  imgUrl: string;
+  firstName?: string;
+  lastName?: string;
+  nickName?: string;
+  email?: string;
+  imgUrl?: string;
   win?: number;
   lost?: number;
   winnedMatch?: any[];
@@ -16,6 +16,8 @@ export interface IAccount {
   beFriends?: any[];
   createdAt?: Date;
   twoFA?: boolean;
+  secret?: string;
+  dataUrl?: string;
   isAdmin?: boolean;
   channelList?: any[];
   channelAdmin?: any[];
@@ -117,12 +119,13 @@ export async function sendFriendReq(
 export async function set2FA(
   this: PrismaService,
   userId: string,
-  twoFA: string,
+  secret: string,
+  dataUrl: string,
 ) {
   try {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { twoFA: true, twoFApwd: twoFA },
+      data: { twoFA: true, secret: secret, dataUrl: dataUrl },
     });
   } catch (error) {
     console.log(error.message);
@@ -135,7 +138,7 @@ export async function delete2FA(this: PrismaService, userId: string) {
       where: {
         id: userId,
       },
-      data: { twoFA: false, twoFApwd: null },
+      data: { twoFA: false, secret: null, dataUrl: null },
     });
   } catch (error) {
     console.log(error.message);
@@ -149,6 +152,24 @@ export async function is2FA(this: PrismaService, userId: string): Promise<boolea
       select: { twoFA: true }
     });
     return user.twoFA;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function get2FA(this: PrismaService, userId: string): Promise<IAccount> {
+  try {
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        login: true,
+        twoFA: true,
+        secret: true,
+        dataUrl: true,
+      },
+    });
+    return user;
   }
   catch (error) {
     console.log(error.message);
@@ -375,7 +396,7 @@ export async function getFriendsById(this: PrismaService, id: string) {
 
 export async function getUserAccount(this: PrismaService, userId: string) {
   try {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
         login: true,
@@ -449,7 +470,7 @@ export async function getUserAccount(this: PrismaService, userId: string) {
     if (user) {
       userAccount.firstName = user.firstName;
       userAccount.lastName = user.lastName;
-      userAccount.fullName = user.nickName;
+      userAccount.nickName = user.nickName;
       userAccount.email = user.email;
       userAccount.login = user.login;
       userAccount.imgUrl = user.imgUrl;

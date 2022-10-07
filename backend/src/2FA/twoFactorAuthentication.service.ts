@@ -21,7 +21,7 @@ export class TwoFactorAuthenticationService {
  
     const otpauthUrl = authenticator.keyuri(user.email, this.configService.get('TWO_FACTOR_AUTHENTICATION_APP_NAME'), secret);
  
-    await this.db.set2FA(user.id, secret);
+    await this.db.set2FA(user.id, secret, otpauthUrl);
  
     return {
       secret,

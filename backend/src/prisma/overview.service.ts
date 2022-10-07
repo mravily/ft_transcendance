@@ -1,32 +1,24 @@
 import { PrismaService } from "../prisma.service";
+import { Match } from "./profile.service";
 
 export interface CardStats {
     win: number,
     lost: number,
-    fiendsOnline: number,
+    rank: number,
     friends: number,
 }
 
-export interface RecentActivity {
+export interface Activity {
     avatar: any,
     displayName: string,
     createdAt: Date,
     message: string,
 }
 
-export interface MatchRequest {
-    avatar: any,
-    displayName: string,
-    login: string,
-    win: number,
-    lost: number,
-    isOnline: boolean,
-}
-
 export interface ProfileOverview {
     cardStats: CardStats,
-    RecentActivity: RecentActivity [],
-    MatchRequest: MatchRequest [],
+    activities: Activity [],
+    Matches: Match [],
 }
 
 export interface friendsList {
@@ -54,9 +46,48 @@ export async function getProfileOverview(this: PrismaService, login: string) {
         const usr = await this.prisma.user.findUnique({
             where: { login: login },
             select: {
+                _count: {
+                    select: {
+                        winnedMatchs: true,
+                        lostMatchs: true,
+                    }
+                },
+                imgUrl: true,
+                nickName: true,
+                winnedMatchs: {
+                    select: {
+                        winnerScore: true,
+                        looserScore: true,
+                        looser: {
+                            select: {
+                                login: true,
+                                imgUrl: true,
+                                nickName: true,
+                            }
+                        }
+                    },
+                },
+                lostMatchs: {
+                    select: {
+                        looserScore: true,
+                        winnerScore: true,
+                        winner: {
+                            select: {
+                                login: true,
+                                imgUrl: true,
+                                nickName: true,
+                            }
+                        }
+                    }
+                },
                 //
             }
         });
+        let profile = {} as ProfileOverview;
+        if (usr) {
+
+        }
+        return profile;
     }
     catch (error) {
         console.log(error.message);

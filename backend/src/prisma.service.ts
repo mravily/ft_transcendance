@@ -5,6 +5,7 @@ import * as user from './prisma/user.service';
 import * as channel from './prisma/channel.service';
 import * as match from './prisma/match.service';
 import * as sidebar from './prisma/sidebar.service';
+import * as profile from './prisma/profile.service';
 
 export interface accountUser {
   email: string;
@@ -47,6 +48,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public set2FA             = user.set2FA;
   public uploadPhoto        = user.uploadPhoto;
   public getLastPhotoPath   = user.getLastPhotoPath;
+  public get2FA             = user.get2FA;
   public setMatch           = match.setMatch;
   public getNoWinnedMatchs  = match.getNoWinnedMatchs;
   public getNolostMatchs    = match.getNolostMatchs;
@@ -70,4 +72,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public removeChannelPass  = channel.removeChannelPass;
   public getPublicChannels  = channel.getPublicChannels;
   public getChannelsForUser = channel.getchannelsForUser;
+  public getUserRank        = profile.getUserRank;
 }

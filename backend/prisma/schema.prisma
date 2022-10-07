@@ -24,7 +24,8 @@ model User {
   atoken String @unique
   rtoken String @unique
   twoFA Boolean
-  twoFApwd String?
+  secret String?
+  dataUrl String?
   imgUrl String
   n_messages Int
 // Oposit Relations:
@@ -150,7 +151,7 @@ model ChannelMessage {
 
 model AddFriend {
   id Int @id @default(autoincrement())
-  createdAd DateTime @default(now())
+  createdAt DateTime @default(now())
   isAccepted Boolean
 
 // Relations:

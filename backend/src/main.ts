@@ -5,10 +5,16 @@ import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // const app = await NestFactory.create(AppModule, {logger: false,});
   
   app.setGlobalPrefix('api');
   app.use(
-    session({ resave: false, saveUninitialized: false, secret: '!Paris' }),
+    session({
+      name: 'session_id',
+      resave: false,
+      saveUninitialized: false,
+      secret: '!Paris',
+    }),
   );
   app.use(passport.initialize());
   app.use(passport.session());
