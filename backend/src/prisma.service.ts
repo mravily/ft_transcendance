@@ -7,17 +7,6 @@ import * as match from './prisma/match.service';
 import * as sidebar from './prisma/sidebar.service';
 import * as profile from './prisma/profile.service';
 
-export interface accountUser {
-  email: string;
-  login: string;
-  fullName: string;
-  avatar: string;
-  score: number;
-  isOnline: boolean;
-  win: number;
-  lost: number;
-}
-
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
@@ -44,7 +33,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public updateUserStatus   = user.updateUserStatus;
   public getBlockedUsers    = user.getBlockedUsers;
   public getFriends         = user.getFriends;
-  public getUser            = user.getUser;
   public set2FA             = user.set2FA;
   public uploadPhoto        = user.uploadPhoto;
   public getLastPhotoPath   = user.getLastPhotoPath;

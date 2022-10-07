@@ -1,29 +1,11 @@
-import { INSTANCE_METADATA_SYMBOL } from "@nestjs/core/injector/instance-wrapper";
 import { PrismaService } from "../prisma.service";
+import { IAccount, IChannel } from "./interfaces";
 
-export interface channelI {
-  // basic info
-  name: string;
-  isDirect: boolean; // à rajouter dans le schéma Prisma
-  isPrivate: boolean;
-  creator: string; // à rajouter dans le schéma Prisma
-  password?: string;
-  
-  // advanced info
-  createdAt?: Date;
-  users?: string[];
-  admins?: string[];
-  mutedUsers?: string[];
-  bannedUsers?: string[];
-  
-  // description?: string; // à rajouter par Juan
-}
-
-export async function setChannel(this: PrismaService, channel: channelI, creatorId: string) {
+export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
     await this.prisma.channel.create({
       data: {
-        channelName: channel.name,
+        channelName: channel.channelName,
         creatorId: creatorId,
         isDirect: channel.isDirect,
         isPrivate: channel.isPrivate,
@@ -172,7 +154,7 @@ export async function deleteBan(this: PrismaService, channel_name: string, login
   }
 }
 
-export async function isAdmin(this: PrismaService, channel_name: string, userId: string) {
+export async function isAdmin(this: PrismaService, channel_name: string, userId: string): Promise<boolean> {
   try {
     const channels = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -190,7 +172,7 @@ export async function isAdmin(this: PrismaService, channel_name: string, userId:
   }
 }
 
-export async function isCreator(this: PrismaService, channel_name: string, userId: string) {
+export async function isCreator(this: PrismaService, channel_name: string, userId: string): Promise<boolean> {
   try {
     const channel = await this.prisma.channel.findUnique({
       where: {
@@ -248,7 +230,7 @@ export async function removeChannelPass(this: PrismaService, channel_name: strin
   }
 }
 
-export async function getChannelUsers(this: PrismaService, channel_name: string) {
+export async function getChannelUsers(this: PrismaService, channel_name: string): Promise<IAccount[]> {
   try {
     const channel = await this.prisma.channel.findUnique({
       where: { channelName: channel_name },
@@ -265,14 +247,25 @@ export async function getChannelUsers(this: PrismaService, channel_name: string)
         }
       }
     });
-    return channel.userList;
+    let list: IAccount[] = [];
+    for (let i = 0; channel.userList[i]; i++) {
+      let tmp = {} as IAccount;
+      tmp.login = channel.userList[i].user.login;
+      tmp.nickName = channel.userList[i].user.nickName;
+      tmp.email = channel.userList[i].user.email;
+      tmp.score = channel.userList[i].user.score;
+      tmp.avatar = channel.userList[i].user.imgUrl;
+      tmp.isOnline = channel.userList[i].user.isOnline;
+      list.push(tmp);
+    }
+    return list;
   }
   catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getPublicChannels(this: PrismaService) {
+export async function getPublicChannels(this: PrismaService): Promise<IChannel[]> {
   try {
     const channels = await this.prisma.channel.findMany({
       where: {
@@ -291,7 +284,7 @@ export async function getPublicChannels(this: PrismaService) {
   }
 }
 
-export async function getchannelsForUser(this: PrismaService, userid: string, skip: number, take: number) {
+export async function getchannelsForUser(this: PrismaService, userid: string, skip: number, take: number): Promise<IChannel[]> {
   try {
     const channels = await this.prisma.user.findUnique({
       where: { id: userid },
@@ -310,14 +303,19 @@ export async function getchannelsForUser(this: PrismaService, userid: string, sk
         },
       },
     });
-    return channels.channelList;
+    let list: IChannel[] = [];
+    for (let i = 0; channels.channelList[i]; i++) {
+      let tmp: IChannel = { channelName: channels.channelList[i].channelId };
+      list.push(tmp);
+    }
+    return list;
   }
   catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getChannelInfo(this: PrismaService, channel_name: string) {
+export async function getChannelInfo(this: PrismaService, channel_name: string): Promise<IChannel> {
   try {
     const chan = await this.prisma.channel.findUnique({
       where: { channelName: channel_name },
@@ -362,7 +360,21 @@ export async function getChannelInfo(this: PrismaService, channel_name: string) 
         }
       }
     });
-    return chan;
+    let channel: IChannel = {
+      channelName: chan.channelName,
+      createdAt: chan.createdAt,
+      is_pwd: chan.is_pwd,
+      password: chan.pwd,
+      isPrivate: chan.isPrivate,
+      isDirect: chan.isDirect,
+      creator: chan.creator.login,
+      users: [],
+      admins: [],
+      mutedUsers: [],
+      bannedUsers: [],
+      messages: [],
+    }
+    return channel;
   }
   catch (error) {
     console.log(error.message);
