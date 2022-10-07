@@ -10,9 +10,17 @@
             <textarea id="description" type="text" formControlName="description" rows="4">
             </textarea>
         </div>
-        <div class="form-group">
+        <div class="form-group" formArrayName="members">
             <label for="members">Members</label>
-            <input id="members" type="text" formControlName="members" rows="3">
+            <div class="memberList">
+                <input *ngFor="let number of members.controls; let i = index" 
+                        id="members" type="text" formControlName="{{i}}"
+                        (keyup.enter)="addMember()">
+                <span>
+                    <button (click)="addMember()">+</button>
+                    <button (click)="deleteMember()">-</button>
+                </span>
+            </div>
         </div>
         <div class="form-group">
             <label for="ispublic">Public</label>
@@ -20,21 +28,20 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input id="password" type="password" formControlName="password" [disabled]="!this.roomForm.get('ispublic')">
+            <input id="password" type="password" formControlName="password">
         </div>
         <div class="action-buttons">
-            <button type="submit" (click)="onSubmitForm()" [disabled]="roomForm.invalid">Create</button>
+            <button type="submit" (click)="onCreateChan()" [disabled]="roomForm.invalid">Create</button>
         </div>
     </form>
 
     <h2 style="margin: 20px;">Join public room</h2>
     <div class="publicChannels" [formGroup]="searchForm">
         <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
-        <div class="publicChannel" *ngFor="let channel of publicChannels">
-            <div class="channelName">{{channel.name}}</div>
-            <div class="channelNumber">{{channel.nbUsers}}<span class="glyphicon glyphicon-user"></span></div>
+        <div class="publicChannel" *ngFor="let channel of publicChannels$ | async">
+            <div class="channelName">{{channel}}</div>
             <span>password: <input formControlName="password" type="password"></span>
-            <button (click)="onJoin(channel.name)">Join</button>
+            <button (click)="onJoin(channel)">Join</button>
         </div>
     </div>
 </div>

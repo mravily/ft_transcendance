@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { channelI } from '../models/channel.model';
-import { PageI } from '../models/chat.model';
+import { MessageI, PageI } from '../models/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +16,13 @@ export class ChatService {
     } });
   }
   
-  getAddedMessage(): Observable<any> {
+  getAddedMessageObs(): Observable<any> {
     return this.socket.fromEvent<any>('message');
   }
-  sendMessage(message: any) {
+  sendMessage(message: MessageI) {
     this.socket.emit('addMessage', message);
   }
-  getMessagesObs(): Observable<any> {
+  getMessagesObs(): Observable<MessageI[]> {
     return this.socket.fromEvent<any>('messages');
   }
   
@@ -40,11 +40,15 @@ export class ChatService {
     this.socket.emit('createChannel', room);
   }
   createDM(login1: string, login2: string) {
-    let room : channelI = {name: login1 + login2, password: "", isDirect: true, userList: [login1, login2], isPrivate: true, creator: "DM"};
+    let room : channelI = {
+      channelName: login1 + login2,
+      is_pwd: false, pwd: "", 
+      isDirect: true, isPrivate: true,
+      userList: [login1, login2], creator: "DM"};
     this.socket.emit('createChannel', room);
   }
   getChannelsObs(): Observable<string[]> {
-    return this.socket.fromEvent<any>('channels');
+    return this.socket.fromEvent<string[]>('channels');
   }
   getMyChannels(page: PageI)  {
     this.socket.emit('getMyChannels', page);
@@ -64,8 +68,14 @@ export class ChatService {
   leaveChannel(channelName: string) {
     this.socket.emit('leaveChannel', channelName);
   }
-  promoteUser(channelName: string, username: string) {
-    this.socket.emit('promoteToAdmin', {channelName: channelName, username: username});
+  promoteUser(channelName: string, id: string) {
+    this.socket.emit('promoteToAdmin', {channelName: channelName, username: id});
+  }
+  banUser(channelName: string, id: string) {
+    this.socket.emit('banUser', {from: channelName, to: id});
+  }
+  muteUser(channelName: string, id: string) {
+    this.socket.emit('muteUser', {from: channelName, to: id});
   }
 
   getChannelInfoObs(): Observable<channelI> {
@@ -80,6 +90,13 @@ export class ChatService {
   }
   getBlockedUsersObs(): Observable<string[]> {
     return this.socket.fromEvent<any>('blockedUsers');
+  }
+
+  getErrorObs(): Observable<string> {
+    return this.socket.fromEvent<any>('Error');
+  }
+  getMyIdObs(): Observable<string> {
+    return this.socket.fromEvent<any>('myId');
   }
   // userblocked userunblocked
 

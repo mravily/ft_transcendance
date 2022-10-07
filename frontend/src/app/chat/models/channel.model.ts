@@ -2,15 +2,17 @@ import { MessageI } from "./chat.model";
 
 export interface channelI {
   // basic info
-  name: string;
+  channelName: string;
   isDirect: boolean; // à rajouter dans le schéma Prisma
   isPrivate: boolean;
   creator: string; // à rajouter dans le schéma Prisma
-  password?: string;
+  is_pwd: boolean;
+  pwd: string;
   
   // advanced info
   createdAt?: Date;
   userList?: string[];
+  userInfoList?: any[];
   userAdminList?: string[];
   mutedUserList?: string[];
   bannedUsers?: string[];

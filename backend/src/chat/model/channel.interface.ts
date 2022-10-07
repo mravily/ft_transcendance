@@ -12,6 +12,7 @@ export interface channelI {
   // advanced info
   createdAt?: Date;
   userList?: string[];
+  userInfoList?: any[];
   userAdminList?: string[];
   mutedUserList?: string[];
   bannedUsers?: string[];

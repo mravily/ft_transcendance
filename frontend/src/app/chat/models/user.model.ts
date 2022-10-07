@@ -30,3 +30,23 @@ export interface UserI {
 //   blockedFrom: BlockUser[];
 //   bannedFrom: BanUser[];
 }
+export interface IAccount {
+  firstName: string,
+  lastName: string,
+  fullName: string,
+  email: string,
+  login: string,
+  imgUrl: string,
+  win?: number,
+  lost?: number,
+  winnedMatch?: any[],
+  lostMatch?: any[],
+  friends?: any[],
+  blockUsers?: any[],
+  beFriends?: any[],
+  createdAt?: Date,
+  twoFA?: boolean,
+  isAdmin?: boolean,
+  channelList?: any[],
+  channelAdmin?: any[],
+}

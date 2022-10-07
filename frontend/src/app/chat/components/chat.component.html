@@ -1,8 +1,8 @@
 <div class="body">
 
   <app-newroom *ngIf="create"></app-newroom>
-  <div class="messagezone" *ngIf="!create">
-    <h3>{{selectedContact}}</h3>
+  <div class="messagezone" *ngIf="!create && selectedChannel && selectedChannel.messages">
+    <h3>{{selectedChannel.channelName}}</h3>
     <div class="dropdown">
       <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <span class="caret"></span>
@@ -14,17 +14,26 @@
         <li role="separator" class="divider"></li>
         <li><a href="#">Separated link</a></li>
       </ul>
+      <button (click)="onLeave()">Leave</button>
     </div>
+
+    <div *ngFor="let member of selectedChannel.userInfoList">
+      {{member.login}}: {{member.id}}
+      <button *ngIf="isAdmin(myId) && !isAdmin(member.id)" (click)="onMute(member.id)">Mute</button>
+      <button *ngIf="isAdmin(myId) && !isAdmin(member.id)" (click)="onBan(member.id)">Ban</button>
+      <button *ngIf="isAdmin(myId) && !isAdmin(member.id)" (click)="onPromote(member.id)">Promote</button>
+    </div>
+    
     <div class="inboxContainer" #messageContainer>
-      <div *ngFor="let message of messages; let i = index;">
-        <div class="message" [ngClass]="{isMine: message.user === 'me'}">
-          <h4 *ngIf="i === 0 || messages[i-1].user !== message.user">
+      <div *ngFor="let message of selectedChannel.messages; let i = index;">
+        <div class="message" [ngClass]="{isMine: message.user === myLogin}">
+          <h4 *ngIf="i === 0 || selectedChannel.messages[i-1].user !== message.user">
             {{message.user}}
           </h4>
           <!-- 
             <div class="message-header-time">{{message.time}}</div>
           -->
-          <div class="message-body" [ngClass]="{isMine: message.user === 'me'}">
+          <div class="message-body" [ngClass]="{isMine: message.user === myLogin}">
             <div class="message-body-text">{{message.text}}</div>
           </div>
         </div>
@@ -38,14 +47,14 @@
 
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create"><span class="plus"></span> Add new room</div>
+    <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
 
     <div class="contact" *ngFor="let contact of contacts" (click)="onContactClick(contact)">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Head_Odysseus_MAR_Sperlonga.jpg">
+      <img src="https://cdn0.iconfinder.com/data/icons/network-and-communication-2-8/66/139-512.png">
       
       <div class="contactW">
         {{contact}}
-        <div class="contact-status">Online</div>
+        <!-- <div class="contact-status">Online</div> -->
       </div>
     </div>
     

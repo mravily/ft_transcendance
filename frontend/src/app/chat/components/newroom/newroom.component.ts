@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { map, Subscription } from 'rxjs';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { map, Observable, Subscription } from 'rxjs';
+import { channelI } from '../../models/channel.model';
 import { ChatService } from '../../services/chat.service';
 
 @Component({
@@ -13,24 +14,20 @@ export class NewroomComponent implements OnInit {
   roomForm!: FormGroup;
   searchForm!: FormGroup;
   searchSubcription!: Subscription;
-  publicChannels: any[];
+  publicChannels$: Observable<string[]>;
   password: string = "";
 
   constructor(private builder: FormBuilder, private chatService: ChatService) {
-    this.publicChannels = [
-      { name: "general", nbUsers : 21},
-      { name: "random", nbUsers : 12},
-      { name: "memes", nbUsers : 1},
-    ];
+    this.publicChannels$ = chatService.getPublicChannelsObs();
   }
 
   ngOnInit(): void {
     this.roomForm = this.builder.group({
       name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      members: [null, [Validators.required]],
-      ispublic: [null, [Validators.required]],
-      password: [{value: null}]
+      description: [null, []],
+      members: this.builder.array([new FormControl()]),
+      ispublic: [null, []],
+      password: [null]
     },
     {
       updateOn: 'blur'
@@ -44,17 +41,35 @@ export class NewroomComponent implements OnInit {
     ).subscribe((search) => {
       this.chatService.searchPublicChannels(search);
     });
-    this.chatService.getPublicChannelsObs().subscribe((channels: any[]) => {
-      this.publicChannels = channels;
-    });
+    this.chatService.getPublicChannels({page: 1, limit: 10});
   }
   ngOnDestroy() {
     this.searchSubcription.unsubscribe();
   }
-
-  onSubmitForm()  {
+  get members() {
+    return this.roomForm.get('members') as FormArray;
+  }
+  addMember() {
+    // const control = <FormArray>this.roomForm.controls['members'];
+    this.members.push(new FormControl())
+  }
+  deleteMember() {
+    // const control = <FormArray>this.roomForm.controls['members'];
+    this.members.removeAt(this.members.length - 1);
+  }
+  onCreateChan()  {
     console.log(this.roomForm.value);
-    this.chatService.createChannel(this.roomForm.value);
+    let chan: channelI = {
+      channelName: this.roomForm.value.name,
+      // description: this.roomForm.value.description,
+      userList: this.roomForm.value.members,
+      isPrivate: !this.roomForm.value.ispublic,
+      isDirect: false,
+      is_pwd: this.roomForm.value.password != null,
+      pwd: this.roomForm.value.password,
+      creator: "me", // only to compile, not necessary
+    }
+    this.chatService.createChannel(chan);
   }
   onJoin(channelName: string) {
     console.log(channelName, this.password);

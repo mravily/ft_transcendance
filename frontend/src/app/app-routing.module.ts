@@ -11,7 +11,7 @@ import { ChatComponent } from './chat/components/chat.component';
 const routes: Routes = [
 	{ path: 'sign-in', component: SignInComponent },
 	{ path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
-	{ path: 'messages', component: ChatComponent},
+	{ path: 'messages', component: ChatComponent, canActivate: [AuthGuard]},
 	{ path: 'play', component: LandingPageComponent},
 	{ path: 'play/:gameId', component: PongComponent,},
 ];

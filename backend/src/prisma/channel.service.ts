@@ -34,6 +34,7 @@ export interface eventI {
 }
 
 export async function setChannel(this: PrismaService, channel: channelI, creatorId: string) {
+  
   try {
     await this.prisma.channel.create({
       data: {
@@ -341,7 +342,7 @@ export async function getPublicChannels(this: PrismaService): Promise<string[]> 
   }
 }
 
-export async function getchannelsForUser(this: PrismaService, userid: string, skip: number, take: number) {
+export async function getchannelsForUser(this: PrismaService, userid: string, skip: number, take: number): Promise<string[]> {
   try {
     const channels = await this.prisma.user.findUnique({
       where: { id: userid },
@@ -360,7 +361,7 @@ export async function getchannelsForUser(this: PrismaService, userid: string, sk
         },
       },
     });
-    return channels.channelList;
+    return channels.channelList.map((channel) => channel.channelId);
   }
   catch (error) {
     console.log(error.message);
@@ -386,6 +387,11 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         userList: {
             select: {
                 userId: true,
+                user: {
+                  select: {
+                      login: true,
+                  }
+                }
             }
         },
         userAdminList: {
@@ -412,21 +418,31 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         }
       }
     });
-    let res: channelI;
+    let res: channelI = {
+      channelName: chan.channelName,
+      createdAt: chan.createdAt,
+      is_pwd: chan.is_pwd,
+      pwd: chan.pwd,
+      isPrivate: chan.isPrivate,
+      isDirect: chan.isDirect,
+      creator: chan.creator.login,
+    };
+    res.userList = chan.userList.map((user) => user.userId);
+    res.userInfoList = chan.userList.map((user) => { return {
+      id: user.userId,
+      login: user.user.login
+    };});
+    res.userAdminList = chan.userAdminList.map((user) => user.userId);
+    res.mutedUserList = chan.mutedUserList.map((user) => user.userId);
     res.bannedUsers = chan.bannedUsers.map((user) => user.userId);
-    res.channelName = chan.channelName;
-    res.createdAt = chan.createdAt;
-    res.creator = chan.creator.login;
-    res.is_pwd = chan.is_pwd;
-    res.isPrivate = chan.isPrivate;
-    res.isDirect = chan.isDirect;
     res.messages = chan.messages.map((message) => {
-      let res: MessageI;
-      res.createdAt = message.createdAt;
-      res.user = message.from.login;
-      res.message = message.message;
-      res.channel = chan.channelName;
-      return res;
+      let mess: MessageI = {
+        createdAt: message.createdAt,
+        user: message.from.login,
+        text: message.message,
+        channel: chan.channelName,
+      };
+      return mess;
     });
 
     return res;
