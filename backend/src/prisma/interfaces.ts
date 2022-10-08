@@ -23,6 +23,7 @@ export interface IAccount {
     dataUrl?: string;
     channelList?: any[];
     channelAdmin?: any[];
+    activities?: Activity[];
 }
 
 export interface IChannel {
@@ -65,38 +66,13 @@ export interface IMessage {
 //     friends: number,
 // }
 
-// export interface Activity {
-//     avatar: any,
-//     displayName: string,
-//     createdAt: Date,
-//     message: string,
-// }
+export interface Activity {
+    avatar: any,
+    displayName: string,
+    createdAt: Date,
+    message: string,
+}
 
-// export interface ProfileOverview {
-//     cardStats: CardStats,
-//     activities: Activity [],
-//     Matches: Match [],
-// }
-
-// export interface friendsList {
-//     email: string,
-//     login: string,
-//     displayName: string,
-//     imgUrl: string,
-//     score: number,
-//     isOnline: boolean,
-//     win: Number,
-//     lost: Number,
-// }
-
-// export interface ProfileSettings {
-//     avatar: string,
-//     displayName: string,
-//     firstName: string,
-//     lastName: string,
-//     email: string,
-//     login: string,
-// }
 // export interface ProfilePublic {
 //     cardStats: CardStats,
 //     friends: Friend[],
@@ -120,27 +96,3 @@ export interface IMatch {
     looser: string;
     looserScore: number;
 }
-
-// export interface Profile {
-//     firstName: string,
-//     lastName: string,
-//     email: string,
-//     login: string,
-//     displayName: string,
-//     avatar: string,
-// }
-
-// export interface ISidebar {
-//     fullName: string,
-//     login: string,
-//     avatar: string,
-//     friendsList: FriendsList[],
-//     friends: number
-// }
-
-// export interface FriendsList {
-//     fullName: string,
-//     login: string,
-//     avatar: string,
-//     isOnline: boolean
-// }

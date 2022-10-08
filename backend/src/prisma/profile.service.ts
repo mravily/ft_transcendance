@@ -46,10 +46,10 @@ export async function getUserRank(this: PrismaService, userId: string): Promise<
     }
 }
 
-export async function getPublicProfile(this: PrismaService, userId: string): Promise<IAccount> {
+export async function getPublicProfile(this: PrismaService, login: string): Promise<IAccount> {
     try {
         const user = await this.prisma.user.findUnique({
-            where : { id: userId },
+            where : { login: login },
             select: {
                 imgUrl: true,
                 nickName: true,
@@ -116,7 +116,7 @@ export async function getPublicProfile(this: PrismaService, userId: string): Pro
             profile.friends = [];
             profile.matches = [];
             profile.n_friends = 0;
-            profile.rank = await this.getUserRank(userId);
+            profile.rank = await this.getUserRank(login);
             profile.lost = user._count.lostMatchs;
             profile.win = user._count.winnedMatchs;
             for (let i = 0; user.befriend[i]; i++) {
