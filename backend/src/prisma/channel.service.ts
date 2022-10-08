@@ -262,12 +262,12 @@ export async function isCreator(this: PrismaService, channel_name: string, userI
   }
 }
 
-export async function setMakeAdmin(this: PrismaService, login: string, channel_name: string) {
+export async function setMakeAdmin(this: PrismaService, userId: string, channel_name: string) {
   try {
     await this.prisma.makeAdmin.create({
       data: {
         channelId: channel_name,
-        userId: login,
+        userId: userId,
       },
     });
   }
@@ -449,6 +449,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
   }
   catch (error) {
     console.log(error.message);
+    return null;
   }
 }
 

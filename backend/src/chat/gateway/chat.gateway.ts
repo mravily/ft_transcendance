@@ -110,11 +110,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async onCreatechannel(socket: Socket, channel: channelI) {
     let login: string = socket.data.user.login;
     let userId: string = socket.data.userId;
+    if ((await this.db.getChannelInfo(channel.channelName)) !== null) {
+      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    }
+
     if (channel.is_pwd) {
       channel.pwd = hashPassword(channel.pwd);
     }
     await this.db.setChannel(channel, userId);
-
     for (const user of channel.userList) {
       const curUser = await this.db.getUser(user);
       if (!curUser)
@@ -139,6 +142,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         console.log(user, ' not connected');
       }
     }
+    await this.db.setMakeAdmin(userId, channel.channelName);
   }
 
   @SubscribeMessage('getMyChannels')
@@ -168,6 +172,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       else
         return socket.emit('Error', new UnauthorizedException());      
     }
+    console.log('Joining channel', channelInfo.name, channel.is_pwd);
     if (channel.is_pwd && comparePasswords(channelInfo.password, channel.pwd)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
@@ -281,8 +286,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const users = await this.db.getChannelUsers(channelName);
     for (const user of users) {
       const socketids: Set<string> = this.connectedUsers.get(user.user.login);
-      for (const socketId of socketids) {
-        this.server.to(socketId).emit(command, data);
+      if (socketids) {
+        for (const socketId of socketids.values()) {
+          this.server.to(socketId).emit(command, data);
+        }
       }
     }
   }
