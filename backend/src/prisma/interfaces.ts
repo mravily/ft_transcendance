@@ -96,3 +96,10 @@ export interface IMatch {
     looser: string;
     looserScore: number;
 }
+
+export interface eventI {
+    from: string;
+    to: string;
+    eventDate?: Date;
+    eventDuration?: number;
+  }
