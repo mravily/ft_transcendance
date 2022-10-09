@@ -21,8 +21,7 @@ model User {
   score Int
   isOnline Boolean
   isAdmin Boolean
-  atoken String @unique
-  rtoken String @unique
+  token String? @unique
   twoFA Boolean
   secret String?
   dataUrl String?

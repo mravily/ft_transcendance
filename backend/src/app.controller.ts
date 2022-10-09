@@ -14,9 +14,6 @@ export class AppController {
       'Juan',
       'Iglesias',
       'jiglesia@student.42.fr',
-      false,
-      'token jiglesia',
-      'atoken jiglesia',
       'https://cdn.intra.42.fr/users/jiglesia.jpg',
     );
     this.db.setUser(
@@ -25,9 +22,6 @@ export class AppController {
       'titi',
       'toto',
       'toto@student.42.fr',
-      false,
-      'token toto',
-      'atoken titi',
       'https://cdn.intra.42.fr/users/mravily.jpg',
     );
     // this.db.setFriend("jiglesia", "mravily");
