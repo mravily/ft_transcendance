@@ -1,7 +1,7 @@
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 // import { AuthService } from 'src/auth/service/auth.service';
 import { Socket, Server } from 'socket.io';
-import { UserI } from '../model/user.interface';
+import { IAccount, UserI } from '../model/user.interface';
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
 import { channelI, eventI } from '../model/channel.interface';
@@ -97,11 +97,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('searchPublicChannels')
   async onSearchPublicchannels(socket: Socket, key: string) {
-    const channels: string[]  = await this.db.getPublicChannels();
+    const channels: IChannel[]  = await this.db.getPublicChannels();
     let res: string[] = [];
     for (const channel of channels) {
-      if (channel.includes(key)) {
-        res.push(channel);
+      if (channel.channelName.includes(key)) { // OK Augustin ?
+        res.push(channel.channelName);         // OK Augustin ?
       }
     }
     return this.server.to(socket.id).emit('publicChannels', channels);
@@ -128,7 +128,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
 
       this.db.setJoinChannel(curUser.id, channel.channelName);
-      const socketIds: Set<string> = this.connectedUsers.get(user);
+      const socketIds: Set<string> = this.connectedUsers.get(user.login);
       if (socketIds) {
         const channels = await this.db.getChannelsForUser(curUser.id, 1, 10);
         // // substract page -1 to match the angular material paginator
@@ -218,7 +218,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('addMember')
-  async onAddMember(socket: Socket, channelName: string, id: string) {
+  async onAddMember(socket: Socket, channelName: string, id: string) { // Pb avec l'ID ?
     let channel: IChannel= await this.db.getChannelInfo(channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -226,9 +226,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel.admins.includes(socket.data.userId)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (channel.users.includes(id)) {
-      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    for (const user of channel.users) { // OK Augustin ?
+      if (user.id.includes(id)) {
+        return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+      }
     }
+    // if (channel.users.includes(id)) {
+    //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    // }
     this.db.setJoinChannel(id, channelName);
     // channel = await this.db.getChannelInfo(channelName);
     // this.sendToChan(channelName, 'channelInfo', channel);
@@ -287,7 +292,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async sendToChan(channelName: string, command: string, data: any) {
     const users = await this.db.getChannelUsers(channelName);
     for (const user of users) {
-      const socketids: Set<string> = this.connectedUsers.get(user.user.login);
+      const socketids: Set<string> = this.connectedUsers.get(user.login);
       if (socketids) {
         for (const socketId of socketids.values()) {
           this.server.to(socketId).emit(command, data);
@@ -379,7 +384,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('getBlockedUsers')
   async onGetBlockedUsers(socket: Socket) {
-    const blockedUsers: string[] = await this.db.getBlockedUsers(socket.data.user.login); // Juan => Peut-on utiliser cette fonction pour obtenir juste un vecteur avec des logins ?
+    const blockedUsers: IAccount[] = await this.db.getBlockedUsers(socket.data.user.login); // Juan => Peut-on utiliser cette fonction pour obtenir juste un vecteur avec des logins ?
     socket.emit('blockedUsers', blockedUsers);
   }
     
