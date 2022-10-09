@@ -1,5 +1,6 @@
 import { PrismaService } from "../prisma.service";
 import { IAccount, IChannel } from "./interfaces";
+import { eventI } from '../chat/model/channel.interface';
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
@@ -109,7 +110,13 @@ export async function getMuteInfo(this: PrismaService, channel_name: string, log
         duration: true,
       },
     });
-    return mute;
+    let res : eventI  = {
+      from: channel_name,
+      to: login,
+      eventDate: mute.createdAt,
+      eventDuration: mute.duration,
+    } 
+    return res;
   }
   catch (error) {
     console.log(error.message);

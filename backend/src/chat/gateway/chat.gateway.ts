@@ -1,7 +1,8 @@
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 // import { AuthService } from 'src/auth/service/auth.service';
 import { Socket, Server } from 'socket.io';
-import { IAccount, UserI } from '../model/user.interface';
+import { UserI } from '../model/user.interface';
+// import { IAccount } from '../model/user.interface';
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
 import { channelI, eventI } from '../model/channel.interface';
@@ -10,7 +11,7 @@ import { PrismaService } from '../../prisma.service';
 import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
 import { AuthService } from '../../auth/auth.service';
-import { IChannel } from '../../prisma/interfaces';
+import { IChannel, IAccount } from '../../prisma/interfaces';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
