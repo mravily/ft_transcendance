@@ -35,11 +35,11 @@ export async function setChannelMessage(this: PrismaService, id: string, channel
   }
 }
 
-export async function setJoinChannel(this: PrismaService, userid: string, channel_name: string) {
+export async function setJoinChannel(this: PrismaService, login: string, channel_name: string) {
   try {
     await this.prisma.joinChannel.create({
       data: {
-        userId: userid,
+        userId: login,
         channelId: channel_name,
       },
     });

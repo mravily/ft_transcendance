@@ -219,26 +219,49 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('addMember')
-  async onAddMember(socket: Socket, channelName: string, id: string) { // Pb avec l'ID ?
+  async onAddMember(socket: Socket, channelName: string, otherUserLogin: string) { // Pb avec l'ID ?
     let channel: IChannel= await this.db.getChannelInfo(channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!channel.admins.includes(socket.data.userId)) {
+    if (!channel.admins.includes(socket.data.userId)) { //Est-ce qu'il faut que je mette dans des boucles tous les includes ?
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     for (const user of channel.users) { // OK Augustin ?
-      if (user.id.includes(id)) {
+      if (user.login.includes(otherUserLogin)) {
         return this.server.to(socket.id).emit('Error', new UnauthorizedException());
       }
     }
     // if (channel.users.includes(id)) {
     //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     // }
-    this.db.setJoinChannel(id, channelName);
+    this.db.setJoinChannel(otherUserLogin, channelName);
     // channel = await this.db.getChannelInfo(channelName);
     // this.sendToChan(channelName, 'channelInfo', channel);
   }
+
+
+  // @SubscribeMessage('addMember')
+  // async onAddMember(socket: Socket, channelName: string, id: string) { // Pb avec l'ID ?
+  //   let channel: IChannel= await this.db.getChannelInfo(channelName);
+  //   if (!channel) {
+  //     return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+  //   }
+  //   if (!channel.admins.includes(socket.data.userId)) {
+  //     return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+  //   }
+  //   for (const user of channel.users) { // OK Augustin ?
+  //     if (user.id.includes(id)) {
+  //       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+  //     }
+  //   }
+  //   // if (channel.users.includes(id)) {
+  //   //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+  //   // }
+  //   this.db.setJoinChannel(id, channelName);
+  //   // channel = await this.db.getChannelInfo(channelName);
+  //   // this.sendToChan(channelName, 'channelInfo', channel);
+  // }
 
   @SubscribeMessage('promoteToAdmin') // muteEvent
   async onPromoteToAdmin(socket: Socket, promoteInfo: {channelName: string, login: string}) {
