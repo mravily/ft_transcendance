@@ -88,10 +88,10 @@ model makeAdmin {
 // Relations:
 
   channelId String
-  userId String
+  login String
   channel Channel @relation(fields: [channelId], references: [channelName])
-  user User @relation(fields: [userId], references: [login])
-  @@unique([channelId, userId])
+  user User @relation(fields: [login], references: [login])
+  @@unique([channelId, login])
 }
 
 model muteUser {
@@ -102,10 +102,10 @@ model muteUser {
 // Relations:
 
   channelId String
-  userId String
+  login String
   channel Channel @relation(fields: [channelId], references: [channelName])
-  user User @relation(fields: [userId], references: [login])
-  @@unique([channelId, userId])
+  user User @relation(fields: [login], references: [login])
+  @@unique([channelId, login])
 }
 
 model BanUser {
@@ -116,10 +116,10 @@ model BanUser {
   // Relations:
 
   channelId String
-  userId String
+  login String
   channel Channel @relation(fields: [channelId], references: [channelName])
-  user User @relation(fields: [userId], references: [login])
-  @@unique([channelId, userId])
+  user User @relation(fields: [login], references: [login])
+  @@unique([channelId, login])
 }
 
 model JoinChannel {
@@ -143,9 +143,9 @@ model ChannelMessage {
 
 // Relations:
 
-  fromId  String
+  userId  String
   channelId String
-  from User @relation(fields: [fromId], references: [id])
+  user User @relation(fields: [userId], references: [id])
   channel Channel @relation(fields: [channelId], references: [channelName])
 }
 
@@ -156,9 +156,9 @@ model AddFriend {
 
 // Relations:
   requesterId String
-  requestedId String
+  requestedLogin String
   requester User @relation(name: "befriend", fields: [requesterId], references: [id])
-  requested User @relation(name: "friend", fields: [requestedId], references: [login])
+  requested User @relation(name: "friend", fields: [requestedLogin], references: [login])
 }
 
 model BlockUser {
@@ -167,10 +167,10 @@ model BlockUser {
 
 // Relations:
   blockerId String
-  blockedId String
+  blockedLogin String
   blocker User @relation(name: "blocker", fields: [blockerId], references: [id])
-  blocked User @relation(name: "blocked", fields: [blockedId], references: [login])
-  @@unique([blockedId, blockerId])
+  blocked User @relation(name: "blocked", fields: [blockedLogin], references: [login])
+  @@unique([blockedLogin, blockerId])
 }
 
 model Photos {
