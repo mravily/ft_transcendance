@@ -56,7 +56,7 @@ export interface IPhoto {
 export interface IMessage {
     createdAt: Date;
     message: string;
-    from: string;
+    user: string;
 }
 
 // export interface CardStats {

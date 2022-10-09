@@ -128,11 +128,11 @@ model JoinChannel {
 
 // Relations:
 
-  userId String
+  login String
   channelId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [login], references: [login])
   channel Channel @relation(fields: [channelId], references: [channelName])
-  @@unique([channelId, userId])
+  @@unique([channelId, login])
 }
 
 model ChannelMessage {
