@@ -142,7 +142,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         console.log(user, ' not connected');
       }
     }
-    await this.db.setMakeAdmin(userId, channel.channelName);
+    //await this.db.setMakeAdmin(userId, channel.channelName);
+    await this.db.setMakeAdmin(socket.data.user.login, channel.channelName);
   }
 
   @SubscribeMessage('getMyChannels')
