@@ -19,7 +19,7 @@ export class ProfileButtonComponent implements OnInit {
   }
 
   isLogout() {
-	this.cookieService.delete('token');
+	this.cookieService.delete('access');
 	this.router.navigateByUrl('/');
   }
 }

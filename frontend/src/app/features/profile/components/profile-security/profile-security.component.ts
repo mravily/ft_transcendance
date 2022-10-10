@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { TfaService } from 'src/app/features/tfa.service';
 
 @Component({
   selector: 'app-profile-security',
@@ -7,9 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileSecurityComponent implements OnInit {
 
-  constructor() { }
+  	constructor() { }
 
-  ngOnInit(): void {
-  }
+  	ngOnInit(): void {
+		
+  	}
 
+	
 }

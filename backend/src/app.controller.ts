@@ -1,5 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AuthService } from './auth/auth.service';
+import { Tokens } from './auth/types/tokens.type';
 import { PrismaService } from './prisma.service';
 
 @Controller()
@@ -7,6 +9,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private db: PrismaService,
+    private authService: AuthService,
   ) {
     // this.db.setUser(
     //   'jiglesia',
@@ -38,4 +41,5 @@ export class AppController {
     console.log('lol');
     return this.appService.getHello();
   }
+
 }

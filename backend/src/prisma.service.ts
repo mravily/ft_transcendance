@@ -5,6 +5,7 @@ import {
   setUser,
   getUserAccount,
   set2FA,
+  get2FASecret,
   updateUserScore,
   updateUserStatus,
   getBlockedUsers,
@@ -14,6 +15,7 @@ import {
   sendFriendReq,
   getLastPhotoPath,
   deleteBlockUser,
+  is2FA,
 } from './prisma/user.service';
 import {
   deleteBan,
@@ -34,6 +36,7 @@ import {
   setJoinChannel,
   setMakeAdmin,
   setMuteUser,
+  
 } from './prisma/channel.service';
 import {
   getMatchHistory,
@@ -80,6 +83,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public setMuteUser = setMuteUser;
   public setMakeAdmin = setMakeAdmin;
   public set2FA = set2FA;
+  public get2FASecret = get2FASecret;
   public setChannelPass = setChannelPass;
   public updateUserScore = updateUserScore;
   public updateUserStatus = updateUserStatus;
@@ -107,4 +111,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getPublicChannels = getPublicChannels;
   public getChannelsForUser = getchannelsForUser;
   public deleteBlockUser = deleteBlockUser;
+  public is2FA = is2FA;
 }

@@ -22,7 +22,7 @@ export class SidebarMenuComponent implements OnInit {
 	//   }
 		
 		isLogin() {
-			return this.cookieService.check('token');
+			return this.cookieService.check('access');
 		}
 		
 	data$!: SideBarData;
