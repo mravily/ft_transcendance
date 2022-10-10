@@ -1,17 +1,18 @@
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 // import { AuthService } from 'src/auth/service/auth.service';
 import { Socket, Server } from 'socket.io';
-import { UserI } from '../model/user.interface';
+// import { UserI } from '../model/user.interface';
 // import { IAccount } from '../model/user.interface';
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
-import { channelI, eventI } from '../model/channel.interface';
-import { MessageI } from '../model/message.interface';
+// import { channelI, eventI } from '../model/channel.interface';
+// import { MessageI } from '../model/message.interface';
 import { PrismaService } from '../../prisma.service';
 import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
 import { AuthService } from '../../auth/auth.service';
-import { IChannel, IAccount } from '../../prisma/interfaces';
+import { IAccount, IChannel, IMessage, eventI } from '../../prisma/interfaces';
+// import { IChannel, IAccount } from '../../prisma/interfaces';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
@@ -57,7 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     console.log('Client connected', client.id, client.data);
     try {
       // const decodedToken = await this.authService.verifyJwt(socket.handshake.headers.authorization);
-      const user: UserI = await this.db.getUserById(client.data.userId);
+      const user: IAccount = await this.db.getUserById(client.data.userId);
       if (!user) {
         return this.disconnect(client);
       } else {
@@ -290,9 +291,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('addMessage')
-  async onAddMessage(socket: Socket, message: MessageI) {
-    message.user = socket.data.user.login;
-    const channel: IChannel= await this.db.getChannelInfo(message.channel);
+  async onAddMessage(socket: Socket, message: IMessage) {
+    message.from = socket.data.user.login;
+    const channel: IChannel= await this.db.getChannelInfo(message.channelId);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
@@ -309,8 +310,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       else
         return socket.emit('Error', new UnauthorizedException());      
     }
-    this.db.setChannelMessage(socket.data.userId, channel.channelName, message.text); 
-    this.sendToChan(message.channel, 'message', message);
+    this.db.setChannelMessage(socket.data.userId, channel.channelName, message.message); 
+    this.sendToChan(message.channelId, 'message', message);
   }
 
   async sendToChan(channelName: string, command: string, data: any) {
@@ -326,11 +327,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   sendNotif(text: string, channelName: string, userId: string) {
-    const createdMessage: MessageI = {
+    const createdMessage: IMessage = {
       isNotif: true,
-      text: text,
-      user: userId,
-      channel: channelName,
+      message: text,
+      from: userId,
+      channelId: channelName,
       createdAt: new Date()
     };
     this.db.setChannelMessage(userId, channelName, text); // attention channel name

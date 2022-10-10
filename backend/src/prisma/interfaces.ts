@@ -57,8 +57,8 @@ export interface IMessage {
     createdAt: Date;
     message: string;
     from: string; // Est-ce que c'est l'ID ou le login ?
-
-    //isNotif?: boolean; => JUAN
+    channelId: string;
+    isNotif?: boolean; //=> JUAN
 
 
 }

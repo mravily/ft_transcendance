@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IChannel } from "./interfaces";
+import { IAccount, IChannel, eventI } from "./interfaces";
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
@@ -70,7 +70,7 @@ export async function setMuteUser(this: PrismaService, channel_name: string, log
     await this.prisma.muteUser.create({
       data: {
         channelId: channel_name,
-        login: login,
+        userId: login,
         duration: duration,
       },
     });
@@ -86,7 +86,7 @@ export async function deleteMuteUser(this: PrismaService, channel_name: string, 
       where: {
         channelId_userId: {
           channelId: channel_name,
-          login: login,
+          userId: login,
         }
       }
     });
@@ -101,7 +101,7 @@ export async function getMuteInfo(this: PrismaService, channel_name: string, log
     const mute = await this.prisma.muteUser.findUnique({
       where: {
         channelId_userId: {
-          login: login,
+          userId: login,
           channelId: channel_name,
         }
       },
@@ -128,13 +128,13 @@ export async function setBanUser(this: PrismaService, channel_name: string, logi
     await this.prisma.banUser.upsert({
       where: {
         channelId_userId: {
-          login: login,
+          userId: login,
           channelId: channel_name,
         }
       },
       update: { duration: duration },
       create: {
-        login: login,
+        userId: login,
         channelId: channel_name,
         duration: duration,
       },
@@ -150,7 +150,7 @@ export async function deleteBan(this: PrismaService, channel_name: string, login
     await this.prisma.banUser.delete({
       where: {
         channelId_userId: {
-          login: login,
+          userId: login,
           channelId: channel_name,
         }
       }
@@ -204,7 +204,7 @@ export async function setMakeAdmin(this: PrismaService, login: string, channel_n
     await this.prisma.makeAdmin.create({
       data: {
         channelId: channel_name,
-        login: login,
+        userId: login,
       },
     });
   }
@@ -340,7 +340,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         },
         userList: {
             select: {
-                userId: true, // Est-ce que ce n'est pas login ici plutôt ?
+                userId: true, // Est-ce que ce n'est pas login ici plutôt ??
             }
         },
         userAdminList: {
@@ -375,7 +375,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
       isPrivate: chan.isPrivate,
       isDirect: chan.isDirect,
       creator: chan.creator.login,
-      users: [],
+      users: chan.userList.map((user) => {return {login: user.userId}}),
       admins: [],
       mutedUsers: [],
       bannedUsers: [],
