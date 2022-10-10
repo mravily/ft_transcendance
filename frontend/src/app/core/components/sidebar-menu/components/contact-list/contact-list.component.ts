@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ShortListContact } from '../../model/sidebar.model';
+import { FriendsList } from '../../model/sidebar.model';
 
 @Component({
   selector: 'app-contact-list',
@@ -8,7 +8,7 @@ import { ShortListContact } from '../../model/sidebar.model';
 })
 export class ContactListComponent implements OnInit {
 
-  @Input() contact!: ShortListContact;
+  @Input() contact!: FriendsList;
 	
   constructor() { }
 

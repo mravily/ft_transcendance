@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TwoFactorAuthenticationModule } from './2FA/twoFactorAuthentication.module';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,6 +21,7 @@ import { UploadsModule } from './uploads/uploads.module';
     StreamModule,
     GameModule,
     ChatModule,
+    TwoFactorAuthenticationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

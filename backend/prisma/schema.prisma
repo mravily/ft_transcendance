@@ -21,8 +21,7 @@ model User {
   score Int
   isOnline Boolean
   isAdmin Boolean
-  atoken String @unique
-  rtoken String @unique
+  token String? @unique
   twoFA Boolean
   secret String?
   dataUrl String?
@@ -128,11 +127,11 @@ model JoinChannel {
 
 // Relations:
 
-  userId String
+  login String
   channelId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [login], references: [login])
   channel Channel @relation(fields: [channelId], references: [channelName])
-  @@unique([channelId, userId])
+  @@unique([channelId, login])
 }
 
 model ChannelMessage {

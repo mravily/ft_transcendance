@@ -106,4 +106,4 @@ export interface eventI {
     to: string;
     eventDate?: Date;
     eventDuration?: number;
-  }
+}

@@ -1,0 +1,15 @@
+.wrapper {
+	display: grid !important;
+	grid-template-columns: repeat(3, 33%) !important;
+	font-size: 11px;
+	border-radius: 5px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+	
+.text {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	justify-items: center;
+}

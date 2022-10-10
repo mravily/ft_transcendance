@@ -4,31 +4,26 @@ import { IAccount, IPhoto } from './interfaces';
 export async function setUser(
   this: PrismaService,
   login: string,
-  name: string,
+  nickname: string,
   firstname: string,
   lastname: string,
   email: string,
-  isAdmin: boolean,
-  rtoken: string,
-  atoken: string,
   imgUrl: string,
 ): Promise<string> {
   try {
     const user = await this.prisma.user.upsert({
       where: { login: login },
-      update: { atoken: atoken, rtoken: rtoken },
+      update: {},
       create: {
         login: login,
-        nickName: name,
+        nickName: nickname,
         firstName: firstname,
         lastName: lastname,
         email: email,
         score: 0,
-        atoken: atoken,
-        rtoken: rtoken,
         twoFA: false,
         isOnline: true,
-        isAdmin: isAdmin,
+        isAdmin: false,
         imgUrl: imgUrl,
         n_messages: 0,
       },
@@ -36,6 +31,30 @@ export async function setUser(
     return user.id;
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function setUserToken(this: PrismaService, userId: string, token: string) {
+  try {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { token: token }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function getUserToken(this: PrismaService, userId: string): Promise<string> {
+  try {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { token: true },
+    });
+    return user.token;
+  }
+  catch (error) {
+    console.log(error.message);
   }
 }
 
@@ -48,7 +67,7 @@ export async function setBlockUser(
     await this.prisma.blockUser.create({
       data: {
         blockerId: login,
-        blockedId: block_login,
+        blockedLogin: block_login,
       },
     });
   } catch (error) {
@@ -64,8 +83,8 @@ export async function deleteBlockUser(
   try {
     await this.prisma.blockUser.delete({
       where: {
-        blockedId_blockerId: {
-          blockedId: login,
+        blockedLogin_blockerId: {
+          blockedLogin: login,
           blockerId: userId,
         },
       },
@@ -83,7 +102,7 @@ export async function sendFriendReq(
   try {
     await this.prisma.addFriend.create({
       data: {
-        requestedId: requested,
+        requestedLogin: requested,
         requesterId: requester,
         isAccepted: false,
       },
@@ -429,7 +448,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         },
         blockedUsers: {
           select: {
-            blockedId: true,
+            blockedLogin: true,
           },
         },
       },
@@ -456,7 +475,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         userAccount.friends.push(user.friends[i].requested);
       }
       for (let i = 0; user.blockedUsers[i]; i++) {
-        userAccount.blockUsers.push(user.blockedUsers[i].blockedId);
+        userAccount.blockUsers.push(user.blockedUsers[i].blockedLogin);
       }
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.befriend[i].requester);

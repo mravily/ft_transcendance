@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Session, StreamableFile } from "@nestjs/common";
+import { Controller, Get, Param, Res, StreamableFile } from "@nestjs/common";
+import type { Response } from 'express';
 import { createReadStream } from "fs";
 import { join } from "path";
 import { PrismaService } from "../prisma.service";
@@ -7,10 +8,14 @@ import { PrismaService } from "../prisma.service";
 export class StreamController {
     constructor(private db: PrismaService) {}
 
-    @Get()
-    async getFile(@Session() session: Record<string, any>): Promise<StreamableFile> {
-        const photo = await this.db.getLastPhotoPath(session.userid);
-        const file = createReadStream(join(process.cwd(), photo));
+    @Get(':id')
+    async getFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
+        const photo = await this.db.getLastPhotoPath(id);
+        const file = createReadStream(join(process.cwd(), photo.path));
+        res.set({
+            'Content-Type': photo.mimetype,
+            'Content-Disposition': 'attachment; filename="' + photo.filename + '"',
+          });
         return new StreamableFile(file);
     }
 }

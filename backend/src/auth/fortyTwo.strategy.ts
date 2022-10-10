@@ -28,9 +28,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       profile.name.givenName,
       profile.name.familyName,
       profile.emails[0].value,
-      false,
-      refreshToken,
-      accessToken,
       profile.photos[0].value,
       );
     request.session.userid = id;

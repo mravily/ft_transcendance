@@ -10,7 +10,11 @@ export class LeaderboardService {
 
   constructor(private http: HttpClient) { }
 
-  getList(): Observable<User[]> {
+  getTopTen(): Observable<User[]> {
 	return this.http.get<User[]>("api/leaderboard");
+  }
+
+  getAllUsers(): Observable<User[]> {
+	return this.http.get<User[]>("api/leaderboard/all")
   }
 }
