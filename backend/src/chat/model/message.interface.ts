@@ -1,6 +1,6 @@
 
 export interface MessageI {
-  id?: number;
+  id?: number; // OSEF
   isNotif?: boolean;
   text: string;
   user: string;

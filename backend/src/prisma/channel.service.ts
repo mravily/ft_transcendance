@@ -1,6 +1,5 @@
 import { PrismaService } from "../prisma.service";
 import { IAccount, IChannel } from "./interfaces";
-import { eventI } from '../chat/model/channel.interface';
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
