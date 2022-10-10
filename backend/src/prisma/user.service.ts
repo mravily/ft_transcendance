@@ -1,4 +1,3 @@
-import { Session } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { IAccount, IPhoto } from './interfaces';
 

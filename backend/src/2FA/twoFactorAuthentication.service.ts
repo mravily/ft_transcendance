@@ -26,7 +26,7 @@ export class TwoFactorAuthenticationService {
       secret,
     );
 
-    await this.db.set2FA(user.id, secret);
+    await this.db.set2FA(user.id, secret, otpauthUrl);
 
     return {
       secret,

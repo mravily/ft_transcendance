@@ -1,21 +1,8 @@
 import { PrismaService } from "../prisma.service";
+import { IAccount } from "./interfaces";
 
-export interface ISidebar {
-    fullName: string,
-    login: string,
-    avatar: string,
-    friendsList: FriendsList[],
-    friends: number
-}
 
-export interface FriendsList {
-    fullName: string,
-    login: string,
-    avatar: string,
-    isOnline: boolean
-}
-
-export async function getSidebar(this: PrismaService, id: string) {
+export async function getSidebar(this: PrismaService, id: string): Promise<IAccount> {
     const usr = await this.prisma.user.findFirst({
         where: { id: id },
         select: {
@@ -48,32 +35,32 @@ export async function getSidebar(this: PrismaService, id: string) {
             }
         }
     });
-    let sidebar = {} as ISidebar;
+    let sidebar = {} as IAccount;
     if (usr) {
         sidebar.login = usr.login;
-        sidebar.fullName = usr.nickName;
+        sidebar.nickName = usr.nickName;
         sidebar.avatar = usr.imgUrl;
-        sidebar.friendsList = [];
+        sidebar.friends = [];
         let count = 0;
         for (let i = 0; usr.friends && usr.friends[i]; i++) {
-            let tmp: FriendsList;
+            let tmp: IAccount;
             tmp.login = usr.friends[i].requested.login;
-            tmp.fullName = usr.friends[i].requested.nickName;
+            tmp.nickName = usr.friends[i].requested.nickName;
             tmp.isOnline = usr.friends[i].requested.isOnline;
             tmp.avatar = usr.friends[i].requested.imgUrl;
             count++;
-            sidebar.friendsList.push(tmp);
+            sidebar.friends.push(tmp);
         }
         for (let i = 0; usr.befriend && usr.befriend[i]; i++) {
-            let tmp: FriendsList;
+            let tmp: IAccount;
             tmp.login = usr.befriend[i].requester.login;
-            tmp.fullName = usr.befriend[i].requester.nickName;
+            tmp.nickName = usr.befriend[i].requester.nickName;
             tmp.isOnline = usr.befriend[i].requester.isOnline;
             tmp.avatar = usr.befriend[i].requester.imgUrl;
             count++;
-            sidebar.friendsList.push(tmp);
+            sidebar.friends.push(tmp);
         }
-        sidebar.friends = count;
+        sidebar.n_friends = count;
     }
     return sidebar;
 }

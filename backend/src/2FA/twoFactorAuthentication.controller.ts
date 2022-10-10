@@ -21,6 +21,7 @@ import TwoFactorAuthenticationDto from './dto/2fa.dto';
 import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
 import { request } from 'http';
+import { IAccount } from 'src/prisma/interfaces';
 
 @Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)

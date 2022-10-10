@@ -1,4 +1,5 @@
-import { PrismaService, accountUser } from '../prisma.service';
+import { PrismaService } from '../prisma.service';
+import { IAccount } from './interfaces';
 
 export async function getTopTen(this: PrismaService) {
   const list = await this.prisma.user.findMany({
@@ -14,12 +15,12 @@ export async function getTopTen(this: PrismaService) {
     orderBy: { score: 'desc' },
     take: 10,
   });
-  let users: accountUser[] = [];
+  let users: IAccount[] = [];
   for (let i in list) {
-    const user: accountUser = {
+    const user: IAccount = {
       score: list[i].score,
       login: list[i].login,
-      fullName: list[i].nickName,
+      nickName: list[i].nickName,
       email: list[i].email,
       avatar: list[i].imgUrl,
       isOnline: list[i].isOnline,
@@ -44,12 +45,12 @@ export async function getUsersRanking(this: PrismaService) {
     },
     orderBy: { score: 'desc' },
   });
-  let users: accountUser[] = [];
+  let users: IAccount[] = [];
   for (let i in list) {
-    const user: accountUser = {
+    const user: IAccount = {
       score: list[i].score,
       login: list[i].login,
-      fullName: list[i].nickName,
+      nickName: list[i].nickName,
       email: list[i].email,
       avatar: list[i].imgUrl,
       isOnline: list[i].isOnline,

@@ -36,10 +36,10 @@ RUN npx prisma generate
 
 # Pour migrer les tables Prisma 👇🏽
 # # Ne pas oublier de changer postgres par localhost dans les .env
-# CMD [ "npm", "run", "start:dev" ]
+CMD [ "npm", "run", "start:dev" ]
 
 # Deploie la migration et lance le service en dev 👇🏽 
-CMD [ "npm", "run", "start:migrate:dev" ]
+# CMD [ "npm", "run", "start:migrate:dev" ]
 
 # Deploie la migration et lance le service en prod 👇🏽 
 # CMD [ "npm", "run", "start:migrate:prod" ]
