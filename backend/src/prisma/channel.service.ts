@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IChannel, eventI } from "./interfaces";
+import { IAccount, IChannel, eventI } from "../interfaces";
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
@@ -158,6 +158,32 @@ export async function deleteBan(this: PrismaService, channel_name: string, login
         }
       }
     });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+export async function getBanInfo(this: PrismaService, channel_name: string, login: string) {
+  try {
+    const ban = await this.prisma.banUser.findUnique({
+      where: {
+        channelId_login: {
+          login: login,
+          channelId: channel_name,
+        }
+      },
+      select: {
+        createdAt: true,
+        duration: true,
+      },
+    });
+    let res : eventI  = {
+      from: channel_name,
+      to: login,
+      eventDate: ban.createdAt,
+      eventDuration: ban.duration,
+    } 
+    return res;
   }
   catch (error) {
     console.log(error.message);
@@ -365,7 +391,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
             select: {
                 createdAt: true,
                 message: true,
-                from: {select : {login: true}},
+                user: {select : {login: true}},
             }
         }
       }
@@ -390,7 +416,8 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         channel.messages.push({
           createdAt: chan.messages[i].createdAt,
           message: chan.messages[i].message,
-          user: chan.messages[i].user.login,
+          from: chan.messages[i].user.login,
+          channelId: channel_name,
         });
       }
     }

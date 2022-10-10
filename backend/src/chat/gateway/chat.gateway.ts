@@ -11,7 +11,7 @@ import { PrismaService } from '../../prisma.service';
 import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
 import { AuthService } from '../../auth/auth.service';
-import { IAccount, IChannel, IMessage, eventI } from '../../prisma/interfaces';
+import { IAccount, IChannel, IMessage, eventI } from '../../interfaces';
 // import { IChannel, IAccount } from '../../prisma/interfaces';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
@@ -58,7 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     console.log('Client connected', client.id, client.data);
     try {
       // const decodedToken = await this.authService.verifyJwt(socket.handshake.headers.authorization);
-      const user: IAccount = await this.db.getUserById(client.data.userId);
+      const user: IAccount = await this.db.getUserAccount(client.data.userId);
       if (!user) {
         return this.disconnect(client);
       } else {
@@ -120,19 +120,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (channel.is_pwd) {
       channel.password = hashPassword(channel.password);
     }
-    await this.db.setChannel(channel, userId);
+    await this.db.createchannel(channel, userId);
     for (const user of channel.users) {
-      const curUser = await this.db.getUser(user);
+      const curUser = await this.db.getUserAccount(user.login);
       if (!curUser)
       {
         console.log(user, " not found");
         continue;
       }
 
-      this.db.setJoinChannel(curUser.id, channel.channelName);
+      this.db.setJoinChannel(curUser.login, channel.channelName);
       const socketIds: Set<string> = this.connectedUsers.get(user.login);
       if (socketIds) {
-        const channels = await this.db.getChannelsForUser(curUser.id, 1, 10);
+        const channels = await this.db.getChannelsForUser(curUser.login, 1, 10);
         // // substract page -1 to match the angular material paginator
         // channels.meta.currentPage = channels.meta.currentPage - 1;
         console.log('Channels to', user, channels);
@@ -314,15 +314,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.sendToChan(message.channelId, 'message', message);
   }
 
+  async sendTo(login: string, command: string, data: any) {
+    const socketids: Set<string> = this.connectedUsers.get(login);
+    if (socketids) {
+      for (const socketId of socketids.values()) {
+        this.server.to(socketId).emit(command, data);
+      }
+    }
+  }
   async sendToChan(channelName: string, command: string, data: any) {
     const users = await this.db.getChannelUsers(channelName);
     for (const user of users) {
-      const socketids: Set<string> = this.connectedUsers.get(user.login);
-      if (socketids) {
-        for (const socketId of socketids.values()) {
-          this.server.to(socketId).emit(command, data);
-        }
-      }
+      this.sendTo(user.login, command, data);
     }
   }
 
@@ -337,7 +340,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.db.setChannelMessage(userId, channelName, text); // attention channel name
     this.sendToChan(channelName, 'message', createdMessage);
   }
-    
+
   @SubscribeMessage('muteUser')
   async onMuteUser(socket: Socket, muteEvent: eventI) {
     // let user: string = await this.connectedUserService.getUserLogin(socket.id);
@@ -350,9 +353,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     this.db.setMuteUser(muteEvent.from, muteEvent.to, muteEvent.eventDuration);
     this.sendNotif(muteEvent.to + " a ete mute", muteEvent.from, socket.data.userId);
-    this.connectedUsers.get(muteEvent.to).forEach(socketId => {
-      this.server.to(socketId).emit('muted', muteEvent);
-    });
+    this.sendTo(muteEvent.to, 'muted', muteEvent);
   }
 
   @SubscribeMessage('unmuteUser') // OK
@@ -367,9 +368,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.db.deleteMuteUser(muteEvent.from, muteEvent.to);
     // avertir le mec qui a été unmute
     this.sendNotif(muteEvent.to + " a ete unmute", muteEvent.from, socket.data.userId);
-    this.connectedUsers.get(muteEvent.to).forEach(socketId => {
-      this.server.to(socketId).emit('unmuted', muteEvent);
-    });
+    this.sendTo(muteEvent.to, 'unmuted', muteEvent);
   }
 
   @SubscribeMessage('banUser')
@@ -385,11 +384,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.db.leaveChannel(banEvent.to, banEvent.from);
     this.db.setBanUser(banEvent.from, banEvent.to, banEvent.eventDuration);
     // avertir le mec qui a été ban
-    this.sendNotif(banEvent.to + " a ete ban", banEvent.from, socket.data.userId);
+    this.sendNotif(banEvent.to + " got banned", banEvent.from, socket.data.userId);
+    this.sendTo(banEvent.to, 'ban', banEvent);
 
-    this.connectedUsers.get(banEvent.to).forEach(socketId => {
-      this.server.to(socketId).emit('ban', banEvent);
-    });
   }
 
   @SubscribeMessage('unbanUser')
@@ -404,7 +401,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     this.db.deleteBan(banEvent.to, banEvent.from);
     // avertir le mec qui a été unban
-    this.sendNotif(banEvent.to + " a ete ban", banEvent.from, socket.data.userId);
+    this.sendNotif(banEvent.to + " got unbanned", banEvent.from, socket.data.userId);
   }
 
   @SubscribeMessage('getBlockedUsers')
@@ -415,7 +412,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     
   @SubscribeMessage('blockUser')
   async onblockUser(socket: Socket, blockEvent: eventI) {
-    this.db.setBlockUser(blockEvent.from, blockEvent.to);
+    // this.db.setBlockUser(blockEvent.from, blockEvent.to);
     //this.server.to(socket.id).emit('userblocked', blockEvent);
 
   }

@@ -59,6 +59,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getMuteInfo        = channel.getMuteInfo;
   public setBanUser         = channel.setBanUser;
   public deleteBan          = channel.deleteBan;
+  public getBanInfo         = channel.getBanInfo;
   public isAdmin            = channel.isAdmin;
   public isCreator          = channel.isCreator;
   public removeChannelPass  = channel.removeChannelPass;

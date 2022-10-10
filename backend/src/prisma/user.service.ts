@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IAccount, IPhoto } from './interfaces';
+import { IAccount, IPhoto } from '../interfaces';
 
 export async function setUser(
   this: PrismaService,
@@ -491,7 +491,9 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
       }
     }
     return userAccount;
-  } catch (error) {
+  }
+  catch (error) {
     console.log(error.message);
+    return null;
   }
 }
