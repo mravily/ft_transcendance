@@ -1,3 +1,4 @@
+import { Session } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { IAccount, IPhoto } from './interfaces';
 
@@ -167,6 +168,31 @@ export async function get2FA(this: PrismaService, userId: string): Promise<IAcco
       },
     });
     return user;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function switch2FA(this: PrismaService, userId: string) {
+  try {
+    const usr = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { twoFA: true },
+    });
+
+    if (usr.twoFA == true) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { twoFA: false },
+      });
+    }
+    else {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { twoFA: true },
+      });
+    }
   }
   catch (error) {
     console.log(error.message);

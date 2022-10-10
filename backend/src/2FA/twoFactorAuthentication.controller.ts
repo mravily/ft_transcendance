@@ -12,6 +12,8 @@ import {
 import { IUser2FA, TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
 import { PrismaService } from '../prisma.service';
+import { IAccount } from 'src/prisma/interfaces';
+import { delete2FA } from 'src/prisma/user.service';
 // import { AuthGuard } from '@nestjs/passport';
  
 @Controller('2fa')
@@ -37,5 +39,20 @@ export class TwoFactorAuthenticationController {
   @Get('verify')
   async verify(@Session() session: Record<string, any>): Promise<boolean> {
     return this.db.is2FA(session.userid);
+  }
+
+  @Get('get2fa')
+  async get2fa(@Session() session: Record<string, any>): Promise<IAccount> {
+    return this.db.get2FA(session.userid);
+  }
+
+  @Post('delete')
+  async delete2FA(@Session() session: Record<string, any>) {
+    this.db.delete2FA(session.userid);
+  }
+
+  @Post('switch')
+  async switch2fa(@Session() session: Record<string, any>) {
+    this.db.switch2FA(session.userid);
   }
 }

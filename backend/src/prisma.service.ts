@@ -19,9 +19,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       await app.close();
     });
   }
-  
+
   protected prisma = new PrismaClient();
-  
+
   public getSidebar         = sidebar.getSidebar;
   public getTopTen          = leaderboard.getTopTen;
   public getUsersRanking    = leaderboard.getUsersRanking;
@@ -38,6 +38,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public uploadPhoto        = user.uploadPhoto;
   public getLastPhotoPath   = user.getLastPhotoPath;
   public get2FA             = user.get2FA;
+  public delete2FA          = user.delete2FA;
+  public switch2FA          = user.switch2FA;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
   public setMatch           = match.setMatch;
