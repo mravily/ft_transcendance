@@ -1,6 +1,5 @@
-import { Session } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { IAccount, IPhoto } from './interfaces';
+import { IAccount, IPhoto } from '../interfaces';
 
 export async function setUser(
   this: PrismaService,
@@ -62,14 +61,14 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
 
 export async function setBlockUser(
   this: PrismaService,
+  userId: string,
   login: string,
-  block_login: string,
 ) {
   try {
     await this.prisma.blockUser.create({
       data: {
-        blockerId: login,
-        blockedLogin: block_login,
+        blockerId: userId,
+        blockedLogin: login,
       },
     });
   } catch (error) {

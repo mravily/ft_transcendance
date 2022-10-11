@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IChannel } from "./interfaces";
+import { IAccount, IChannel } from "../interfaces";
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {

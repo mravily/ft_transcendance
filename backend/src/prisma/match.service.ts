@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IMatch } from './interfaces';
+import { IMatch } from '../interfaces';
 
 export async function setMatch(this: PrismaService): Promise<number> {
   try {

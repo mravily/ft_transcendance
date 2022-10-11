@@ -12,8 +12,7 @@ import {
 import { IUser2FA, TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
 import { PrismaService } from '../prisma.service';
-import { IAccount } from 'src/prisma/interfaces';
-import { delete2FA } from 'src/prisma/user.service';
+import { IAccount } from 'src/interfaces';
 // import { AuthGuard } from '@nestjs/passport';
  
 @Controller('2fa')

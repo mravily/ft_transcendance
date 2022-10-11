@@ -139,6 +139,7 @@ model ChannelMessage {
   createdAt DateTime @default(now())
   message String
   isRead Boolean
+  isNotif Boolean
 
 // Relations:
 
