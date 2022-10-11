@@ -39,8 +39,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public updateUserScore    = user.updateUserScore;
   public updateUserStatus   = user.updateUserStatus;
   public getFriends         = user.getFriends;
+  public getFriendsById     = user.getFriendsById;
   public uploadPhoto        = user.uploadPhoto;
-  public getLastPhotoPath   = user.getLastPhotoPath;
+  public getLastPhoto       = user.getLastPhoto;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
   public setMatch           = match.setMatch;
@@ -54,11 +55,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;
   public setMuteUser        = channel.setMuteUser;
-  public setMakeAdmin       = channel.setMakeAdmin;
-  public getChannelUsers    = channel.getChannelUsers;
-  public leaveChannel       = channel.leaveChannel;
   public deleteMuteUser     = channel.deleteMuteUser;
   public getMuteInfo        = channel.getMuteInfo;
+  public setMakeAdmin       = channel.setMakeAdmin;
+  public deleteMakeAdmin    = channel.deleteMakeAdmin;
+  public getChannelUsers    = channel.getChannelUsers;
+  public leaveChannel       = channel.leaveChannel;
   public setBanUser         = channel.setBanUser;
   public deleteBan          = channel.deleteBan;
   public isAdmin            = channel.isAdmin;

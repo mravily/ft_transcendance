@@ -211,6 +211,22 @@ export async function setMakeAdmin(this: PrismaService, login: string, channel_n
   }
 }
 
+export async function deleteMakeAdmin(this: PrismaService, login: string, channel_name: string) {
+  try {
+    await this.prisma.makeAdmin.delete({
+      where: {
+        channelId_login: {
+          login: login,
+          channelId: channel_name,
+        }
+      }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setChannelPass(this: PrismaService, channel_name: string, pwd: string) {
   try {
     await this.prisma.channel.update({

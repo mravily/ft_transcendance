@@ -284,7 +284,7 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
   }
 }
 
-export async function getLastPhotoPath(this: PrismaService, login: string): Promise<IPhoto> {
+export async function getLastPhoto(this: PrismaService, login: string): Promise<IPhoto> {
   try {
     const tmp = await this.prisma.user.findUnique({
       where: { login: login },
@@ -358,10 +358,10 @@ export async function getFriends(this: PrismaService, login: string): Promise<IA
   }
 }
 
-export async function getFriendsById(this: PrismaService, id: string): Promise<IAccount[]> {
+export async function getFriendsById(this: PrismaService, userId: string): Promise<IAccount[]> {
   try {
     const friends = await this.prisma.user.findUnique({
-      where: { id: id },
+      where: { id: userId },
       select: {
         friends: {
           select: {
