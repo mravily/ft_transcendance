@@ -58,6 +58,23 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
   }
 }
 
+export async function isUser(this: PrismaService, login: string): Promise<boolean> {
+  try {
+    const user = await this.prisma.user.count({
+      where: { login: login },
+    });
+    if (user) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setBlockUser(
   this: PrismaService,
   login: string,

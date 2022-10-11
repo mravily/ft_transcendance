@@ -13,6 +13,8 @@ export class ChatComponent implements OnInit {
 
   @ViewChild("messageContainer")
   mContainer!: ElementRef;
+  @ViewChild("addMember")
+  addMemberInput!: ElementRef;
 
   create: boolean = false;
 
@@ -23,7 +25,6 @@ export class ChatComponent implements OnInit {
 
   constructor(private chatServ: ChatService) { }
   
-
   ngOnInit(): void {
     this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
       if (this.selectedChannel && this.selectedChannel.messages &&
@@ -88,14 +89,18 @@ export class ChatComponent implements OnInit {
     this.chatServ.leaveChannel(this.selectedChannel.channelName);
     this.selectedChannel.messages = undefined;
   }
-  onMute(id: string) {
-    this.chatServ.muteUser(id, this.selectedChannel.channelName);
+  onMute(login: string) {
+    this.chatServ.muteUser(this.selectedChannel.channelName, login);
   }
-  onBan(id: string) {
-    this.chatServ.banUser(this.selectedChannel.channelName, id);
+  onBan(login: string) {
+    this.chatServ.banUser(this.selectedChannel.channelName, login);
   }
-  onPromote(id: string) {
-    this.chatServ.promoteUser(this.selectedChannel.channelName, id);
+  onPromote(login: string) {
+    this.chatServ.promoteUser(this.selectedChannel.channelName, login);
+  }
+  onAddMember() {
+    this.chatServ.addMember(this.selectedChannel.channelName, this.addMemberInput.nativeElement.value);
+    this.addMemberInput.nativeElement.value = "";
   }
 
 }

@@ -56,7 +56,7 @@ export interface IPhoto {
 export interface IMessage {
     createdAt: Date;
     message: string;
-    from: string; // Est-ce que c'est l'ID ou le login ?
+    from: string; // Est-ce que c'est le login !!!!
     channelId: string;
     isNotif?: boolean; //=> JUAN
 

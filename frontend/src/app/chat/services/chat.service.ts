@@ -57,6 +57,9 @@ export class ChatService {
   joinChannel(channelName: string, password: string) {
     this.socket.emit('joinChannel', {name: channelName, password: password});
   }
+  addMember(channelName: string, login: string) {
+    this.socket.emit('addMember', {channelName: channelName, login: login});
+  }
   getChannelMembersObs(): Observable<IAccount> {
     return this.socket.fromEvent<IAccount>('channelMembers');
   }
@@ -69,14 +72,14 @@ export class ChatService {
   leaveChannel(channelName: string) {
     this.socket.emit('leaveChannel', channelName);
   }
-  promoteUser(channelName: string, id: string) {
-    this.socket.emit('promoteToAdmin', {channelName: channelName, username: id});
+  promoteUser(channelName: string, login: string) {
+    this.socket.emit('promoteToAdmin', {channelName: channelName, login: login});
   }
-  banUser(channelName: string, id: string) {
-    this.socket.emit('banUser', {from: channelName, to: id});
+  banUser(channelName: string, login: string) {
+    this.socket.emit('banUser', {from: channelName, to: login});
   }
-  muteUser(channelName: string, id: string) {
-    this.socket.emit('muteUser', {from: channelName, to: id});
+  muteUser(channelName: string, login: string) {
+    this.socket.emit('muteUser', {from: channelName, to: login, eventDuration: 10000});
   }
 
   getChannelInfoObs(): Observable<IChannel> {

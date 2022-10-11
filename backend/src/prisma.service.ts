@@ -27,6 +27,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getTopTen          = leaderboard.getTopTen;
   public getUsersRanking    = leaderboard.getUsersRanking;
   public setUser            = user.setUser;
+  public isUser             = user.isUser;
   public deleteBlockUser    = user.deleteBlockUser;
   public getUserAccount     = user.getUserAccount;
   public sendFriendReq      = user.sendFriendReq;

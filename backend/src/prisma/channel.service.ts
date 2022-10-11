@@ -48,16 +48,12 @@ export async function setJoinChannel(this: PrismaService, login: string, channel
   }
 }
 
-export async function leaveChannel(this: PrismaService, userId: string, channel_name: string) {
+export async function leaveChannel(this: PrismaService, login: string, channel_name: string) {
   try {
-    let login = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { login: true }
-    });
     await this.prisma.joinChannel.delete({
       where: { 
         channelId_login: {
-          login: login.login,
+          login: login,
           channelId: channel_name,
         }
       }
@@ -190,18 +186,14 @@ export async function getBanInfo(this: PrismaService, channel_name: string, logi
   }
 }
 
-export async function isAdmin(this: PrismaService, channel_name: string, userId: string): Promise<boolean> {
+//is admin plus vraiment necesaire
+export async function isAdmin(this: PrismaService, login: string, channel_name: string): Promise<boolean> {
   try {
     const channels = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {adminChannel: {select: {channelId: true}}}
+      where: { login: login },
+      select: { adminChannel: {select: {channelId: true}}}
     });
-    for (let i in channels.adminChannel) {
-      if (i == channel_name) {
-        return true;
-      }
-    }
-    return false;
+    return channels.adminChannel.map((chan) => chan.channelId).includes(channel_name);
   }
   catch (error) {
     console.log(error.message);

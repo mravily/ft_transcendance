@@ -132,13 +132,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     await this.db.createchannel(channel, userId);
     for (const user of channel.users) {
       console.log('Joining', user);
-      // const curUser = await this.db.getUserAccount(user.login);
-      // if (!curUser)
-      // {
-      //   console.log(user, " not found");
-      //   continue;
-      // } // a implementer, si le user n'existe pas, on l'ignore
-
+      if (!(await this.db.isUser(user.login))){
+        console.log(user, " not found");
+        continue;
+      } 
+      
       this.db.setJoinChannel(user.login, channel.channelName);
       const socketIds: Set<string> = this.connectedUsers.get(user.login);
       if (socketIds) {
@@ -150,13 +148,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           this.server.to(socketId).emit('channels', channels);
         }
       }
-      else
-      {
+      else {
         console.log(user, ' not connected');
       }
     }
     //await this.db.setMakeAdmin(userId, channel.channelName);
-    await this.db.setMakeAdmin(socket.data.user.login, channel.channelName);
+    await this.db.setMakeAdmin(login, channel.channelName);
   }
 
   @SubscribeMessage('getMyChannels')
@@ -191,8 +188,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     console.log('Joining channel', channelInfo.name, channel.is_pwd);
     if (channel.is_pwd && comparePasswords(channelInfo.password, channel.password)) {
-      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+      return this.server.to(socket.id).emit('wrongPassword', new UnauthorizedException());
     }
+    // if (!(await this.db.isUser(login))){
+    //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    // }
+
     await this.db.setJoinChannel(login, channel.channelName);
     this.sendNotif(login + " joined the channel", channel.channelName, socket.data.userId);
     this.onPaginatechannel(socket, { page: 1, limit: 20 });
@@ -228,13 +229,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel.users.includes(socket.data.userId))
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     this.sendNotif(socket.data.user.login + " left the channel", channelName, socket.data.userId);
-    await this.db.leaveChannel(socket.data.userId, channelName);
+    await this.db.leaveChannel(socket.data.user.login, channelName);
     this.onPaginatechannel(socket, { page: 0, limit: 20 });
   }
 
   @SubscribeMessage('addMember')
-  async onAddMember(socket: Socket, channelName: string, otherUserLogin: string) { // Pb avec l'ID ?
-    let channel: IChannel= await this.db.getChannelInfo(channelName);
+  async onAddMember(socket: Socket, addMemberInfo: {channelName: string, login: string}) { // Pb avec l'ID ?
+    let channel: IChannel= await this.db.getChannelInfo(addMemberInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
@@ -242,14 +243,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     for (const user of channel.users) { // OK Augustin ?
-      if (user.login.includes(otherUserLogin)) {
+      if (user.login.includes(addMemberInfo.login)) {
         return this.server.to(socket.id).emit('Error', new UnauthorizedException());
       }
     }
     // if (channel.users.includes(id)) {
     //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     // }
-    this.db.setJoinChannel(otherUserLogin, channelName);
+    if (!(await this.db.isUser(addMemberInfo.login))){
+      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    }
+    this.db.setJoinChannel(addMemberInfo.login, addMemberInfo.channelName);
     // channel = await this.db.getChannelInfo(channelName);
     // this.sendToChan(channelName, 'channelInfo', channel);
   }
@@ -279,15 +283,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('promoteToAdmin') // muteEvent
   async onPromoteToAdmin(socket: Socket, promoteInfo: {channelName: string, login: string}) {
-    let channel: IChannel= await this.db.getChannelInfo(promoteInfo.channelName);
+    let channel: IChannel = await this.db.getChannelInfo(promoteInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!this.db.isAdmin(socket.data.user.login, promoteInfo.channelName)
-        || this.db.isAdmin(promoteInfo.login, promoteInfo.channelName)) {
+    if (!channel.users.map(user => user.login).includes(promoteInfo.login)) {
+      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    }
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)
+        || channel.admins.map(user => user.login).includes(promoteInfo.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     this.db.setMakeAdmin(promoteInfo.login, promoteInfo.channelName);
+    this.db.deleteMuteUser(promoteInfo.login, promoteInfo.channelName);
     this.sendNotif(promoteInfo.login + " is now an admin", promoteInfo.channelName, socket.data.userId);
   }
 
@@ -300,6 +308,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (channel.users.find(user => user.login === socket.data.user.login) === undefined) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
+    // si le user en questiona fini sa peine de mute, on le unmute
+    if (channel.mutedUsers.map(user => user.login).includes(socket.data.user.login))
+    {
+      let mute : eventI = await this.db.getMuteInfo(channel.channelName, socket.data.user.login);
+      if (mute.eventDate.getTime() + mute.eventDuration > Date.now()) {
+        this.db.deleteMuteUser(channel.channelName, socket.data.user.login);
+      }
+      else
+        return socket.emit('Error', new UnauthorizedException());      
+    }
     socket.emit('channelInfo', channel);
   }
 
@@ -310,18 +328,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!(channel.users.includes(socket.data.userId))) {
+    if (!(channel.users.map(user => user.login).includes(socket.data.user.login))
+      || channel.mutedUsers.map(user => user.login).includes(socket.data.user.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-    }
-    if (socket.data.user.login in channel.mutedUsers)
-    {
-      let mute : eventI = await this.db.getMuteInfo(channel.channelName, socket.data.user.login);
-      if (mute.eventDate.getDate() + mute.eventDuration > Date.now())
-      {
-        this.db.deleteMuteUser(channel.channelName, socket.data.user.login);
-      }
-      else
-        return socket.emit('Error', new UnauthorizedException());      
     }
     this.db.setChannelMessage(socket.data.userId, channel.channelName, message.message); 
     this.sendToChan(message.channelId, 'message', message);
@@ -357,15 +366,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('muteUser')
   async onMuteUser(socket: Socket, muteEvent: eventI) {
     // let user: string = await this.connectedUserService.getUserLogin(socket.id);
+    console.log(muteEvent);
     let channel: IChannel= await this.db.getChannelInfo(muteEvent.from);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!this.db.isAdmin(socket.data.userId, muteEvent.from)) {
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
+    console.log(muteEvent);
     this.db.setMuteUser(muteEvent.from, muteEvent.to, muteEvent.eventDuration);
-    this.sendNotif(muteEvent.to + " a ete mute", muteEvent.from, socket.data.userId);
+    this.sendNotif(muteEvent.to + " got muted", muteEvent.from, socket.data.userId);
     this.sendTo(muteEvent.to, 'muted', muteEvent);
   }
 
@@ -375,7 +386,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!this.db.isAdmin(socket.data.user.login, muteEvent.from)) {
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return socket.emit('Error', new UnauthorizedException());  
     }
     this.db.deleteMuteUser(muteEvent.from, muteEvent.to);
@@ -391,7 +402,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!this.db.isAdmin(socket.data.user.login, banEvent.from)) {
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return socket.emit('Error', new UnauthorizedException());  
     }
     this.db.leaveChannel(banEvent.to, banEvent.from);
@@ -409,7 +420,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!this.db.isAdmin(socket.data.user.login, banEvent.from)) {
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return socket.emit('Error', new UnauthorizedException());  
     }
     this.db.deleteBan(banEvent.to, banEvent.from);
@@ -443,6 +454,5 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     page.page = page.page + 1;
     return page;
   }
-
 
 }

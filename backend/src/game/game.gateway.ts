@@ -28,26 +28,26 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   // , @Session() session: Record<string, any>,
   async handleConnection(client: Socket)  {
-    try {
-      const cookie = parse(client.handshake.headers.cookie);
-      const token = cookie['token'];
-      if (!token) {
-        console.log('token not found');
-        client.disconnect();
-        return;
-      }
-      const userId = await this.authService.getUseridFromToken(token);
-      if (!userId) {
-        console.log('User not found');
-        client.disconnect();
-        return;
-      }
-      client.data.userId = userId;
-    }
-    catch (e) {
-      console.log('Error', e);
-      client.disconnect();
-    }
+    // try {
+    //   const cookie = parse(client.handshake.headers.cookie);
+    //   const token = cookie['token'];
+    //   if (!token) {
+    //     console.log('token not found');
+    //     client.disconnect();
+    //     return;
+    //   }
+    //   const userId = await this.authService.getUseridFromToken(token);
+    //   if (!userId) {
+    //     console.log('User not found');
+    //     client.disconnect();
+    //     return;
+    //   }
+    //   client.data.userId = userId;
+    // }
+    // catch (e) {
+    //   console.log('Error', e);
+    //   client.disconnect();
+    // }
     console.log('Client connected', client.id, client.data);
   }
   async handleDisconnect(client: Socket) {
