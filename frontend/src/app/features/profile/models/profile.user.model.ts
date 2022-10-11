@@ -69,3 +69,8 @@ export class Profile {
 	displayName!: string
 	avatar!: any
 }
+
+export class tfa {
+	dataUrl?: string
+	secret?: string
+}
