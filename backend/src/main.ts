@@ -20,7 +20,10 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.useStaticAssets(join(__dirname, 'upload'),)
+  app.useStaticAssets(join(__dirname, 'upload'), {
+    index: false,
+    prefix: '/upload',
+  });
 
   await app.listen(3000);
 }
