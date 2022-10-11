@@ -320,10 +320,10 @@ export async function getPublicChannels(this: PrismaService): Promise<IChannel[]
   }
 }
 
-export async function getchannelsForUser(this: PrismaService, userid: string, skip: number, take: number): Promise<IChannel[]> {
+export async function getchannelsForUser(this: PrismaService, login: string, skip: number, take: number): Promise<IChannel[]> {
   try {
     const channels = await this.prisma.user.findUnique({
-      where: { id: userid },
+      where: { login: login },
       select: {
         channelList: {
           select: {
@@ -339,12 +339,7 @@ export async function getchannelsForUser(this: PrismaService, userid: string, sk
         },
       },
     });
-    let list: IChannel[] = [];
-    for (let i = 0; channels.channelList[i]; i++) {
-      let tmp: IChannel = { channelName: channels.channelList[i].channelId };
-      list.push(tmp);
-    }
-    return list;
+    return channels.channelList.map((channel) => { return {channelName: channel.channelId}});
   }
   catch (error) {
     console.log(error.message);
@@ -397,33 +392,35 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
       }
     });
     let channel = {} as IChannel;
-    if (chan) {
-      channel = {
-        channelName: chan.channelName,
-        createdAt: chan.createdAt,
-        is_pwd: chan.is_pwd,
-        password: chan.pwd,
-        isPrivate: chan.isPrivate,
-        isDirect: chan.isDirect,
-        creator: chan.creator.login,
-        users: chan.userList,
-        admins: chan.userAdminList,
-        mutedUsers: chan.mutedUserList,
-        bannedUsers: chan.bannedUsers,
-        messages: [],
-      }
-      for (let i in chan.messages) {
-        channel.messages.push({
-          createdAt: chan.messages[i].createdAt,
-          message: chan.messages[i].message,
-          from: chan.messages[i].user.login,
-          channelId: channel_name,
-        });
-      }
+    if (chan === undefined) {
+      return null;
+    }
+    channel = {
+      channelName: chan.channelName,
+      createdAt: chan.createdAt,
+      is_pwd: chan.is_pwd,
+      password: chan.pwd,
+      isPrivate: chan.isPrivate,
+      isDirect: chan.isDirect,
+      creator: chan.creator.login,
+      users: chan.userList,
+      admins: chan.userAdminList,
+      mutedUsers: chan.mutedUserList,
+      bannedUsers: chan.bannedUsers,
+      messages: [],
+    }
+    for (let i in chan.messages) {
+      channel.messages.push({
+        createdAt: chan.messages[i].createdAt,
+        message: chan.messages[i].message,
+        from: chan.messages[i].user.login,
+        channelId: channel_name,
+      });
     }
     return channel;
   }
   catch (error) {
     console.log(error.message);
+    return null;
   }
 }

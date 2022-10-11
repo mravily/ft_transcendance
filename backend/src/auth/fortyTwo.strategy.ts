@@ -13,6 +13,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       callbackURL: process.env.CALLBACK_URI,
       passReqToCallback: true,
     });
+    console.log('42 strategy loaded', process.env.FORTYTWO_CLIENT_SECRET);
   }
 
   async validate(
@@ -29,9 +30,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       profile.name.familyName,
       profile.emails[0].value,
       profile.photos[0].value,
-      );
+    );
     request.session.userid = id;
-    request.session.jwt = this.jwtService.sign({ userid: id });
+    request.session.jwt = this.jwtService.sign({ userid: id }, {secret: process.env.ACCESS_SECRET });
     return cb(null, profile);
   }
 }

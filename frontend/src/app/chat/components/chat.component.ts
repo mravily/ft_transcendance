@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { channelI } from '../models/channel.model';
-import { MessageI } from '../models/chat.model';
+import { IChannel, IMessage } from '../../interfaces';
+// import { channelI } from '../models/channel.model';
+// import { MessageI } from '../models/chat.model';
 import { ChatService } from '../services/chat.service';
 
 @Component({
@@ -16,7 +17,7 @@ export class ChatComponent implements OnInit {
   create: boolean = false;
 
   contacts: string[] = ["John Potter", "Jane McGiller", "Joe Froster", "Jill Smith", "Jenny Smith", "Henry Colmard", "Stuart Little", "John Doe", "Jane Doe", "Joe Doe", "Jill Doe", "Jenny Doe", "Henry Doe", "Stuart Doe"];
-  selectedChannel!: channelI;
+  selectedChannel!: IChannel;
   curMessage!: string;
   myId!: string;
 
@@ -24,22 +25,22 @@ export class ChatComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.chatServ.getAddedMessageObs().subscribe((message: MessageI) => {
+    this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
       if (this.selectedChannel && this.selectedChannel.messages &&
-          message.channel == this.selectedChannel.channelName) {
+          message.channelId == this.selectedChannel.channelName) {
         this.selectedChannel.messages.push(message);
       }
     });
-    this.chatServ.getMessagesObs().subscribe((messages: MessageI[]) => {
-      if (this.selectedChannel && messages[0].channel == this.selectedChannel.channelName)
+    this.chatServ.getMessagesObs().subscribe((messages: IMessage[]) => {
+      if (this.selectedChannel && messages[0].channelId == this.selectedChannel.channelName)
         this.selectedChannel.messages = messages;
     });
-    this.chatServ.getChannelInfoObs().subscribe((channel: channelI) => {
+    this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
       console.log(channel);
       this.selectedChannel = channel;
     });
-    this.chatServ.getChannelsObs().subscribe((rooms: string[]) => {
-      this.contacts = rooms;
+    this.chatServ.getChannelsObs().subscribe((rooms: IChannel[]) => {
+      this.contacts = rooms.map((room) => room.channelName);
     });
     this.chatServ.getErrorObs().subscribe((error: string) => {
       console.log(error);
@@ -55,19 +56,20 @@ export class ChatComponent implements OnInit {
     }
   }
   get myLogin() {
-    return this.selectedChannel.userInfoList?.find((user) => user.id == this.myId)?.login;
+    return 'adesvall';
+    // return this.selectedChannel.users?.find((user) => user.id == this.myId)?.login;
   }
-  isAdmin(id: string) {
-    if (this.selectedChannel && this.selectedChannel.userAdminList) {
-      return this.selectedChannel.userAdminList.includes(id);
+  isAdmin(login: string) {
+    if (this.selectedChannel && this.selectedChannel.admins) {
+      return this.selectedChannel.admins.map((user) => user.login).includes(login);
     }
     return false;
   }
   onSendMessage() {
     this.chatServ.sendMessage({
-      text: this.curMessage,
-      user: "me",
-      channel: this.selectedChannel.channelName,
+      message: this.curMessage,
+      from: "me",
+      channelId: this.selectedChannel.channelName,
       createdAt: new Date()
     });
     // this.messages.push({user: "me",

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
-import { channelI } from '../models/channel.model';
-import { MessageI, PageI } from '../models/chat.model';
+import { IMessage, IChannel, IAccount } from '../../interfaces';
+// import { channelI } from '../models/channel.model';
+import { PageI } from '../models/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,15 +20,15 @@ export class ChatService {
   getAddedMessageObs(): Observable<any> {
     return this.socket.fromEvent<any>('message');
   }
-  sendMessage(message: MessageI) {
+  sendMessage(message: IMessage) {
     this.socket.emit('addMessage', message);
   }
-  getMessagesObs(): Observable<MessageI[]> {
+  getMessagesObs(): Observable<IMessage[]> {
     return this.socket.fromEvent<any>('messages');
   }
   
-  getPublicChannelsObs(): Observable<string[]> {
-    return this.socket.fromEvent<any>('publicChannels');
+  getPublicChannelsObs(): Observable<IChannel[]> {
+    return this.socket.fromEvent<IChannel[]>('publicChannels');
   }
   searchPublicChannels(search: string) {
     this.socket.emit('searchPublicChannels', search);
@@ -36,19 +37,19 @@ export class ChatService {
     this.socket.emit('searchPublicChannels', page);
   }
 
-  createChannel(room: channelI) {
+  createChannel(room: IChannel) {
     this.socket.emit('createChannel', room);
   }
   createDM(login1: string, login2: string) {
-    let room : channelI = {
+    let room : IChannel = {
       channelName: login1 + login2,
-      is_pwd: false, pwd: "", 
+      is_pwd: false, password: "", 
       isDirect: true, isPrivate: true,
-      userList: [login1, login2], creator: "DM"};
+      users: [{login: login1}, {login: login2}], creator: "DM"};
     this.socket.emit('createChannel', room);
   }
-  getChannelsObs(): Observable<string[]> {
-    return this.socket.fromEvent<string[]>('channels');
+  getChannelsObs(): Observable<IChannel[]> {
+    return this.socket.fromEvent<IChannel[]>('channels');
   }
   getMyChannels(page: PageI)  {
     this.socket.emit('getMyChannels', page);
@@ -56,8 +57,8 @@ export class ChatService {
   joinChannel(channelName: string, password: string) {
     this.socket.emit('joinChannel', {name: channelName, password: password});
   }
-  getChannelMembersObs(): Observable<any> {
-    return this.socket.fromEvent<any>('channelMembers');
+  getChannelMembersObs(): Observable<IAccount> {
+    return this.socket.fromEvent<IAccount>('channelMembers');
   }
   setPassword(channelName: string, password: string) {
     this.socket.emit('updatePassword', {name: channelName, password: password});
@@ -78,8 +79,8 @@ export class ChatService {
     this.socket.emit('muteUser', {from: channelName, to: id});
   }
 
-  getChannelInfoObs(): Observable<channelI> {
-    return this.socket.fromEvent<channelI>('channelInfo');
+  getChannelInfoObs(): Observable<IChannel> {
+    return this.socket.fromEvent<IChannel>('channelInfo');
   }
   getChannelInfo(channelName: string) {
     this.socket.emit('getChannelInfo', channelName);

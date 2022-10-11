@@ -39,9 +39,9 @@
     <div class="publicChannels" [formGroup]="searchForm">
         <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
         <div class="publicChannel" *ngFor="let channel of publicChannels$ | async">
-            <div class="channelName">{{channel}}</div>
+            <div class="channelName">{{channel.channelName}}</div>
             <span>password: <input formControlName="password" type="password"></span>
-            <button (click)="onJoin(channel)">Join</button>
+            <button (click)="onJoin(channel.channelName)">Join</button>
         </div>
     </div>
 </div>

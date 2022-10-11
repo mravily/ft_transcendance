@@ -463,32 +463,29 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
       userAccount.avatar = user.imgUrl;
       userAccount.winnedMatch = user.winnedMatchs;
       userAccount.lostMatch = user.lostMatchs;
-      userAccount.win = 0;
-      for (let i = 0; user.winnedMatchs[i]; i++) {
-        userAccount.win++;
-      }
-      userAccount.lost = 0;
-      for (let i = 0; user.lostMatchs[i]; i++) {
-        userAccount.lost++;
-      }
+
+      userAccount.win = user.winnedMatchs.length;
+      userAccount.lost = user.lostMatchs.length;
+      userAccount.friends = [];
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
-      }
-      for (let i = 0; user.blockedUsers[i]; i++) {
-        userAccount.blockUsers.push(user.blockedUsers[i].blockedLogin);
       }
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.befriend[i].requester);
       }
+      userAccount.blockUsers = [];
+      for (let i = 0; user.blockedUsers[i]; i++) {
+        userAccount.blockUsers.push(user.blockedUsers[i].blockedLogin);
+      }
       userAccount.createdAt = user.createdAt;
       userAccount.twoFA = user.twoFA;
       userAccount.isAdmin = user.isAdmin;
-      for (let i in user.channelList) {
-        userAccount.channelList.push(i);
-      }
-      for (let i in user.adminChannel) {
-        userAccount.channelAdmin.push(i);
-      }
+      // for (let i in user.channelList) {
+      //   userAccount.channelList.push(i);
+      // }
+      // for (let i in user.adminChannel) {
+      //   userAccount.channelAdmin.push(i);
+      // }
     }
     return userAccount;
   }

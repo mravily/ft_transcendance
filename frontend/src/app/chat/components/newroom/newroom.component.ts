@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, Observable, Subscription } from 'rxjs';
-import { channelI } from '../../models/channel.model';
+import { IChannel } from '../../../interfaces';
+// import { channelI } from '../../models/channel.model';
+
 import { ChatService } from '../../services/chat.service';
 
 @Component({
@@ -14,7 +16,7 @@ export class NewroomComponent implements OnInit {
   roomForm!: FormGroup;
   searchForm!: FormGroup;
   searchSubcription!: Subscription;
-  publicChannels$: Observable<string[]>;
+  publicChannels$: Observable<IChannel[]>;
   password: string = "";
 
   constructor(private builder: FormBuilder, private chatService: ChatService) {
@@ -59,14 +61,14 @@ export class NewroomComponent implements OnInit {
   }
   onCreateChan()  {
     console.log(this.roomForm.value);
-    let chan: channelI = {
+    let chan: IChannel = {
       channelName: this.roomForm.value.name,
       // description: this.roomForm.value.description,
-      userList: this.roomForm.value.members,
+      users: this.roomForm.value.members.map((member: string) => { return {login: member} }),
       isPrivate: !this.roomForm.value.ispublic,
       isDirect: false,
       is_pwd: this.roomForm.value.password != null,
-      pwd: this.roomForm.value.password,
+      password: this.roomForm.value.password,
       creator: "me", // only to compile, not necessary
     }
     this.chatService.createChannel(chan);
