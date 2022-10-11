@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Session } from "@nestjs/common";
+import { Controller, Get, Param, Post, Session } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 
 @Controller('profile')
@@ -19,4 +19,7 @@ export class ProfileController {
     getOverview(@Session() session: Record<string, any>) {
         return this.db.getProfileOverview(session.userid);
     }
+
+    @Post('update')
+    updateProfile() {}
 }

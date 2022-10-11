@@ -44,6 +44,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getLastPhoto       = user.getLastPhoto;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
+  public getUserEmail       = user.getUserEmail;
+  public isUser             = user.isUser;
   public setMatch           = match.setMatch;
   public setMatchWinner     = match.setMatchWinner;
   public setMatchLooser     = match.setMatchLooser;
