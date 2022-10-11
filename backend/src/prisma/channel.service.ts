@@ -18,7 +18,7 @@ export async function setChannel(this: PrismaService, channel: IChannel, creator
   }
 }
 
-export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string) {
+export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string, isNotif: boolean) {
   try {
     await this.prisma.channelMessage.create({
       data: {
@@ -26,6 +26,7 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
         userId: userId,
         channelId: channel_name,
         isRead: false,
+        isNotif: isNotif,
       },
     });
   }
