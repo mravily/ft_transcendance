@@ -64,7 +64,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return this.disconnect(client);
       }
       client.data.user = user; // save user in client
-      
+      client.emit('myUser', user);
       // Save connection
       console.log('saving connection');
             
@@ -130,14 +130,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channel.password = hashPassword(channel.password);
     }
     await this.db.createchannel(channel, userId);
+    this.db.setJoinChannel(login, channel.channelName);
+
+    let members: string[] = [login];
     for (const user of channel.users) {
       console.log('Joining', user);
-      if (!(await this.db.isUser(user.login))){
+      if (user.login == null || !(await this.db.isUser(user.login)))  {
         console.log(user, " not found");
         continue;
-      } 
-      
+      }
+      if (members.includes(user.login)) {
+        console.log(user, " already in channel");
+        continue;
+      }
       this.db.setJoinChannel(user.login, channel.channelName);
+      members.push(user.login);
       const socketIds: Set<string> = this.connectedUsers.get(user.login);
       if (socketIds) {
         const channels = await this.db.getChannelsForUser(user.login, 1, 10);
@@ -228,7 +235,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     if (!channel.users.includes(socket.data.userId))
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-    this.sendNotif(socket.data.user.login + " left the channel", channelName, socket.data.userId);
+    this.sendNotif(socket.data.user.login + " left the channel", channelName, socket.data.user.login);
     await this.db.leaveChannel(socket.data.user.login, channelName);
     this.onPaginatechannel(socket, { page: 0, limit: 20 });
   }
@@ -239,47 +246,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!channel.admins.includes(socket.data.userId)) { //Est-ce qu'il faut que je mette dans des boucles tous les includes ?
+    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) { //Est-ce qu'il faut que je mette dans des boucles tous les includes ? NON les map c'est swag
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    for (const user of channel.users) { // OK Augustin ?
-      if (user.login.includes(addMemberInfo.login)) {
-        return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-      }
+    if (channel.users.map(user => user.login).includes(addMemberInfo.login)) {
+      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    // if (channel.users.includes(id)) {
-    //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-    // }
-    if (!(await this.db.isUser(addMemberInfo.login))){
+    if (!(await this.db.isUser(addMemberInfo.login))) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     this.db.setJoinChannel(addMemberInfo.login, addMemberInfo.channelName);
-    // channel = await this.db.getChannelInfo(channelName);
-    // this.sendToChan(channelName, 'channelInfo', channel);
+    this.sendNotif(socket.data.user.login + " added " + addMemberInfo.login + " to the channel", addMemberInfo.channelName, socket.data.userId);
+    channel = await this.db.getChannelInfo(addMemberInfo.channelName);
+    this.sendToChan(addMemberInfo.channelName, 'channelUpdate', channel);
   }
-
-
-  // @SubscribeMessage('addMember')
-  // async onAddMember(socket: Socket, channelName: string, id: string) { // Pb avec l'ID ?
-  //   let channel: IChannel= await this.db.getChannelInfo(channelName);
-  //   if (!channel) {
-  //     return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-  //   }
-  //   if (!channel.admins.includes(socket.data.userId)) {
-  //     return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-  //   }
-  //   for (const user of channel.users) { // OK Augustin ?
-  //     if (user.id.includes(id)) {
-  //       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-  //     }
-  //   }
-  //   // if (channel.users.includes(id)) {
-  //   //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-  //   // }
-  //   this.db.setJoinChannel(id, channelName);
-  //   // channel = await this.db.getChannelInfo(channelName);
-  //   // this.sendToChan(channelName, 'channelInfo', channel);
-  // }
 
   @SubscribeMessage('promoteToAdmin') // muteEvent
   async onPromoteToAdmin(socket: Socket, promoteInfo: {channelName: string, login: string}) {

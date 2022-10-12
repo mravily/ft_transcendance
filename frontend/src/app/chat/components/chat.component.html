@@ -21,21 +21,21 @@
 
     <div *ngFor="let member of selectedChannel.users">
       {{member.login}}
-      <button *ngIf="isAdmin(myLogin) && !isAdmin(member.login)" (click)="onMute(member.login)">Mute</button>
-      <button *ngIf="isAdmin(myLogin) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
-      <button *ngIf="isAdmin(myLogin) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onMute(member.login)">Mute</button>
+      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
+      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
     </div>
     
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of selectedChannel.messages; let i = index;">
-        <div class="message" [ngClass]="{isMine: message.from === myLogin}">
+        <div class="message" [ngClass]="{isMine: message.from === myUser.login}">
           <h4 *ngIf="i === 0 || selectedChannel.messages[i-1].from !== message.from">
             {{message.from}}
           </h4>
           <!-- 
             <div class="message-header-time">{{message.time}}</div>
           -->
-          <div class="message-body" [ngClass]="{isMine: message.from === myLogin}">
+          <div class="message-body" [ngClass]="{isMine: message.from === myUser.login}">
             <div class="message-body-text">{{message.message}}</div>
           </div>
         </div>

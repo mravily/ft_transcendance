@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { IChannel, IMessage } from '../../interfaces';
+import { IAccount, IChannel, IMessage } from '../../interfaces';
 // import { channelI } from '../models/channel.model';
 // import { MessageI } from '../models/chat.model';
 import { ChatService } from '../services/chat.service';
@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit {
   contacts: string[] = ["John Potter", "Jane McGiller", "Joe Froster", "Jill Smith", "Jenny Smith", "Henry Colmard", "Stuart Little", "John Doe", "Jane Doe", "Joe Doe", "Jill Doe", "Jenny Doe", "Henry Doe", "Stuart Doe"];
   selectedChannel!: IChannel;
   curMessage!: string;
-  myId!: string;
+  myUser!: IAccount;
 
   constructor(private chatServ: ChatService) { }
   
@@ -37,8 +37,13 @@ export class ChatComponent implements OnInit {
         this.selectedChannel.messages = messages;
     });
     this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
-      console.log(channel);
+      // console.log(channel);
       this.selectedChannel = channel;
+    });
+    this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
+      // console.log(channel);
+      if (this.selectedChannel && this.selectedChannel.channelName == channel.channelName)
+        this.selectedChannel = channel;
     });
     this.chatServ.getChannelsObs().subscribe((rooms: IChannel[]) => {
       this.contacts = rooms.map((room) => room.channelName);
@@ -46,8 +51,8 @@ export class ChatComponent implements OnInit {
     this.chatServ.getErrorObs().subscribe((error: string) => {
       console.log(error);
     });
-    this.chatServ.getMyIdObs().subscribe((id: string) => {
-      this.myId = id;
+    this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
+      this.myUser = user;
     });
   }
 
@@ -56,10 +61,7 @@ export class ChatComponent implements OnInit {
       this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
     }
   }
-  get myLogin() {
-    return 'adesvall';
-    // return this.selectedChannel.users?.find((user) => user.id == this.myId)?.login;
-  }
+
   isAdmin(login: string) {
     if (this.selectedChannel && this.selectedChannel.admins) {
       return this.selectedChannel.admins.map((user) => user.login).includes(login);

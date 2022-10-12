@@ -85,6 +85,9 @@ export class ChatService {
   getChannelInfoObs(): Observable<IChannel> {
     return this.socket.fromEvent<IChannel>('channelInfo');
   }
+  getChannelUpdateObs(): Observable<IChannel> {
+    return this.socket.fromEvent<IChannel>('channelUpdate');
+  }
   getChannelInfo(channelName: string) {
     this.socket.emit('getChannelInfo', channelName);
   }
@@ -99,8 +102,8 @@ export class ChatService {
   getErrorObs(): Observable<string> {
     return this.socket.fromEvent<any>('Error');
   }
-  getMyIdObs(): Observable<string> {
-    return this.socket.fromEvent<any>('myId');
+  getMyUserObs(): Observable<IAccount> {
+    return this.socket.fromEvent<IAccount>('myUser');
   }
   // userblocked userunblocked
 
