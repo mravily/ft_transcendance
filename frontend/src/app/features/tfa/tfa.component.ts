@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import * as e from 'express';
 import { response } from 'express';
 import { CookieService } from 'ngx-cookie-service';
-import { async, catchError, Observable, of, tap, throwError } from 'rxjs';
+import { async, catchError, filter, Observable, of, tap, throwError } from 'rxjs';
 import { TfaService } from '../tfa.service';
 
 
@@ -45,13 +45,15 @@ export class TfaComponent implements OnInit {
 	  }
 	}
 
-	isValid$!: Observable<boolean>;
+	previousUrl!: string;
+	isValid!: boolean;
 	onSubmit() {
+
 		const token = this.otp;
-		this.isValid$ = this.tfaServices.verifyAuth(token);
-		console.log('isValid', this.isValid$.subscribe());
-		if (this.isValid$)
-			this.router.navigateByUrl('/');
+		this.tfaServices.verifyAuth(token).subscribe(v => this.isValid = v);
+		console.log('isValid', this.isValid);
+		if (this.isValid)
+			this.router.navigateByUrl(this.previousUrl);
 	}
 
  	ngOnDestroy() {

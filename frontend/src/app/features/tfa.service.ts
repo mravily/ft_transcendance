@@ -29,4 +29,8 @@ export class TfaService {
 	get2FA(): Observable<IAccount> {
 		return this.http.get<IAccount>('api/tfa/get2fa');
 	}
+
+	switch2FA() {
+		this.http.get('api/tfa/switch');
+	}
 }

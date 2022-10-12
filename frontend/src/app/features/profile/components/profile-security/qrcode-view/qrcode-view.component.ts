@@ -11,13 +11,13 @@ import { tfa } from '../../../models/profile.user.model';
 export class QrcodeViewComponent implements OnInit {
 
 	@Input() alreadySet!: string;
-	tfa$!: Observable<tfa>;
+	tfa!: tfa;
   	constructor(private tfaServices: TfaService) { }
 
   	ngOnInit(): void {
-		console.log('alreadySet', this.alreadySet)
-		if (!this.alreadySet) this.tfa$ = this.tfaServices.generate();
-		else this.tfa$ = this.tfaServices.get2FA();
+		// console.log('alreadySet', this.alreadySet)
+		this.tfaServices.generate().subscribe(v => this.tfa = v);
+		// else this.tfa = this.tfaServices.get2FA();
 		// console.log('tfa', this.tfa$.secret);
   	}
 

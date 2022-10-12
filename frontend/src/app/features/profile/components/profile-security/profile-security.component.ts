@@ -12,6 +12,8 @@ export class ProfileSecurityComponent implements OnInit {
 
 	isActivated$!: Observable<boolean>
 	alreadySet$!: Observable<string>
+	isActivated!: boolean
+	alreadySet!: string
 	
   	constructor(private tfaService: TfaService) {
 
@@ -23,6 +25,11 @@ export class ProfileSecurityComponent implements OnInit {
   	}
 
 	onClickSwitch() {
+		this.tfaService.switch2FA();
+	}
 
+	onSetup() {
+		this.alreadySet$.subscribe(v => this.alreadySet = v);
+		
 	}
 }
