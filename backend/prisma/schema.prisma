@@ -28,7 +28,6 @@ model User {
   imgUrl String
   n_messages Int
 // Oposit Relations:
-
   photo Photos[]
   channelList JoinChannel[]
   mutedChannel muteUser[]
@@ -49,9 +48,7 @@ model Match {
   createdAt DateTime @default(now())
   winnerScore Int?
   looserScore Int?
-
 // Relations:
-
   winnerid String?
   looserid String?
   winner User? @relation(name: "win", fields: [winnerid], references: [id])
@@ -66,13 +63,10 @@ model Channel {
   pwd String?
   isDirect Boolean
   isPrivate Boolean
-
-// Relations: 
+// Relations:
   creatorId String
   creator User @relation(fields: [creatorId], references: [id])
-
 // Oposit Relations:
-
   userList JoinChannel[]
   userAdminList makeAdmin[]
   mutedUserList muteUser[]
@@ -83,9 +77,7 @@ model Channel {
 model makeAdmin {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
-
 // Relations:
-
   channelId String
   login String
   channel Channel @relation(fields: [channelId], references: [channelName])
@@ -97,9 +89,7 @@ model muteUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   duration Int
-
 // Relations:
-
   channelId String
   login String
   channel Channel @relation(fields: [channelId], references: [channelName])
@@ -111,9 +101,7 @@ model BanUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   duration Int
-
   // Relations:
-
   channelId String
   login String
   channel Channel @relation(fields: [channelId], references: [channelName])
@@ -124,9 +112,7 @@ model BanUser {
 model JoinChannel {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
-
 // Relations:
-
   login String
   channelId String
   user User @relation(fields: [login], references: [login])
@@ -142,7 +128,6 @@ model ChannelMessage {
   isNotif Boolean
 
 // Relations:
-
   userId  String
   channelId String
   user User @relation(fields: [userId], references: [id])
@@ -153,7 +138,6 @@ model AddFriend {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   isAccepted Boolean
-
 // Relations:
   requesterId String
   requestedLogin String
@@ -164,7 +148,6 @@ model AddFriend {
 model BlockUser {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
-
 // Relations:
   blockerId String
   blockedLogin String
@@ -180,7 +163,6 @@ model Photos {
   path String @unique
   mimetype String
   size Int
-
 // Relations:
   userId String
   user User @relation(fields: [userId], references: [id])

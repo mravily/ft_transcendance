@@ -6,7 +6,7 @@ import * as channel from './prisma/channel.service';
 import * as match from './prisma/match.service';
 import * as sidebar from './prisma/sidebar.service';
 import * as profile from './prisma/profile.service';
-import * as overview from './prisma/overview.service'
+import * as overview from './prisma/overview.service';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -36,6 +36,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public get2FA             = user.get2FA;
   public delete2FA          = user.delete2FA;
   public switch2FA          = user.switch2FA;
+  public get2FASecret       = null;
+  public getUser            = null;
   public updateUserScore    = user.updateUserScore;
   public updateUserStatus   = user.updateUserStatus;
   public getFriends         = user.getFriends;
@@ -73,9 +75,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public isCreator          = channel.isCreator;
   public getPublicChannels  = channel.getPublicChannels;
   public getChannelsForUser = channel.getchannelsForUser;
-  public getUserRank        = profile.getUserRank;
-  public getUserProfile     = profile.getUserProfile;
-  public getPublicProfile   = profile.getPublicProfile;
-  public getTotalFriends    = overview.getTotalFiends;
+  public getUserRank = profile.getUserRank;
+  public getUserProfile = profile.getUserProfile;
+  public getPublicProfile = profile.getPublicProfile;
+  public getTotalFriends = overview.getTotalFiends;
   public getProfileOverview = overview.getProfileOverview;
 }

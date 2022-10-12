@@ -1,62 +1,62 @@
 export interface IAccount {
-    login: string;
-    firstName?: string;
-    lastName?: string;
-    nickName?: string;
-    email?: string;
-    score?: number;
-    avatar?: string;
-    win?: number;
-    lost?: number;
-    rank?: number;
-    winnedMatch?: any[];
-    lostMatch?: any[];
-    matches?: any[];
-    friends?: IAccount[];
-    n_friends?: number;
-    blockUsers?: any[];
-    createdAt?: Date;
-    isOnline?: boolean;
-    isAdmin?: boolean;
-    twoFA?: boolean;
-    secret?: string;
-    dataUrl?: string;
-    channelList?: any[];
-    channelAdmin?: any[];
-    activities?: Activity[];
+  login: string;
+  firstName?: string;
+  lastName?: string;
+  nickName?: string;
+  email?: string;
+  score?: number;
+  avatar?: string;
+  win?: number;
+  lost?: number;
+  rank?: number;
+  winnedMatch?: any[];
+  lostMatch?: any[];
+  matches?: any[];
+  friends?: IAccount[];
+  n_friends?: number;
+  blockUsers?: any[];
+  createdAt?: Date;
+  isOnline?: boolean;
+  isAdmin?: boolean;
+  twoFA?: boolean;
+  secret?: string;
+  dataUrl?: string;
+  channelList?: any[];
+  channelAdmin?: any[];
+  activities?: Activity[];
 }
 
 export interface IChannel {
-    // basic info
-    channelName: string;
-    isDirect?: boolean;
-    isPrivate?: boolean;
-    creator?: string;
-    password?: string;
-    is_pwd?: boolean;
-    
-    // advanced info
-    createdAt?: Date;
-    users?: IAccount[];
-    admins?: IAccount[];
-    mutedUsers?: IAccount[];
-    bannedUsers?: IAccount[];
-    messages?: IMessage[];
-    
-    // description?: string; // à rajouter par Juan
+  // basic info
+  channelName: string;
+  isDirect?: boolean;
+  isPrivate?: boolean;
+  creator?: string;
+  password?: string;
+  is_pwd?: boolean;
+
+  // advanced info
+  createdAt?: Date;
+  users?: IAccount[];
+  admins?: IAccount[];
+  mutedUsers?: IAccount[];
+  bannedUsers?: IAccount[];
+  messages?: IMessage[];
+
+  // description?: string; // à rajouter par Juan
 }
 
 export interface IPhoto {
-    filename: string;
-    path: string;
-    mimetype: string;
-    size: number;
+  filename: string;
+  path: string;
+  mimetype: string;
+  size: number;
 }
 
 export interface IMessage {
-    createdAt: Date;
-    message: string;
-    user: string;
+  createdAt: Date;
+  message: string;
+  user: string;
 }
 
 // export interface CardStats {
@@ -67,10 +67,10 @@ export interface IMessage {
 // }
 
 export interface Activity {
-    avatar: any,
-    displayName: string,
-    createdAt: Date,
-    message: string,
+  avatar: any;
+  displayName: string;
+  createdAt: Date;
+  message: string;
 }
 
 // export interface ProfilePublic {
@@ -80,19 +80,19 @@ export interface Activity {
 // }
 
 export interface IPersoMatch {
-    usrAvatar: string,
-    usrDisplayName: string,
-    usrScore: number,
-    opScore: number,
-    opDisplayName: string,
-    opLogin: string,
-    opAvatar: string,
+  usrAvatar: string;
+  usrDisplayName: string;
+  usrScore: number;
+  opScore: number;
+  opDisplayName: string;
+  opLogin: string;
+  opAvatar: string;
 }
 
 export interface IMatch {
-    createdAt?: Date;
-    winner: string;
-    winnerScore: number;
-    looser: string;
-    looserScore: number;
+  createdAt?: Date;
+  winner: string;
+  winnerScore: number;
+  looser: string;
+  looserScore: number;
 }

@@ -12,6 +12,7 @@ import { SharingModule } from 'src/app/pipe/sharing.module';
 import { ProfilePublicComponent } from './components/profile-public/profile-public.component';
 import { FriendsComponent } from './components/profile-public/friends/friends.component';
 import { BlocFriendPublicComponent } from './components/profile-public/friends/bloc-friends-public/bloc-friend-public.component';
+// import { QrcodeViewComponent } from './components/profile-security/qrcode-view/qrcode-view.component';
 
 @NgModule({
 	declarations: [
@@ -20,7 +21,8 @@ import { BlocFriendPublicComponent } from './components/profile-public/friends/b
 		ProfileNavBarComponent,
 		ProfilePublicComponent,
 		FriendsComponent,
-		BlocFriendPublicComponent
+		BlocFriendPublicComponent,
+		// QrcodeViewComponent
 	],
 	imports: [
 		CommonModule,
@@ -32,9 +34,10 @@ import { BlocFriendPublicComponent } from './components/profile-public/friends/b
 		ProfileFriendsModule,
 		SharingModule,
 	],
-	exports: [ 
+	exports: [
 		FriendsComponent,
-		BlocFriendPublicComponent
+		BlocFriendPublicComponent,
+		// QrcodeViewComponent
 	]
 })
 export class ProfileModule { }

@@ -61,7 +61,7 @@
 			  <div class="col-md-12">
 				<div class="form-group mb-3">
 					<label for="formFile" class="form-label">Upload Image</label>
-					<input class="form-control" type="file" id="formFile" formControlName="formFile">
+					<input class="form-control" type="file" id="formFile" formControlName="formFile" (change)="uploadFile($event)">
 				  </div>
 			  </div>
 			</div>

@@ -1,38 +1,68 @@
 import {
-    ClassSerializerInterceptor,
-    Controller,
-    Post,
-    UseInterceptors,
-    Res,
-    UseGuards,
-    Req,
-    Session,
-    Get,
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  UseInterceptors,
+  Res,
+  Req,
+  Session,
+  UnauthorizedException,
+  HttpCode,
+  Body,
+  Get,
+  Redirect,
 } from '@nestjs/common';
-import { IUser2FA, TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
-import { Response } from 'express';
+import {
+  IUser2FA,
+  TwoFactorAuthenticationService,
+} from './twoFactorAuthentication.service';
+import { response, Response } from 'express';
+import TwoFactorAuthenticationDto from './dto/2fa.dto';
+import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
-import { IAccount } from 'src/interfaces';
-// import { AuthGuard } from '@nestjs/passport';
- 
-@Controller('2fa')
+import { request } from 'http';
+import { IAccount } from '../interfaces';
+
+@Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
   constructor(
-    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly tfaService: TwoFactorAuthenticationService,
     private db: PrismaService,
   ) {}
- 
+
   @Post('generate')
-//   @UseGuards(AuthGuard('42'))
-  async register(@Res() response: Response, @Session() session: Record<string, any>, @Req() req) {
-    let user = {} as IUser2FA;
-    console.log(session.userid);
+  //   @UseGuards(AuthGuard('42'))
+  async register(
+    @Res() response: Response,
+    @Session() session: Record<string, any>,
+    @Req() req,
+  ) {
+    console.log('user.id.tfa', session.userid);
+    // console.log('user.email.tfa', req.email);
+    const user = {} as IUser2FA;
     user.id = session.userid;
-    user.email = req.email;
-    const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(user);
- 
-    return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+    user.email = 'mravily@student.42.fr';
+    const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
+      user,
+    );
+    toDataURL(otpauthUrl, (err, dataUrl: string) => {
+      if (err) throw err;
+      return response.status(200).json({
+        message: 'TFA Auth needs to be verified',
+        dataUrl,
+        secret: secret,
+      });
+    });
+  }
+
+  @Post('authenticate')
+  //   @UseGuards(JwtAuthenticationGuard)
+  authenticate(
+    @Session() session: Record<string, any>,
+    @Body() { token }: TwoFactorAuthenticationDto,
+  ) {
+    return this.tfaService.isTfaCodeValid(token, session.userid);
   }
 
   @Get('verify')
