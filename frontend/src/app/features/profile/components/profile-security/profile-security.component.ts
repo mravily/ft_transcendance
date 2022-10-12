@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { TfaService } from 'src/app/features/tfa.service';
 
 @Component({
@@ -9,11 +10,19 @@ import { TfaService } from 'src/app/features/tfa.service';
 })
 export class ProfileSecurityComponent implements OnInit {
 
-  	constructor() { }
+	isActivated$!: Observable<boolean>
+	alreadySet$!: Observable<string>
+	
+  	constructor(private tfaService: TfaService) {
+
+	}
 
   	ngOnInit(): void {
-		
+		this.isActivated$ = this.tfaService.isActivated();
+		this.alreadySet$ = this.tfaService.getSecret()
   	}
 
-	
+	onClickSwitch() {
+
+	}
 }

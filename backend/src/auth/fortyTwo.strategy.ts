@@ -24,19 +24,20 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     profile: Profile,
     cb: VerifyCallback,
   ): Promise<any> {
-    const id = await this.db.setUser(
-      profile.username,
-      profile.displayName,
-      profile.name.givenName,
-      profile.name.familyName,
-      profile.emails[0].value,
-      profile.photos[0].value,
-    );
-    request.session.userid = id;
+    try {
+      const id = await this.db.setUser(
+        profile.username,
+        profile.displayName,
+        profile.name.givenName,
+        profile.name.familyName,
+        profile.emails[0].value,
+        profile.photos[0].value,
+      );
+      request.session.userid = id;
+    } catch (err) {
+      return cb(err, profile);
+    }
     return cb(null, profile);
-  }
-  catch(err) {
-    return cb(err, profile);
   }
 }
 

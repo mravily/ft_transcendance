@@ -35,6 +35,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getBlockedUsers = user.getBlockedUsers;
   public getFriends = user.getFriends;
   public set2FA = user.set2FA;
+  public get2FASecret = user.get2FASecret;
   public uploadPhoto = user.uploadPhoto;
   public getLastPhotoPath = user.getLastPhotoPath;
   public get2FA = user.get2FA;
