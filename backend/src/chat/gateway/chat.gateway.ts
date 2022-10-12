@@ -234,7 +234,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     //si c'est le denier user du channel, on supprime le channel
     //sinon, si ct le creator, on en designe un admin // ou alors on supprime le channel comme tu veux
-    //  et si il n'y pas d'autre admin, on en designe un //TODO Ulysse
+    //  et si il n'y pas d'autre admin, on en designe un //TODO Ulysse aussi probleme de motdepasse, a investiguer
     this.sendNotif(socket.data.user.login + " left the channel", channelName, socket.data.user.login);
     await this.db.leaveChannel(socket.data.user.login, channelName);
     this.onPaginatechannel(socket, { page: 0, limit: 20 });
@@ -243,7 +243,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('addMember')
-  async onAddMember(socket: Socket, addMemberInfo: {channelName: string, login: string}) { // Pb avec l'ID ?
+  async onAddMember(socket: Socket, addMemberInfo: {channelName: string, login: string}) {
     let channel: IChannel= await this.db.getChannelInfo(addMemberInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
