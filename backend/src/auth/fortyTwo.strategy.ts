@@ -40,7 +40,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     }
   }
 }
-
 // accessToken 8c320b27a870db5c998d483325a948c9ce2c59db121b8588eb7f2d8640345ef3
 // refreshToken 89af29de5a8d34ae0c7a0cdda719e8731ce2685a0660e9c579b3f270bfa835a2
 // profile {

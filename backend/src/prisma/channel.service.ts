@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IChannel } from "./interfaces";
+import { IAccount, IChannel } from "../interfaces";
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
@@ -18,7 +18,7 @@ export async function setChannel(this: PrismaService, channel: IChannel, creator
   }
 }
 
-export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string) {
+export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string, isNotif: boolean) {
   try {
     await this.prisma.channelMessage.create({
       data: {
@@ -26,6 +26,7 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
         userId: userId,
         channelId: channel_name,
         isRead: false,
+        isNotif: isNotif,
       },
     });
   }
@@ -207,6 +208,22 @@ export async function setMakeAdmin(this: PrismaService, login: string, channel_n
   }
   catch (error) {
     console.log(error.message)
+  }
+}
+
+export async function deleteMakeAdmin(this: PrismaService, login: string, channel_name: string) {
+  try {
+    await this.prisma.makeAdmin.delete({
+      where: {
+        channelId_login: {
+          login: login,
+          channelId: channel_name,
+        }
+      }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
   }
 }
 

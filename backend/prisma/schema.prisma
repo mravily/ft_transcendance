@@ -63,7 +63,7 @@ model Channel {
   pwd String?
   isDirect Boolean
   isPrivate Boolean
-// Relations: 
+// Relations:
   creatorId String
   creator User @relation(fields: [creatorId], references: [id])
 // Oposit Relations:
@@ -125,6 +125,8 @@ model ChannelMessage {
   createdAt DateTime @default(now())
   message String
   isRead Boolean
+  isNotif Boolean
+
 // Relations:
   userId  String
   channelId String

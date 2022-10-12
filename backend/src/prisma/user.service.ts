@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IAccount, IPhoto } from './interfaces';
+import { IAccount, IPhoto } from '../interfaces';
 
 export async function setUser(
   this: PrismaService,
@@ -79,16 +79,46 @@ export async function get2FASecret(
   }
 }
 
+export async function isUser(this: PrismaService, login: string): Promise<boolean> {
+  try {
+    const user = await this.prisma.user.count({
+      where: { login: login },
+    });
+    if (user) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function getUserEmail(this: PrismaService, userId: string): Promise<string> {
+  try {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, },
+    });
+    return user.email;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setBlockUser(
   this: PrismaService,
+  userId: string,
   login: string,
-  block_login: string,
 ) {
   try {
     await this.prisma.blockUser.create({
       data: {
-        blockerId: login,
-        blockedLogin: block_login,
+        blockerId: userId,
+        blockedLogin: login,
       },
     });
   } catch (error) {
@@ -312,10 +342,7 @@ export async function uploadPhoto(
   }
 }
 
-export async function getLastPhotoPath(
-  this: PrismaService,
-  login: string,
-): Promise<IPhoto> {
+export async function getLastPhoto(this: PrismaService, login: string): Promise<IPhoto> {
   try {
     const tmp = await this.prisma.user.findUnique({
       where: { login: login },
@@ -391,13 +418,10 @@ export async function getFriends(
   }
 }
 
-export async function getFriendsById(
-  this: PrismaService,
-  id: string,
-): Promise<IAccount[]> {
+export async function getFriendsById(this: PrismaService, userId: string): Promise<IAccount[]> {
   try {
     const friends = await this.prisma.user.findUnique({
-      where: { id: id },
+      where: { id: userId },
       select: {
         friends: {
           select: {

@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IMatch } from './interfaces';
+import { IMatch } from '../interfaces';
 
 export async function setMatch(this: PrismaService): Promise<number> {
   try {
@@ -13,18 +13,42 @@ export async function setMatch(this: PrismaService): Promise<number> {
 export async function setMatchWinner(
   this: PrismaService,
   matchId: number,
-  id: string,
+  userId: string,
   score: number,
 ) {
   try {
     await this.prisma.match.update({
       where: { id: matchId },
-      data: { winnerid: id, winnerScore: score },
+      data: {
+        winnerid: userId,
+        winnerScore: score
+      },
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.log(error.message);
   }
 }
+
+export async function setMatchLooser(
+  this: PrismaService,
+  matchId: number,
+  userId: string,
+  score: number,
+  ) {
+    try {
+      await this.prisma.match.update({
+        where: { id: matchId },
+        data: {
+          looserid: userId,
+          looserScore: score
+        },
+      });
+    }
+    catch (error) {
+      console.log(error.message);
+    }
+  }
 
 export async function getNoWinnedMatchs(this: PrismaService, login: string): Promise<number> {
   try {

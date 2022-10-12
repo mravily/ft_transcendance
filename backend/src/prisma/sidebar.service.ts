@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount } from "./interfaces";
+import { IAccount } from "../interfaces";
 
 
 export async function getSidebar(this: PrismaService, id: string): Promise<IAccount> {

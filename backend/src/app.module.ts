@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { TwoFactorAuthenticationModule } from './2FA/twoFactorAuthentication.module';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
@@ -18,6 +20,9 @@ import { UploadsModule } from './uploads/uploads.module';
     UploadsModule,
     StreamModule,
     TwoFactorAuthenticationModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, 'upload'),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
