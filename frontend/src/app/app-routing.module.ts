@@ -4,10 +4,10 @@ import { ProfilePublicComponent } from './features/profile/components/profile-pu
 import { SignInComponent } from './features/sign-in/sign-in.component';
 import { AuthGuard } from './guards/auth.guard';
 import { TfaComponent } from './features/tfa/tfa.component';
-// import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
+import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
 
 const routes: Routes = [
-	// { path: 'qrcode', component: QrcodeViewComponent },
+	{ path: 'qrcode', component: QrcodeViewComponent },
 	{ path: 'tfa', component: TfaComponent },
 	{ path: 'user/:id', component: ProfilePublicComponent },
 	{ path: 'sign-in', component: SignInComponent },
@@ -19,4 +19,4 @@ const routes: Routes = [
 	imports: [RouterModule.forRoot(routes)],
 	exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
