@@ -39,18 +39,18 @@ export class AuthService {
     return argon2.hash(data);
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshToken = await this.hashData(refreshToken);
-    // await Update le RefreshToken dans le model User
-  }
+  //   async updateRefreshToken(userId: string, refreshToken: string) {
+  //     const hashedRefreshToken = await this.hashData(refreshToken);
+  //     // await Update le RefreshToken dans le model User
+  //   }
 
-  async refreshTokens(userId: string, refreshToken: string) {
-    const user = await this.db.getUser(userId);
-    if (!user || !user.rtoken) throw new ForbiddenException('Access Denied');
-    const refreshTokenMatches = await argon2.verify(user.rtoken, refreshToken);
-    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
-    const tokens = await this.getTokens(userId);
-    await this.updateRefreshToken(user.id, tokens.refresh_token);
-    return tokens;
-  }
+  //   async refreshTokens(userId: string, refreshToken: string) {
+  //     const user = await this.db.getUser(userId);
+  //     if (!user || !user.rtoken) throw new ForbiddenException('Access Denied');
+  //     const refreshTokenMatches = await argon2.verify(user.rtoken, refreshToken);
+  //     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+  //     const tokens = await this.getTokens(userId);
+  //     await this.updateRefreshToken(user.id, tokens.refresh_token);
+  //     return tokens;
+  //   }
 }

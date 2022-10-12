@@ -49,7 +49,6 @@ export class TwoFactorAuthenticationController {
     toDataURL(otpauthUrl, (err, dataUrl: string) => {
       if (err) throw err;
       return response.status(200).json({
-        message: 'TFA Auth needs to be verified',
         dataUrl,
         secret: secret,
       });
@@ -75,12 +74,17 @@ export class TwoFactorAuthenticationController {
     return this.db.get2FA(session.userid);
   }
 
+  @Get('secret')
+  async get2faSe(@Session() session: Record<string, any>): Promise<string> {
+    return this.db.get2FASecret(session.userid);
+  }
+
   @Post('delete')
   async delete2FA(@Session() session: Record<string, any>) {
     this.db.delete2FA(session.userid);
   }
 
-  @Post('switch')
+  @Get('switch')
   async switch2fa(@Session() session: Record<string, any>) {
     this.db.switch2FA(session.userid);
   }
