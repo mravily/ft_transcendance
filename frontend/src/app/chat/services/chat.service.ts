@@ -17,14 +17,17 @@ export class ChatService {
     } });
   }
   
-  getAddedMessageObs(): Observable<any> {
-    return this.socket.fromEvent<any>('message');
+  getAddedMessageObs(): Observable<IMessage> {
+    return this.socket.fromEvent<IMessage>('message');
   }
   sendMessage(message: IMessage) {
     this.socket.emit('addMessage', message);
   }
+  getMessages(channelName: string): Observable<IMessage[]> {
+    return this.socket.emit('getMessages', channelName);
+  }
   getMessagesObs(): Observable<IMessage[]> {
-    return this.socket.fromEvent<any>('messages');
+    return this.socket.fromEvent<IMessage[]>('messages');
   }
   
   getPublicChannelsObs(): Observable<IChannel[]> {
@@ -60,6 +63,9 @@ export class ChatService {
   addMember(channelName: string, login: string) {
     this.socket.emit('addMember', {channelName: channelName, login: login});
   }
+  removeMember(channelName: string, login: string) {
+    this.socket.emit('removeMember', {channelName: channelName, login: login});
+  }
   getChannelMembersObs(): Observable<IAccount> {
     return this.socket.fromEvent<IAccount>('channelMembers');
   }
@@ -67,7 +73,7 @@ export class ChatService {
     this.socket.emit('updatePassword', {name: channelName, password: password});
   }
   removePassword(channelName: string) {
-    this.socket.emit('updatePassword', {channelName: channelName});
+    this.socket.emit('updatePassword', {name: channelName});
   }
   leaveChannel(channelName: string) {
     this.socket.emit('leaveChannel', channelName);
@@ -76,10 +82,16 @@ export class ChatService {
     this.socket.emit('promoteToAdmin', {channelName: channelName, login: login});
   }
   banUser(channelName: string, login: string) {
-    this.socket.emit('banUser', {from: channelName, to: login});
+    this.socket.emit('banUser', {from: channelName, to: login, eventDuration: 10000});
+  }
+  unbanUser(channelName: string, login: string) {
+    this.socket.emit('unbanUser', {from: channelName, to: login});
   }
   muteUser(channelName: string, login: string) {
     this.socket.emit('muteUser', {from: channelName, to: login, eventDuration: 10000});
+  }
+  unmuteUser(channelName: string, login: string) {
+    this.socket.emit('unmuteUser', {from: channelName, to: login});
   }
 
   getChannelInfoObs(): Observable<IChannel> {
@@ -92,9 +104,9 @@ export class ChatService {
     this.socket.emit('getChannelInfo', channelName);
   }
 
-  getChannelMutedObs(): Observable<string[]> {
-    return this.socket.fromEvent<any>('muted');
-  }
+  // getChannelMutedObs(): Observable<string[]> {
+  //   return this.socket.fromEvent<any>('muted');
+  // }
   getBlockedUsersObs(): Observable<string[]> {
     return this.socket.fromEvent<any>('blockedUsers');
   }

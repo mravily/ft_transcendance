@@ -89,12 +89,24 @@ html	{
 	box-sizing: border-box;
 	
 	h4	{
-		margin-top: 8px;
+		margin: 8px;
 		height: 18px;
 		justify-content: baseline;
 	}
 	&.isMine {
 		direction: rtl;
+	}
+	&.isNotif {
+		color: #888;
+		margin: auto;
+
+		.message-body, .isNotif {
+			font-size: small;
+			background-color: #eee;
+			border-radius: 10px;
+			padding: 5px;
+		}
+
 	}
 }
 .message-body {

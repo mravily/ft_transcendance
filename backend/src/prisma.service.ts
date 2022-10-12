@@ -28,6 +28,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getUsersRanking    = leaderboard.getUsersRanking;
   public setUser            = user.setUser;
   public isUser             = user.isUser;
+  public setBlockUser       = user.setBlockUser;
   public deleteBlockUser    = user.deleteBlockUser;
   public getUserAccount     = user.getUserAccount;
   public sendFriendReq      = user.sendFriendReq;
@@ -49,6 +50,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getRatio           = match.getRatio;
   public setChannelPass     = channel.setChannelPass;
   public getChannelInfo     = channel.getChannelInfo;
+  public getChannelMessages = channel.getChannelMessages;
   public createchannel      = channel.setChannel;
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;

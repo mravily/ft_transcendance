@@ -3,46 +3,50 @@
   <app-newroom *ngIf="create"></app-newroom>
   <div class="messagezone" *ngIf="!create && selectedChannel && selectedChannel.messages">
     <h3>{{selectedChannel.channelName}}</h3>
-    <div class="dropdown">
-      <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">Separated link</a></li>
-      </ul>
-      <button (click)="onLeave()">Leave</button>
-      <input placeholder="Enter login" #addMember>
-      <button (click)="onAddMember()">Add Member</button>
-    </div>
 
-    <div *ngFor="let member of selectedChannel.users">
-      {{member.login}}
-      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onMute(member.login)">Mute</button>
-      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
-      <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+    <div class="dropdown">
+      <button (click)="onLeave()">Leave</button>
+      <input placeholder="Enter login" [(ngModel)]="newMemberLogin" #addMember>
+      <button (click)="onAddMember()">Add Member</button>
+      
+      <div *ngFor="let member of selectedChannel.users">
+        {{member.login}}
+        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
+        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
+        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onRemove(member.login)">Remove</button>
+        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
+        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+      </div>
+      <div *ngIf="isAdmin(myUser.login)">
+        <div *ngIf="!selectedChannel.isPrivate && amICreator()">
+          <input placeholder="New Password" [(ngModel)]="newPassword">
+          <button (click)="onUpdatePassword()" [disabled]="newPassword == null">{{(selectedChannel.is_pwd)?"Update Password":"Set Password"}}</button>
+          <button (click)="onRemovePassword()" *ngIf="selectedChannel.is_pwd">Remove Password</button>
+        </div>
+        <div *ngFor="let user of selectedChannel.bannedUsers">
+          {{user.login}}
+          <button (click)="onUnban(user.login)">Unban</button>
+        </div>
+      </div>
     </div>
     
     <div class="inboxContainer" #messageContainer>
-      <div *ngFor="let message of selectedChannel.messages; let i = index;">
-        <div class="message" [ngClass]="{isMine: message.from === myUser.login}">
-          <h4 *ngIf="i === 0 || selectedChannel.messages[i-1].from !== message.from">
-            {{message.from}}
-          </h4>
-          <!-- 
-            <div class="message-header-time">{{message.time}}</div>
-          -->
-          <div class="message-body" [ngClass]="{isMine: message.from === myUser.login}">
-            <div class="message-body-text">{{message.message}}</div>
-          </div>
+      <div *ngFor="let message of selectedChannel.messages; let i = index;"
+            class="message" [ngClass]="{isMine: message.from === myUser.login}">
+        <h4 *ngIf="(i === 0 || selectedChannel.messages[i-1].from !== message.from) && !message.isNotif">
+          {{message.from}}
+        </h4>
+        <!-- 
+          <div class="message-header-time">{{message.time}}</div>
+        -->
+        <div class="message-body" [ngClass]="{isMine: message.from === myUser.login, isNotif: message.isNotif}">
+          <div class="message-body-text">{{message.message}}</div>
         </div>
       </div>
     </div>
     <div class="inputbar">
-      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage">hey</textarea>
+      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..."
+        type="text" [(ngModel)]="curMessage" [disabled]="isMuted(myUser.login)"></textarea>
       <button (click)="onSendMessage()">Send</button>
     </div>
   </div>

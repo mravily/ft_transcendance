@@ -13,14 +13,14 @@ export class ChatComponent implements OnInit {
 
   @ViewChild("messageContainer")
   mContainer!: ElementRef;
-  @ViewChild("addMember")
-  addMemberInput!: ElementRef;
 
   create: boolean = false;
 
   contacts: string[] = ["John Potter", "Jane McGiller", "Joe Froster", "Jill Smith", "Jenny Smith", "Henry Colmard", "Stuart Little", "John Doe", "Jane Doe", "Joe Doe", "Jill Doe", "Jenny Doe", "Henry Doe", "Stuart Doe"];
   selectedChannel!: IChannel;
   curMessage!: string;
+  newMemberLogin!: string;
+  newPassword!: string;
   myUser!: IAccount;
 
   constructor(private chatServ: ChatService) { }
@@ -37,13 +37,21 @@ export class ChatComponent implements OnInit {
         this.selectedChannel.messages = messages;
     });
     this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
-      // console.log(channel);
+      let tmp!: IMessage[];
+      if (channel.messages)
+        tmp = channel.messages;
       this.selectedChannel = channel;
+      channel.messages = tmp;
     });
     this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
       // console.log(channel);
-      if (this.selectedChannel && this.selectedChannel.channelName == channel.channelName)
+      if (this.selectedChannel && this.selectedChannel.channelName == channel.channelName)  {
+        let tmp!: IMessage[];
+        if (channel.messages)
+          tmp = channel.messages;
         this.selectedChannel = channel;
+        channel.messages = tmp;
+      }
     });
     this.chatServ.getChannelsObs().subscribe((rooms: IChannel[]) => {
       this.contacts = rooms.map((room) => room.channelName);
@@ -62,9 +70,20 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  amICreator() {
+    if (this.selectedChannel && this.myUser)
+      return this.selectedChannel.creator == this.myUser.login;
+    return false;
+  }
   isAdmin(login: string) {
     if (this.selectedChannel && this.selectedChannel.admins) {
       return this.selectedChannel.admins.map((user) => user.login).includes(login);
+    }
+    return false;
+  }
+  isMuted(login: string) {
+    if (this.selectedChannel && this.selectedChannel.mutedUsers) {
+      return this.selectedChannel.mutedUsers.map((user) => user.login).includes(login);
     }
     return false;
   }
@@ -85,6 +104,7 @@ export class ChatComponent implements OnInit {
   
   onContactClick(contact: string) {
     this.chatServ.getChannelInfo(contact);
+    this.chatServ.getMessages(contact);
     this.create = false;
   }
   onLeave() {
@@ -94,15 +114,32 @@ export class ChatComponent implements OnInit {
   onMute(login: string) {
     this.chatServ.muteUser(this.selectedChannel.channelName, login);
   }
+  onUnmute(login: string) {
+    this.chatServ.unmuteUser(this.selectedChannel.channelName, login);
+  }
   onBan(login: string) {
     this.chatServ.banUser(this.selectedChannel.channelName, login);
+  }
+  onUnban(login: string) {
+    this.chatServ.unbanUser(this.selectedChannel.channelName, login);
   }
   onPromote(login: string) {
     this.chatServ.promoteUser(this.selectedChannel.channelName, login);
   }
   onAddMember() {
-    this.chatServ.addMember(this.selectedChannel.channelName, this.addMemberInput.nativeElement.value);
-    this.addMemberInput.nativeElement.value = "";
+    this.chatServ.addMember(this.selectedChannel.channelName, this.newMemberLogin);
+    this.newMemberLogin = "";
   }
+  onRemove(login: string) {
+    this.chatServ.removeMember(this.selectedChannel.channelName, login);
+  }
+  onUpdatePassword() {
+    this.chatServ.setPassword(this.selectedChannel.channelName, this.newPassword);
+    this.newPassword = "";
+  }
+  onRemovePassword() {
+    this.chatServ.removePassword(this.selectedChannel.channelName);
+  }
+
 
 }

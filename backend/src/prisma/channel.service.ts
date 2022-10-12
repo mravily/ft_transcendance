@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IChannel, eventI } from "../interfaces";
+import { IAccount, IChannel, eventI, IMessage } from "../interfaces";
 
 export async function setChannel(this: PrismaService, channel: IChannel, creatorId: string) {
   try {
@@ -199,7 +199,7 @@ export async function isAdmin(this: PrismaService, login: string, channel_name: 
     console.log(error.message);
   }
 }
-
+// pareil plus vraiment necessaire
 export async function isCreator(this: PrismaService, channel_name: string, userId: string): Promise<boolean> {
   try {
     const channel = await this.prisma.channel.findUnique({
@@ -346,7 +346,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         channelName: true,
         createdAt: true,
         is_pwd: true,
-        pwd: true,
+        pwd: true,// pas ouf nan ? vaut mieux faire une fonction speciale ici pour check le password
         isPrivate: true,
         isDirect: true,
         creator: {
@@ -374,13 +374,13 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
                 login: true,
             }
         },
-        messages: {
-            select: {
-                createdAt: true,
-                message: true,
-                user: {select : {login: true}},
-            }
-        }
+        // messages: {
+        //     select: {
+        //         createdAt: true,
+        //         message: true,
+        //         user: {select : {login: true}},
+        //     }
+        // }
       }
     });
     let channel = {} as IChannel;
@@ -401,18 +401,46 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
       bannedUsers: chan.bannedUsers,
       messages: [],
     }
-    for (let i in chan.messages) {
-      channel.messages.push({
-        createdAt: chan.messages[i].createdAt,
-        message: chan.messages[i].message,
-        from: chan.messages[i].user.login,
-        channelId: channel_name,
-      });
-    }
+    // for (let i in chan.messages) {
+    //   channel.messages.push({
+    //     createdAt: chan.messages[i].createdAt,
+    //     message: chan.messages[i].message,
+    //     from: chan.messages[i].user.login,
+    //     channelId: channel_name,
+    //   });
+    // }
     return channel;
   }
   catch (error) {
     console.log(error.message);
     return null;
+  }
+}
+
+export async function getChannelMessages(this: PrismaService, channel_name: string): Promise<IMessage[]> {
+  try {
+    const messages = await this.prisma.channelMessage.findMany({
+      where: { channelId: channel_name },
+      select: {
+        createdAt: true,
+        message: true,
+        user: {select : {login: true}},
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      // take: 50,
+    });
+    return messages.map((mess) => {
+      return {
+        createdAt: mess.createdAt,
+        message: mess.message,
+        from: mess.user.login,
+        channelId: channel_name,
+      }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
   }
 }
