@@ -12,7 +12,7 @@ export class ChatService {
   socket!: Socket;
   
   constructor() { 
-    this.socket = new Socket({ url: 'localhost:4200/chat', options: {
+    this.socket = new Socket({ url: '/chat', options: {
       withCredentials: false,
     } });
   }
@@ -37,19 +37,19 @@ export class ChatService {
     this.socket.emit('searchPublicChannels', search);
   }
   getPublicChannels(page: PageI) {
-    this.socket.emit('searchPublicChannels', page);
+    this.socket.emit('getPublicChannels', page);
   }
-
+  searchUsers(search: string) {
+    this.socket.emit('searchUsers', search);
+  }
+  getSearchUsersObs(): Observable<string[]> {
+    return this.socket.fromEvent<string[]>('users');
+  }
   createChannel(room: IChannel) {
     this.socket.emit('createChannel', room);
   }
-  createDM(login1: string, login2: string) {
-    let room : IChannel = {
-      channelName: login1 + login2,
-      is_pwd: false, password: "", 
-      isDirect: true, isPrivate: true,
-      users: [{login: login1}, {login: login2}], creator: "DM"};
-    this.socket.emit('createChannel', room);
+  getDMinfo(login: string) {
+    this.socket.emit('getDMinfo', login);
   }
   getChannelsObs(): Observable<IChannel[]> {
     return this.socket.fromEvent<IChannel[]>('channels');
@@ -107,8 +107,14 @@ export class ChatService {
   // getChannelMutedObs(): Observable<string[]> {
   //   return this.socket.fromEvent<any>('muted');
   // }
-  getBlockedUsersObs(): Observable<string[]> {
-    return this.socket.fromEvent<any>('blockedUsers');
+  // getBlockedUsersObs(): Observable<string[]> {
+  //   return this.socket.fromEvent<any>('blockedUsers');
+  // }
+  blockUser(login: string) {
+    return this.socket.emit('blockUser', login);
+  }
+  unblockUser(login: string) {
+    return this.socket.emit('unblockUser', login);
   }
 
   getErrorObs(): Observable<string> {

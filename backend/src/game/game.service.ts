@@ -124,6 +124,8 @@ export class GameMatch {
   private wallOffset:number;
   public player1Score: number;
   public player2Score: number;
+
+  private period: number = 1000 / 60;
   
   constructor(private readonly wsg: GameGateway, public playerSockets: Array<Socket>, public custom: boolean = false) {
     
@@ -141,12 +143,15 @@ export class GameMatch {
     this.player2 = new Paddle(this.paddleWidth,this.paddleHeight,this.canvasWidth - (this.wallOffset + this.paddleWidth) - this.ballSize, this.canvasWidth / 2 - this.paddleHeight / 2);
     this.ball = new Ball(this.ballSize,this.ballSize,this.canvasWidth / 2 - this.ballSize / 2, this.canvasWidth / 2 - this.ballSize / 2, this);
     this.powerUps = [];
-
     this.ready = [];
     this.spectators = [];
   }
   
   async start(): Promise<void> {
+    this.wsg.sendStart(this.playerSockets, 5);
+    await delay(1000);
+    this.wsg.sendStart(this.playerSockets, 4);
+    await delay(1000);
     this.wsg.sendStart(this.playerSockets, 3);
     await delay(1000);
     this.wsg.sendStart(this.playerSockets, 2);
@@ -156,15 +161,14 @@ export class GameMatch {
     this.wsg.sendStart(this.playerSockets, 0);
     
     this.cur = Date.now();
-    this.idInterval = setInterval(() => this.gameLoop(), 1000 / 120);
+    this.idInterval = setInterval(() => this.gameLoop(), 1000 / 59);
   }
   
   gameLoop(){
-    let period = 1000 / 60;
-    while (Date.now() - this.cur >= period)
+    while (Date.now() - this.cur >= this.period)
     {
       this.update();
-      this.cur = this.cur + period;
+      this.cur += this.period;
     }
   }
   end(): void {
@@ -195,6 +199,7 @@ export class GameMatch {
   sendEndofPowerUp(idPlayer: boolean, type: number): void {
     this.wsg.sendEndofPowerUp(this.playerSockets, this.spectators, idPlayer, type);
   }
+
   update()  {
     this.player1.update(this.canvasHeight, this.wallOffset, this);
     this.player2.update(this.canvasHeight, this.wallOffset, this);
@@ -245,13 +250,21 @@ export class GameMatch {
     {
       this.player1.y = paddle.y;
       this.player1.yVel = paddle.yVel;
-      this.wsg.sendPaddlePos(0, this.playerSockets[1], this.spectators, {y: this.player1.y, yVel: this.player1.yVel});
+      this.wsg.sendPaddlePos(0, this.playerSockets[1], this.spectators, {y: this.player1.y, yVel: this.player1.yVel, timeStamp: paddle.timeStamp});
+      while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
+        this.player1.update(this.canvasHeight, this.wallOffset, this);
+        paddle.timeStamp += this.period;
+      }
     }
     else if (client == this.playerSockets[1])
     {
       this.player2.y = paddle.y;
       this.player2.yVel = paddle.yVel;
-      this.wsg.sendPaddlePos(1, this.playerSockets[0], this.spectators, {y: this.player2.y, yVel: this.player2.yVel});
+      this.wsg.sendPaddlePos(1, this.playerSockets[0], this.spectators, {y: this.player2.y, yVel: this.player2.yVel, timeStamp: paddle.timeStamp});
+      while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
+        this.player2.update(this.canvasHeight, this.wallOffset, this);
+        paddle.timeStamp += this.period;
+      }
     }
   }
 }

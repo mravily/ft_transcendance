@@ -1,34 +1,62 @@
 <div class="body">
+  <!-- <div class="dropdown">
+    <button class="btndrop" type="button">
+      ...
+    </button>
+    <div class="dropmenu">
+      <a class="dropdown-item" href="#">Action</a>
+      <a class="dropdown-header" href="#">Secondary</a>
+      <a class="dropdown-item" href="#">Something else here</a>
+    </div>
+  </div> -->
 
   <app-newroom *ngIf="create"></app-newroom>
   <div class="messagezone" *ngIf="!create && selectedChannel && selectedChannel.messages">
-    <h3>{{selectedChannel.channelName}}</h3>
+    <div class="header dropdown">
+      <h3 class="btndrop">{{(selectedChannel.isDirect) ? getDMname(selectedChannel) : selectedChannel.channelName}}</h3>
 
-    <div class="dropdown">
-      <button (click)="onLeave()">Leave</button>
-      <input placeholder="Enter login" [(ngModel)]="newMemberLogin" #addMember>
-      <button (click)="onAddMember()">Add Member</button>
-      
-      <div *ngFor="let member of selectedChannel.users">
-        {{member.login}}
-        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
-        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
-        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onRemove(member.login)">Remove</button>
-        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
-        <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
-      </div>
-      <div *ngIf="isAdmin(myUser.login)">
-        <div *ngIf="!selectedChannel.isPrivate && amICreator()">
-          <input placeholder="New Password" [(ngModel)]="newPassword">
-          <button (click)="onUpdatePassword()" [disabled]="newPassword == null">{{(selectedChannel.is_pwd)?"Update Password":"Set Password"}}</button>
-          <button (click)="onRemovePassword()" *ngIf="selectedChannel.is_pwd">Remove Password</button>
+      <div class="dropmenu">
+        <div *ngIf="!selectedChannel.isDirect">
+          <button (click)="onLeave()">Leave</button>
+          <div [formGroup]="searchForm">
+            <input placeholder="Enter login" formControlName="search">
+            <button *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user)">Add {{user}}</button>
+          </div>
+          
+          <div *ngFor="let member of selectedChannel.users">
+            <button>{{member.login}}</button>
+            <button *ngIf="member.login != myUser.login" (click)="onDMclick(member.login)">Send Message</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
+            <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
+
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onRemove(member.login)">Remove</button>
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+          </div>
+          <div *ngIf="isAdmin(myUser.login)">
+            <div *ngIf="!selectedChannel.isPrivate && amICreator()">
+              <input placeholder="New Password" [(ngModel)]="newPassword">
+              <button (click)="onUpdatePassword()" [disabled]="newPassword == null || newPassword == ''">{{(selectedChannel.is_pwd)?"Update Password":"Set Password"}}</button>
+              <button (click)="onRemovePassword()" *ngIf="selectedChannel.is_pwd">Remove Password</button>
+            </div>
+            <div *ngFor="let user of selectedChannel.bannedUsers">
+              {{user.login}}
+              <button (click)="onUnban(user.login)">Unban</button>
+            </div>
+          </div>
         </div>
-        <div *ngFor="let user of selectedChannel.bannedUsers">
-          {{user.login}}
-          <button (click)="onUnban(user.login)">Unban</button>
+        <div *ngIf="selectedChannel.isDirect">
+          <div *ngFor="let member of selectedChannel.users">
+            <button>{{member.login}}</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
+            <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
+          </div>
         </div>
       </div>
     </div>
+
     
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of selectedChannel.messages; let i = index;"
@@ -47,7 +75,7 @@
     <div class="inputbar">
       <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..."
         type="text" [(ngModel)]="curMessage" [disabled]="isMuted(myUser.login)"></textarea>
-      <button (click)="onSendMessage()">Send</button>
+      <button (click)="onSendMessage()" [disabled]="curMessage==null || curMessage==''">Send</button>
     </div>
   </div>
 
@@ -55,11 +83,11 @@
     
     <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
 
-    <div class="contact" *ngFor="let contact of contacts" (click)="onContactClick(contact)">
-      <img src="https://cdn0.iconfinder.com/data/icons/network-and-communication-2-8/66/139-512.png">
+    <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
+      <img *ngIf="contact.isDirect" [src]="getRoomPhoto(contact)">
       
       <div class="contactW">
-        {{contact}}
+        {{(contact.isDirect) ? getDMname(contact) : contact.channelName}}
         <!-- <div class="contact-status">Online</div> -->
       </div>
     </div>

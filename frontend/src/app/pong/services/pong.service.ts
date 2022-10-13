@@ -19,13 +19,11 @@ export class PongService {
   specModeEvent: Observable<void>;
   powerUpEvent: Observable<PowerUpEvent>;
   endEvent: Observable<Results>;
+  syncEvent: Observable<number>;
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
-      // withCredentials: false,
-      extraHeaders: {
-        'set-cookie' : this.cookieService.get('token'),
-      }
+      withCredentials: false,
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');
     this.paddleEvent = this.socket.fromEvent<PaddlePos>('paddle');
@@ -36,6 +34,7 @@ export class PongService {
     this.specModeEvent = this.socket.fromEvent<void>('specMode');
     this.powerUpEvent = this.socket.fromEvent<PowerUpEvent>('powerUp');
     this.endEvent = this.socket.fromEvent<Results>('endGame');
+    this.syncEvent = this.socket.fromEvent<number>('sync');
   }
 
   getNewMatchmaking(): void {
@@ -45,8 +44,8 @@ export class PongService {
     this.socket.emit('findPUMatch');
   }
 
-  sendPaddlePos(y: number, yVel: number): void {
-    this.socket.emit('paddle', {y: y, yVel: yVel});
+  sendPaddlePos(y: number, yVel: number, timestamp: number): void {
+    this.socket.emit('paddle', {y: y, yVel: yVel, timeStamp: timestamp});
   }
 
   sendStartGame(gameId: number): void {
@@ -57,6 +56,11 @@ export class PongService {
     this.socket.emit('message', message);
   }
 
+  sendSync(): number {
+    let t = Date.now();
+    this.socket.emit('sync', t);
+    return t;
+  }
   //
   invitePlayer(playerId: number): void {
     this.socket.emit('invite', playerId);

@@ -28,6 +28,15 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
         isRead: false,
       },
     });
+    await this.prisma.channel.update(
+      {
+        where:
+        {channelName: channel_name},
+        data: {
+          updatedAt: new Date(),
+        }
+      }
+    )
   }
   catch (error) {
     console.log(error.message);
@@ -311,6 +320,26 @@ export async function getPublicChannels(this: PrismaService): Promise<IChannel[]
     console.log(error.message);
   }
 }
+export async function searchPublicChannels(this: PrismaService, key: string): Promise<IChannel[]> {
+  try {
+    const chans = await this.prisma.channel.findMany({
+      where: {
+        channelName: {
+          contains: key,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        channelName: true,
+      },
+      take:
+        30,
+    });
+    return chans;
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
 export async function getchannelsForUser(this: PrismaService, login: string, skip: number, take: number): Promise<IChannel[]> {
   try {
@@ -355,9 +384,15 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
           }
         },
         userList: {
-            select: {
+          select: {
+            user: {
+              select: {
                 login: true,
+                imgUrl: true,
+                nickName: true,
+              }
             }
+          }
         },
         userAdminList: {
             select: {
@@ -383,10 +418,10 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
         // }
       }
     });
-    let channel = {} as IChannel;
-    if (chan === undefined) {
+    if (chan === null || chan === undefined) {
       return null;
     }
+    let channel = {} as IChannel;
     channel = {
       channelName: chan.channelName,
       createdAt: chan.createdAt,
@@ -395,7 +430,11 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
       isPrivate: chan.isPrivate,
       isDirect: chan.isDirect,
       creator: chan.creator.login,
-      users: chan.userList,
+      users: chan.userList.map((user) => { return {
+        login: user.user.login,
+        nickName: user.user.nickName,
+        avatar: user.user.imgUrl
+      }}),
       admins: chan.userAdminList,
       mutedUsers: chan.mutedUserList,
       bannedUsers: chan.bannedUsers,
@@ -427,7 +466,7 @@ export async function getChannelMessages(this: PrismaService, channel_name: stri
         user: {select : {login: true}},
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
       // take: 50,
     });

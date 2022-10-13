@@ -75,7 +75,7 @@ export class PongComponent implements AfterViewInit {
 export class PongMatch {
 
   private gameContext!: CanvasRenderingContext2D;
-
+  private period = 1000/60;
   public playerScore: number = 0;
   public opponentScore: number = 0;
   private wallOffset: number = 20;
@@ -83,12 +83,14 @@ export class PongMatch {
   private opponentPlayer!: Paddle;
   private ball!: Ball;
   private powerUps: PowerUp[] = [];
-  private cur!: number; //lastupdate time
+  protected cur!: number; //lastupdate time
   private gameId!: number;
   specSubcription: Subscription;
   otherSubcriptions: Subscription[] = [];
   idInterval!: any;
-  
+  private clockdiff: number = 0;
+  private clockdifftab: number[] = [];
+
   constructor(private route: ActivatedRoute, protected wss: PongService, private gameCanvas: ElementRef<HTMLCanvasElement>) {
     console.log("ngAfterViewInit");
     this.gameContext = <CanvasRenderingContext2D> this.gameCanvas.nativeElement.getContext("2d");
@@ -110,15 +112,28 @@ export class PongMatch {
     this.ball = new Ball(ballSize,ballSize,this.gameCanvas.nativeElement.width / 2 - ballSize / 2, this.gameCanvas.nativeElement.width / 2 - ballSize / 2, this);
     this.gameId = +this.route.snapshot.params['gameId'];
     
+    // si le mec est spectateur
+    this.specSubcription = this.wss.myPaddleEvent.subscribe((pad: PaddlePos)  => {
+      if (this.player.isPlayer) {
+        this.player.y = pad.y;
+        this.player.yVel = pad.yVel;
+        
+        while (pad.yVel != 0 && pad.timeStamp <= this.cur)
+        {
+          this.player.update(this.gameCanvas.nativeElement, this.wallOffset);
+          pad.timeStamp += this.period;
+        }
+      }
+    });
     this.otherSubcriptions.push(this.wss.paddleEvent.subscribe((pad: PaddlePos)  => {
       this.opponentPlayer.y = pad.y;
       this.opponentPlayer.yVel = pad.yVel;
-      console.log("Response from websocket: " + pad);
-    }));
-    this.otherSubcriptions.push(this.specSubcription = this.wss.myPaddleEvent.subscribe((pad: PaddlePos)  => {
-      this.player.y = pad.y;
-      this.player.yVel = pad.yVel;
-      console.log("Response from websocket: " + pad);
+      
+      while (pad.yVel != 0 && pad.timeStamp + this.period <= this.cur)
+      {
+        this.opponentPlayer.update(this.gameCanvas.nativeElement, this.wallOffset);
+        pad.timeStamp += this.period;
+      }
     }));
     this.otherSubcriptions.push(this.wss.gameEvent.subscribe((state: GameStatus) => {
       this.playerScore = state.myScore;
@@ -127,10 +142,20 @@ export class PongMatch {
       this.ball.y = state.ballY;
       this.ball.xVel = state.ballXVel;
       this.ball.yVel = state.ballYVel;
-      this.cur = state.timeStamp;
-      console.log("Response from websocket: " + state);
+
+      while (state.timeStamp + this.period <= this.cur)
+      {
+        this.ball.update(this.player, this.opponentPlayer, this.gameCanvas.nativeElement.width, this.gameCanvas.nativeElement.height, this.wallOffset);
+        state.timeStamp += this.period;
+      }
+      // console.log("Global Update:", state.timeStamp, "mynow", this.cur, "latency", this.cur - state.timeStamp);
+      // this.cur = state.timeStamp;
+      // console.log("Response from websocket: " + state);
     }));
     this.otherSubcriptions.push(this.wss.startEvent.subscribe((compteur: number) => {
+      if (compteur == 5) {
+        this.clockdiff = this.wss.sendSync();
+      }
       if (compteur !== 0) {
         this.gameContext.fillStyle = "#000";
         this.gameContext.fillRect(0,0,this.gameCanvas.nativeElement.width,this.gameCanvas.nativeElement.width);
@@ -169,7 +194,7 @@ export class PongMatch {
       this.gameContext.fillStyle = "#000";
       this.gameContext.fillRect(0,0,this.gameCanvas.nativeElement.width,this.gameCanvas.nativeElement.height);
       this.gameContext.fillStyle = "#fff";
-    this.gameContext.font = "120px Orbitron";
+      this.gameContext.font = "120px Orbitron";
       if (this.playerScore > this.opponentScore)
         this.gameContext.fillText(`You win`, 700, 300);
       else
@@ -179,6 +204,25 @@ export class PongMatch {
       this.otherSubcriptions.forEach((sub) => sub.unsubscribe());
       this.otherSubcriptions = [];
     }));
+    this.otherSubcriptions.push(this.wss.syncEvent.subscribe((servertime: number) => {
+      let t = Date.now();
+      console.log('1', this.clockdiff, '2', servertime, '3', t);
+      console.log('servertime attendu', (this.clockdiff + t) / 2, 'latency aller retour', (t - this.clockdiff) / 2);
+      this.clockdiff = servertime - (this.clockdiff + t) / 2;
+      console.log('difference', this.clockdiff);
+      this.clockdifftab.push(this.clockdiff);
+
+      if (this.clockdifftab.length < 9) {
+        console.log('Ulysse en redemande !');
+        this.clockdiff = this.wss.sendSync();
+      }
+      else {
+        console.log(this.clockdifftab);
+        this.clockdifftab.sort();
+        this.clockdiff = this.clockdifftab[4];
+        console.log('clockdiff median', this.clockdiff);
+      }
+    }));
   }
   ready() {
     this.wss.sendStartGame(this.gameId);
@@ -187,22 +231,25 @@ export class PongMatch {
     if (this.cur !== undefined) {
       return;
     }
-    this.cur = Date.now();
-    this.idInterval = setInterval(() => this.gameLoop(), 1000 / 120);
+    this.cur = this.myNow();
+    this.idInterval = setInterval(() => this.gameLoop(), 1000 / 62);
+  }
+  myNow() {
+    return Date.now() + this.clockdiff;
   }
   
-  gameLoop(){
-    let period = 1000 / 60;
-    while (Date.now() - this.cur >= period)
+  gameLoop() {
+    while (this.myNow() - this.cur >= this.period)
     {
       this.update();
-      this.cur = this.cur + period;
+      this.cur += this.period;
     }
     this.draw();
   }
   
   end(): void {
     clearInterval(this.idInterval);
+    this.otherSubcriptions.forEach((sub) => sub.unsubscribe());
   }
   
   drawBoardDetails(){
@@ -250,12 +297,12 @@ export class PlayingPongMatch extends PongMatch {
 
   constructor(route: ActivatedRoute, wss: PongService, gameCanvas: ElementRef<HTMLCanvasElement>) {
     super(route, wss, gameCanvas);
-    this.player.setPlayer();
+    this.player.isPlayer = true;
     this.specSubcription.unsubscribe();
   }
 
   update_direction() {
     this.player.update_dir();
-    this.wss.sendPaddlePos(this.player.y, this.player.yVel);
+    this.wss.sendPaddlePos(this.player.y, this.player.yVel, this.cur);
   }
 }

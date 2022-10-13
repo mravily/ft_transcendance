@@ -9,6 +9,7 @@ export class GameStatus {
 }
 
 export interface PaddlePos {
+    timeStamp: number;
     y: number;
     yVel: number;
 }

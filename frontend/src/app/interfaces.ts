@@ -14,7 +14,7 @@ export interface IAccount {
     matches?: any[];
     friends?: IAccount[];
     n_friends?: number;
-    blockUsers?: any[];
+    blockUsers?: string[];
     createdAt?: Date;
     isOnline?: boolean;
     isAdmin?: boolean;

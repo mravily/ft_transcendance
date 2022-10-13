@@ -13,6 +13,7 @@ export interface GameStatus {
     ballYVel:number;
 }
 export interface GamePaddle {
+    timeStamp: number;
     y: number;
     yVel: number;
 }

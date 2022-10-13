@@ -63,14 +63,15 @@ class DoublePaddle extends Entity {
 
 export class Paddle extends Entity{
   
-  private speed:number = 15;
+  private baseSpeed = 20;
+  private speed:number = 20;
   private powerUps: Map<powerType, number> = new Map();
   private double_paddle!: DoublePaddle | undefined;
   private coef_height: number = 1;
   private coef_speed: number = 1;
   coef_force: number = 1;
 
-  constructor(w:number,h:number,x:number,y:number, private isPlayer: boolean){
+  constructor(private w:number,private h:number,x:number,y:number, public isPlayer: boolean){
     super(w,h,x,y);
   }
 
@@ -98,9 +99,9 @@ export class Paddle extends Entity{
   }
   
   update(canvas: HTMLCanvasElement, wallOffset: number) {
-    this.height = 120 * this.coef_height;
-    this.speed = 15 * this.coef_speed;
-    this.width = 20 * this.coef_force;
+    this.height = this.h * this.coef_height;
+    this.speed = this.baseSpeed * this.coef_speed;
+    this.width = this.w * this.coef_force;
 
     if (this.isPlayer)
       this.update_dir();
@@ -172,9 +173,6 @@ export class Paddle extends Entity{
         return;
     }
     this.powerUps.delete(type);
-  }
-  setPlayer(){
-    this.isPlayer = true;
   }
 }
 

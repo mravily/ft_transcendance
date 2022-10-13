@@ -50,8 +50,15 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     // }
     console.log('Client connected', client.id, client.data);
   }
+  
   async handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
+  }
+
+  @SubscribeMessage('sync')
+  async sync(client: Socket) {
+    client.emit('sync', Date.now());
+    console.log('sync', client.id );
   }
 
   @SubscribeMessage('findMatch')
@@ -90,12 +97,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (client)
       client.emit('paddle', payload);
     if (specs)  {
-      let msg = 'paddle';
-      if (numPlayer == 0)
-        msg = 'myPaddle';
-      for (var i = 0; i < specs.length; i++) {
-        specs[i].emit('paddle', payload);
-      }
+      let msg = (numPlayer == 0) ? 'myPaddle' : 'paddle';
+      specs.forEach(s => s.emit(msg, payload));
     }
   }
 

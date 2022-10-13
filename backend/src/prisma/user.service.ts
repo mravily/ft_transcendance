@@ -398,6 +398,26 @@ export async function getFriendsById(this: PrismaService, id: string): Promise<I
   }
 }
 
+export async function searchUser(this: PrismaService, key: string): Promise<string[]> {
+  try {
+    const users = await this.prisma.user.findMany({
+      where: {
+        login: {
+          contains: key,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        login: true,
+      },
+      take: 5,
+    });
+    return users.map((user) => user.login);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function getUserAccount(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
@@ -490,10 +510,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.befriend[i].requester);
       }
-      userAccount.blockUsers = [];
-      for (let i = 0; user.blockedUsers[i]; i++) {
-        userAccount.blockUsers.push(user.blockedUsers[i].blockedLogin);
-      }
+      userAccount.blockUsers = user.blockedUsers.map((user) => user.blockedLogin);
       userAccount.createdAt = user.createdAt;
       userAccount.twoFA = user.twoFA;
       userAccount.isAdmin = user.isAdmin;

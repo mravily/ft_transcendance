@@ -1,4 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { map, Observable, Subscription } from 'rxjs';
 import { IAccount, IChannel, IMessage } from '../../interfaces';
 // import { channelI } from '../models/channel.model';
 // import { MessageI } from '../models/chat.model';
@@ -16,14 +18,17 @@ export class ChatComponent implements OnInit {
 
   create: boolean = false;
 
-  contacts: string[] = ["John Potter", "Jane McGiller", "Joe Froster", "Jill Smith", "Jenny Smith", "Henry Colmard", "Stuart Little", "John Doe", "Jane Doe", "Joe Doe", "Jill Doe", "Jenny Doe", "Henry Doe", "Stuart Doe"];
+  contacts!: Observable<IChannel[]>;
   selectedChannel!: IChannel;
   curMessage!: string;
-  newMemberLogin!: string;
+  // newMemberLogin!: string;
   newPassword!: string;
   myUser!: IAccount;
+  searchForm!: FormGroup;
+  userSearchResult$!: Observable<string[]>;
+  searchSubcription!: Subscription;
 
-  constructor(private chatServ: ChatService) { }
+  constructor(private chatServ: ChatService, private builder: FormBuilder) { }
   
   ngOnInit(): void {
     this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
@@ -38,30 +43,39 @@ export class ChatComponent implements OnInit {
     });
     this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
       let tmp!: IMessage[];
-      if (channel.messages)
-        tmp = channel.messages;
+      if (this.selectedChannel?.messages)
+        tmp = this.selectedChannel.messages;
       this.selectedChannel = channel;
-      channel.messages = tmp;
+      this.selectedChannel.messages = tmp;
+      this.create = false;
     });
     this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
       // console.log(channel);
       if (this.selectedChannel && this.selectedChannel.channelName == channel.channelName)  {
         let tmp!: IMessage[];
-        if (channel.messages)
-          tmp = channel.messages;
+        if (this.selectedChannel?.messages)
+          tmp = this.selectedChannel.messages;
         this.selectedChannel = channel;
-        channel.messages = tmp;
+        this.selectedChannel.messages = tmp;
       }
     });
-    this.chatServ.getChannelsObs().subscribe((rooms: IChannel[]) => {
-      this.contacts = rooms.map((room) => room.channelName);
-    });
+    this.contacts = this.chatServ.getChannelsObs();
     this.chatServ.getErrorObs().subscribe((error: string) => {
       console.log(error);
     });
     this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
       this.myUser = user;
     });
+
+    this.searchForm = this.builder.group({
+      search: [null]
+    });
+    this.searchSubcription = this.searchForm.valueChanges.pipe(
+      map((form) => form.search)
+    ).subscribe((search) => {
+      this.chatServ.searchUsers(search);
+    });
+    this.userSearchResult$ = this.chatServ.getSearchUsersObs();
   }
 
   ngAfterViewChecked() {
@@ -87,6 +101,13 @@ export class ChatComponent implements OnInit {
     }
     return false;
   }
+  isBlocked(login: string) {
+    if (this.myUser && this.myUser.blockUsers) {
+      return this.myUser.blockUsers.includes(login);
+    }
+    return false;
+  }
+
   onSendMessage() {
     this.chatServ.sendMessage({
       message: this.curMessage,
@@ -103,9 +124,14 @@ export class ChatComponent implements OnInit {
   }
   
   onContactClick(contact: string) {
+    this.create = false;
     this.chatServ.getChannelInfo(contact);
     this.chatServ.getMessages(contact);
+  }
+  onDMclick(login: string) {
     this.create = false;
+    this.selectedChannel.messages = undefined;
+    this.chatServ.getDMinfo(login);
   }
   onLeave() {
     this.chatServ.leaveChannel(this.selectedChannel.channelName);
@@ -126,9 +152,9 @@ export class ChatComponent implements OnInit {
   onPromote(login: string) {
     this.chatServ.promoteUser(this.selectedChannel.channelName, login);
   }
-  onAddMember() {
-    this.chatServ.addMember(this.selectedChannel.channelName, this.newMemberLogin);
-    this.newMemberLogin = "";
+  onAddMember(login: string) {
+    this.chatServ.addMember(this.selectedChannel.channelName, login);
+    // this.newMemberLogin = "";
   }
   onRemove(login: string) {
     this.chatServ.removeMember(this.selectedChannel.channelName, login);
@@ -140,6 +166,18 @@ export class ChatComponent implements OnInit {
   onRemovePassword() {
     this.chatServ.removePassword(this.selectedChannel.channelName);
   }
-
-
+  getDMname(room: IChannel) {
+    return room.users?.find((user) => user.login != this.myUser.login)?.nickName;
+  }
+  getRoomPhoto(room: IChannel) {
+    if (!room.isDirect)
+      return "https://cdn0.iconfinder.com/data/icons/network-and-communication-2-8/66/139-512.png";
+    return room.users?.find((user) => user.login != this.myUser.login)?.avatar;
+  }
+  onBlock(login: string) {
+    this.chatServ.blockUser(login);
+  }
+  onUnblock(login: string) {
+    this.chatServ.unblockUser(login);
+  }
 }

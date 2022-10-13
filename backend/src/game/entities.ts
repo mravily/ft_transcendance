@@ -61,14 +61,15 @@ class DoublePaddle extends Entity {
 }
 export class Paddle extends Entity{
   
-  private speed:number = 15;
-  powerUps: Map<powerType, number> = new Map<powerType, number>();
+  private baseSpeed = 20;
+  private speed:number = 20;
+  private powerUps: Map<powerType, number> = new Map<powerType, number>();
   private double_paddle!: DoublePaddle;
   private coef_height: number = 1;
   public coef_force: number = 1;
   private coef_speed: number = 1;
   
-  constructor(w:number,h:number,x:number,y:number){
+  constructor(private w:number, private h:number,x:number,y:number){
     super(w,h,x,y);
   }
   
@@ -99,9 +100,9 @@ export class Paddle extends Entity{
       this.coef_speed = 1;
       game.sendEndofPowerUp(this.x > 700, powerType.slow_paddle);
     }
-    this.height = 120 * this.coef_height;
-    this.speed = 15 * this.coef_speed;
-    this.width = 20 * this.coef_force;
+    this.height = this.h * this.coef_height;
+    this.speed = this.baseSpeed * this.coef_speed;
+    this.width = this.w * this.coef_force;
 
     if( this.yVel === -1 ){
       if(this.y + this.yVel * this.speed <= wallOffset){
