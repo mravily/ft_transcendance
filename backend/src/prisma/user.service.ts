@@ -335,7 +335,7 @@ export async function uploadPhoto(
     });
     await this.prisma.user.update({
       where: { id: userId },
-      data: { imgUrl: 'localhost:3000/api/stream/' + usr.login },
+      data: { imgUrl: 'http://localhost:3000/api/stream/' + usr.login },
     });
   } catch (error) {
     console.log(error.message);
