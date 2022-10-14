@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service';
 import { Tokens } from './types/tokens.type';
-import * as argon2 from 'argon2';
+// import * as argon2 from 'argon2';
 
 @Injectable()
 export class AuthService {
@@ -35,9 +35,9 @@ export class AuthService {
     };
   }
 
-  hashData(data: string) {
-    return argon2.hash(data);
-  }
+  // hashData(data: string) {
+  //   // return argon2.hash(data);
+  // }
 
   //   async updateRefreshToken(userId: string, refreshToken: string) {
   //     const hashedRefreshToken = await this.hashData(refreshToken);
