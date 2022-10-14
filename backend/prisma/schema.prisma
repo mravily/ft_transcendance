@@ -23,6 +23,7 @@ model User {
   isAdmin Boolean
   token String? @unique
   twoFA Boolean
+  isSecret Boolean
   secret String?
   dataUrl String?
   imgUrl String

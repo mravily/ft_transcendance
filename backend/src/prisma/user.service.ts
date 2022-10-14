@@ -22,6 +22,7 @@ export async function setUser(
         email: email,
         score: 0,
         twoFA: false,
+        isSecret: false,
         isOnline: true,
         isAdmin: false,
         imgUrl: imgUrl,
@@ -109,11 +110,7 @@ export async function getUserEmail(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function setBlockUser(
-  this: PrismaService,
-  userId: string,
-  login: string,
-) {
+export async function setBlockUser(this: PrismaService, userId: string, login: string) {
   try {
     await this.prisma.blockUser.create({
       data: {
@@ -126,11 +123,7 @@ export async function setBlockUser(
   }
 }
 
-export async function deleteBlockUser(
-  this: PrismaService,
-  userId: string,
-  login: string,
-) {
+export async function deleteBlockUser(this: PrismaService, userId: string, login: string) {
   try {
     await this.prisma.blockUser.delete({
       where: {
@@ -145,11 +138,7 @@ export async function deleteBlockUser(
   }
 }
 
-export async function sendFriendReq(
-  this: PrismaService,
-  requester: string,
-  requested: string,
-) {
+export async function sendFriendReq(this: PrismaService, requester: string, requested: string) {
   try {
     await this.prisma.addFriend.create({
       data: {
@@ -163,16 +152,31 @@ export async function sendFriendReq(
   }
 }
 
-export async function set2FA(
-  this: PrismaService,
-  userId: string,
-  secret: string,
-  dataUrl: string,
-) {
+export async function isSecret(this: PrismaService, userId: string): Promise<boolean> {
+  try {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        isSecret: true,
+      }
+    });
+    return user.isSecret;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function set2FA(this: PrismaService, userId: string, secret: string, dataUrl: string) {
   try {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { twoFA: false, secret: secret, dataUrl: dataUrl },
+      data: {
+        twoFA: true,
+        isSecret: true,
+        secret: secret,
+        dataUrl: dataUrl
+      },
     });
   } catch (error) {
     console.log(error.message);
@@ -185,17 +189,19 @@ export async function delete2FA(this: PrismaService, userId: string) {
       where: {
         id: userId,
       },
-      data: { twoFA: false, secret: null, dataUrl: null },
+      data: {
+        twoFA : false,
+        isSecret: false,
+        secret: null,
+        dataUrl: null
+      },
     });
   } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function is2FA(
-  this: PrismaService,
-  userId: string,
-): Promise<boolean> {
+export async function is2FA(this: PrismaService, userId: string): Promise<boolean> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

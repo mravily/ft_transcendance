@@ -88,4 +88,9 @@ export class TwoFactorAuthenticationController {
   async switch2fa(@Session() session: Record<string, any>) {
     this.db.switch2FA(session.userid);
   }
+
+  @Get('issecret')
+  async isSecret(@Session() session: Record<string, any>) {
+    return this.db.isSecret(session.userid);
+  }
 }

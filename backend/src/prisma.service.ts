@@ -36,7 +36,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public get2FA             = user.get2FA;
   public delete2FA          = user.delete2FA;
   public switch2FA          = user.switch2FA;
-  public get2FASecret       = null;
+  public get2FASecret       = user.get2FASecret;
+  public isSecret           = user.isSecret;
   public getUser            = null;
   public updateUserScore    = user.updateUserScore;
   public updateUserStatus   = user.updateUserStatus;
