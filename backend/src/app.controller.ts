@@ -11,23 +11,23 @@ export class AppController {
     private db: PrismaService,
     private authService: AuthService,
   ) {
-    this.db.setUser(
-      'jiglesia',
-      'Juan Iglesias',
-      'Juan',
-      'Iglesias',
-      'jiglesia@student.42.fr',
-      'https://cdn.intra.42.fr/users/jiglesia.jpg',
-    );
-    this.db.setUser(
-      'mravily',
-      'titi toto',
-      'titi',
-      'toto',
-      'toto@student.42.fr',
-      'https://cdn.intra.42.fr/users/mravily.jpg',
-    );
-    // this.db.setFriend("jiglesia", "mravily");
+    // this.db.setUser(
+    //   'jiglesia',
+    //   'Juan Iglesias',
+    //   'Juan',
+    //   'Iglesias',
+    //   'jiglesia@student.42.fr',
+    //   'https://cdn.intra.42.fr/users/jiglesia.jpg',
+    // );
+    // this.db.setUser(
+    //   'mravily',
+    //   'titi toto',
+    //   'titi',
+    //   'toto',
+    //   'toto@student.42.fr',
+    //   'https://cdn.intra.42.fr/users/mravily.jpg',
+    // );
+    // // this.db.setFriend("jiglesia", "mravily");
   }
 
   @Get()

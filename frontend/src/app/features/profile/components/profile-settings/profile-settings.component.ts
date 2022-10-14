@@ -16,6 +16,7 @@ export class ProfileSettingsComponent implements OnInit {
   settingsForm!: FormGroup;
   user$!: Profile;
   urlRegex!: RegExp;
+  selectedFile!: File
 
   constructor(
 	private http: HttpClient,
@@ -44,16 +45,11 @@ export class ProfileSettingsComponent implements OnInit {
 	} 
 	
 	uploadFile(event: any) {
-		const file = (event.target.files[0]);
-		this.settingsForm.patchValue({
-		  srcFile: file,
-		});
-		this.settingsForm.get('srcFile')!.updateValueAndValidity();
+		this.selectedFile = event.target.files[0];
 	}
 
 	onSubmitForm() {
-		const file = this.settingsForm.get('srcFile')!.value;
-		this.profileService.upload(file);
-		this.profileService.sendForm(this.settingsForm);
+		this.profileService.upload(this.selectedFile);
+		// this.profileService.sendForm(this.settingsForm);
 	}
 }

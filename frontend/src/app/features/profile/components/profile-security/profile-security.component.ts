@@ -10,18 +10,22 @@ import { TfaService } from 'src/app/features/tfa.service';
 })
 export class ProfileSecurityComponent implements OnInit {
 
-	isActivated$!: Observable<boolean>
-	alreadySet$!: Observable<string>
+	// isActivated$!: Observable<boolean>
+	// alreadySet$!: Observable<string>
 	isActivated!: boolean
 	alreadySet!: string
+	setup: boolean = false
 	
   	constructor(private tfaService: TfaService) {
-
+		this.tfaService.isActivated().subscribe(v => this.isActivated = v);
+		this.tfaService.getSecret().subscribe(v => this.alreadySet = v);
+		console.log('already-set-1', this.alreadySet);
 	}
 
   	ngOnInit(): void {
-		this.isActivated$ = this.tfaService.isActivated();
-		this.alreadySet$ = this.tfaService.getSecret()
+		this.tfaService.isActivated().subscribe(v => this.isActivated = v);
+		this.tfaService.getSecret().subscribe(v => this.alreadySet = v);
+		console.log('already-set-2', this.alreadySet);
   	}
 
 	onClickSwitch() {
@@ -29,7 +33,9 @@ export class ProfileSecurityComponent implements OnInit {
 	}
 
 	onSetup() {
-		this.alreadySet$.subscribe(v => this.alreadySet = v);
-		
+		if (!this.setup)
+			this.setup = true;
+		else
+			this.setup = false;
 	}
 }

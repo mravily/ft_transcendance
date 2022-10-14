@@ -14,14 +14,12 @@ export class ProfileService {
   upload(file: any) {
 	console.log('file', file);
   	// if (!file){
-		const fileData = new FormData(); 
-		fileData.append('file', file, file.name);
+		let fileData = new FormData(); 
+		fileData.append('file', file);
 		this.http.post('api/upload', fileData).subscribe({
 			next: (response) => console.log(response),
 			error: (error) => console.log(error),
-			});;
-		console.log('out');
-	// }
+			});
   }
 
   sendForm(settingsForm: FormGroup) {
