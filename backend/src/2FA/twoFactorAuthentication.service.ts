@@ -17,16 +17,16 @@ export class TwoFactorAuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async generateTfaSecret(user: IUser2FA) {
+  public async generateTfaSecret(user: string) {
     const secret = authenticator.generateSecret();
 
     const otpauthUrl = authenticator.keyuri(
-      user.email,
+      await this.db.getUserEmail(user),
       this.configService.get('APP_NAME'),
       secret,
     );
 
-    await this.db.set2FA(user.id, secret, otpauthUrl);
+    await this.db.set2FA(user, secret, otpauthUrl);
 
     return {
       secret,

@@ -50,16 +50,17 @@ export async function setUserToken(
   }
 }
 
-export async function getUserToken(
-  this: PrismaService,
-  userId: string,
-): Promise<string> {
+export async function getUserToken(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { token: true },
+      select: {
+        id: true,
+        login: true,
+        token: true
+      },
     });
-    return user.token;
+    return user;
   } catch (error) {
     console.log(error.message);
   }
