@@ -95,30 +95,17 @@ export async function setBlockUser(
 
 export async function getBlockers(this: PrismaService, login: string): Promise<IAccount[]> {
   try {
-    const blockedList = await this.prisma.user.findUnique({
-      where: { login: login },
+    const blockedList = await this.prisma.blockUser.findMany({
+      where: { blockedLogin: login },
       select: {
-        blockedFrom: {
+        blocker: {
           select: {
-            blocker: {
-              select: {
-                login: true,
-                nickName: true,
-                email: true,
-                score: true,
-                imgUrl: true,
-                isOnline: true,
-              },
-            },
-          },
-        },
+            login: true,
+          }
+        }
       },
     });
-    let list: IAccount[] = [];
-    for (let i = 0; blockedList.blockedFrom[i]; i++) {
-      list[i] = blockedList.blockedFrom[i].blocker;
-    }
-    return list;
+    return blockedList.map((blocker) => blocker.blocker);
   } catch (error) {
     console.log(error.message);
   }
@@ -442,7 +429,7 @@ export async function searchUser(this: PrismaService, key: string): Promise<stri
       select: {
         login: true,
       },
-      take: 5,
+      take: 4,
     });
     return users.map((user) => user.login);
   } catch (error) {

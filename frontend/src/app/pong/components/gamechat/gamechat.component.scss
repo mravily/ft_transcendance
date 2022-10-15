@@ -12,13 +12,14 @@
 	padding: 0px;
 	margin: 0px;
 	background-color: rgb(214, 181, 34);
-	
 }
+
 .inboxContainer {
 	height: 85%;
 	width: 100%;
+	padding: 5px;
     border: 1px solid #333;
-    border-radius: 10px 10px 10px 0;
+    border-radius: 0px 0px 10px 0;
 	background-color: #222;
     overflow: auto;
 }
@@ -29,9 +30,10 @@
 	box-sizing: border-box;
 	
 	h4	{
-		margin-top: 8px;
+		margin: 8px;
 		height: 18px;
 		justify-content: baseline;
+		color: #DDD;
 	}
 	&.isMine {
 		direction: rtl;
@@ -62,7 +64,7 @@
 } 
 .inputbar	{
 	display: flex;
-	height: 10%;
+	height: 15%;
 	flex-direction: row;
 	border: none;
 	outline: none;
@@ -70,6 +72,7 @@
 	
 	textarea	{
 		border: none;
+		height: 100%;
 		flex: 8;
 		resize: none;
 		color: white;

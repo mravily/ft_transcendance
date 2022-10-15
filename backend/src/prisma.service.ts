@@ -6,7 +6,7 @@ import * as channel from './prisma/channel.service';
 import * as match from './prisma/match.service';
 import * as sidebar from './prisma/sidebar.service';
 import * as profile from './prisma/profile.service';
-import * as overview from './prisma/overview.service'
+import * as overview from './prisma/overview.service';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {

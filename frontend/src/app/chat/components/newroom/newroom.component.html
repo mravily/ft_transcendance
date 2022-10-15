@@ -36,11 +36,13 @@
     </form>
 
     <h2 style="margin: 20px;">Join public room</h2>
-    <div class="publicChannels" [formGroup]="searchForm">
-        <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
+    <div class="publicChannels">
+        <div [formGroup]="searchForm">
+            <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
+        </div>
         <div class="publicChannel" *ngFor="let channel of publicChannels$ | async">
             <div class="channelName">{{channel.channelName}}</div>
-            <span>password: <input formControlName="password" type="password"></span>
+            <span>password: <input [(ngModel)]="password" type="password"></span>
             <button (click)="onJoin(channel.channelName)">Join</button>
         </div>
     </div>

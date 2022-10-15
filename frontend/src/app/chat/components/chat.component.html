@@ -58,7 +58,6 @@
       </div>
     </div>
 
-    
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of selectedChannel.messages; let i = index;"
             class="message" [ngClass]="{isMine: message.from === myUser.login}">
@@ -69,14 +68,14 @@
           <div class="message-header-time">{{message.time}}</div>
         -->
         <div class="message-body" [ngClass]="{isMine: message.from === myUser.login, isNotif: message.isNotif}">
-          <div class="message-body-text">{{message.message}}</div>
+          <div class="message-body-text">{{(!isBlocked(message.from)) ? message.message : 'blocked'}}</div>
         </div>
       </div>
     </div>
     <div class="inputbar">
       <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..."
         type="text" [(ngModel)]="curMessage" [disabled]="isMuted(myUser.login)"></textarea>
-      <button (click)="onSendMessage()" [disabled]="curMessage==null || curMessage==''">Send</button>
+      <button (click)="onSendMessage()" [disabled]="curMessage==null || curMessage=='' || isMuted(myUser.login)">Send</button>
     </div>
   </div>
 
@@ -85,10 +84,12 @@
     <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
 
     <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
-      <img *ngIf="contact.isDirect" [src]="contact.imgUrl">
+      <img [src]="contact.imgUrl">
       
       <div class="contactW">
-        {{contact.realName}}
+        <h6>
+          {{contact.realName}}
+        </h6>
         <!-- <div class="contact-status">Online</div> -->
       </div>
     </div>

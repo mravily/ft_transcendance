@@ -45,8 +45,6 @@ export class PongComponent implements AfterViewInit {
   }
   @ViewChild('canvas')
   gameCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('readyButton')
-  readyButton!: ElementRef<HTMLButtonElement>;
 
   private game!: PongMatch;
 
@@ -68,7 +66,6 @@ export class PongComponent implements AfterViewInit {
 
   ready() {
     this.game.ready();
-    this.readyButton.nativeElement.disabled = true;
   }
 }
 
@@ -101,7 +98,7 @@ export class PongMatch {
     this.gameContext.textBaseline = "middle";
     this.gameContext.font = "60px Orbitron";
     this.gameContext.fillStyle = "#fff";
-    this.gameContext.fillText("PONG LEGACY", this.gameCanvas.nativeElement.width / 2, this.gameCanvas.nativeElement.height / 2, 1000);
+    this.gameContext.fillText("Click when you are ready", this.gameCanvas.nativeElement.width / 2, this.gameCanvas.nativeElement.height / 2, 1000);
     var paddleWidth:number = 20, 
       paddleHeight:number = 120, 
       ballSize:number = 20; 

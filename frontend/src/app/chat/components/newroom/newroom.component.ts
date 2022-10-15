@@ -35,8 +35,7 @@ export class NewroomComponent implements OnInit {
       updateOn: 'blur'
     })
     this.searchForm = this.builder.group({
-      search: [null],
-      password: [null]
+      search: [null]
     });
     this.searchSubcription = this.searchForm.valueChanges.pipe(
       map((form) => form.search)

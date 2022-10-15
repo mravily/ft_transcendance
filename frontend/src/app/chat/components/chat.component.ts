@@ -42,11 +42,7 @@ export class ChatComponent implements OnInit {
         this.selectedChannel.messages = messages;
     });
     this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
-      let tmp!: IMessage[];
-      if (this.selectedChannel?.messages)
-        tmp = this.selectedChannel.messages;
       this.selectedChannel = channel;
-      this.selectedChannel.messages = tmp;
       this.create = false;
     });
     this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
@@ -64,7 +60,6 @@ export class ChatComponent implements OnInit {
         channels.map((channel: IChannel) => {
           channel.imgUrl = this.getRoomPhoto(channel);
           channel.realName = this.getRealName(channel);
-          console.log(channel.realName, channel.imgUrl);
           return channel;
         })
       )
@@ -78,7 +73,6 @@ export class ChatComponent implements OnInit {
     this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
       this.myUser = user;
     });
-
     this.searchForm = this.builder.group({
       search: [null]
     });
@@ -108,20 +102,23 @@ export class ChatComponent implements OnInit {
     return false;
   }
   isMuted(login: string): boolean {
-    if (this.selectedChannel && this.selectedChannel.mutedUsers) {
+    if (this.selectedChannel && this.selectedChannel.mutedUsers && !this.selectedChannel.isDirect) {
       return this.selectedChannel.mutedUsers.map((user) => user.login).includes(login);
     }
-    if (this.selectedChannel && this.selectedChannel.isDirect) {
-      let other = this.selectedChannel.users?.find((user) => user.login != this.myUser.login)?.login;
-      if (other && this.myUser.blockedFrom) {
-        return this.myUser.blockedFrom?.includes(other);
-      }
-    }
+    let other = this.selectedChannel.users?.find((user) => user.login != this.myUser.login)?.login;
+    if (this.selectedChannel.isDirect && other)
+      return this.isBlocked(other) || this.amIBlockedBy(other);
     return false;
   }
   isBlocked(login: string | undefined) {
     if (this.myUser && this.myUser.blockUsers && login) {
       return this.myUser.blockUsers.includes(login);
+    }
+    return false;
+  }
+  amIBlockedBy(login: string) { 
+    if (this.myUser.blockedFrom) {
+      return this.myUser.blockedFrom?.includes(login);
     }
     return false;
   }
@@ -133,11 +130,6 @@ export class ChatComponent implements OnInit {
       channelId: this.selectedChannel.channelName,
       createdAt: new Date()
     });
-    // this.messages.push({user: "me",
-    //                   text: this.curMessage,
-    //                   channel : this.selectedChannel.channelName, 
-    //                   createdAt: new Date(),
-    //                  }); // suppr
     this.curMessage = "";
   }
   
@@ -188,7 +180,6 @@ export class ChatComponent implements OnInit {
     if (!room.isDirect) {
       return room.channelName;
     }
-    console.log(room.users?.find((user) => user.login != this.myUser.login)?.nickName);
     return room.users?.find((user) => user.login != this.myUser.login)?.nickName;
   }
   getRoomPhoto(room: IChannel) {
