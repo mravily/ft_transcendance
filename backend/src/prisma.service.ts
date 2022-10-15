@@ -53,6 +53,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getChannelInfo     = channel.getChannelInfo;
   public getChannelMessages = channel.getChannelMessages;
   public createchannel      = channel.setChannel;
+  public deleleChannel      = channel.deleteChannel;
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;
   public setMuteUser        = channel.setMuteUser;

@@ -18,6 +18,32 @@ export async function setChannel(this: PrismaService, channel: IChannel, creator
   }
 }
 
+export async function deleteChannel(this: PrismaService, channel: string) {
+  try {
+    await this.prisma.joinChannel.deleteMany({
+      where: { channelId: channel }
+    });
+    await this.prisma.makeAdmin.deleteMany({ 
+      where: { channelId: channel }
+     });
+    await this.prisma.bannedUsers.deleteMany({
+      where: { channelId: channel }
+    });
+    await this.prisma.muteUser.deleteMany({
+      where: { channelId: channel }
+    });
+    await this.prisma.channelMessage.deleteMany({
+      where: { channeltId: channel }
+    });
+    await this.prisma.channel.delete({
+      where: { channelName: channel }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string) {
   try {
     await this.prisma.channelMessage.create({
