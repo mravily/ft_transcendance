@@ -48,6 +48,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getUserToken       = user.getUserToken;
   public getUserEmail       = user.getUserEmail;
   public isUser             = user.isUser;
+  public deleteUser         = user.deleteUser;
   public setMatch           = match.setMatch;
   public setMatchWinner     = match.setMatchWinner;
   public setMatchLooser     = match.setMatchLooser;
@@ -75,9 +76,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public isCreator          = channel.isCreator;
   public getPublicChannels  = channel.getPublicChannels;
   public getChannelsForUser = channel.getchannelsForUser;
-  public getUserRank = profile.getUserRank;
-  public getUserProfile = profile.getUserProfile;
-  public getPublicProfile = profile.getPublicProfile;
-  public getTotalFriends = overview.getTotalFiends;
+  public deleteChannel      = channel.deleteChannel;
+  public getUserRank        = profile.getUserRank;
+  public getUserProfile     = profile.getUserProfile;
+  public getPublicProfile   = profile.getPublicProfile;
+  public getTotalFriends    = overview.getTotalFiends;
   public getProfileOverview = overview.getProfileOverview;
 }

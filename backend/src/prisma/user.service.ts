@@ -35,11 +35,7 @@ export async function setUser(
   }
 }
 
-export async function setUserToken(
-  this: PrismaService,
-  userId: string,
-  token: string,
-) {
+export async function setUserToken(this: PrismaService, userId: string, token: string) {
   try {
     await this.prisma.user.update({
       where: { id: userId },
@@ -66,10 +62,7 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function get2FASecret(
-  this: PrismaService,
-  userId: string,
-): Promise<string> {
+export async function get2FASecret(this: PrismaService, userId: string): Promise<string> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -214,10 +207,7 @@ export async function is2FA(this: PrismaService, userId: string): Promise<boolea
   }
 }
 
-export async function get2FA(
-  this: PrismaService,
-  userId: string,
-): Promise<IAccount> {
+export async function get2FA(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -257,11 +247,7 @@ export async function switch2FA(this: PrismaService, userId: string) {
   }
 }
 
-export async function updateUserScore(
-  this: PrismaService,
-  login: string,
-  points: number,
-) {
+export async function updateUserScore(this: PrismaService, login: string, points: number) {
   try {
     await this.prisma.user.update({
       where: { login: login },
@@ -272,11 +258,7 @@ export async function updateUserScore(
   }
 }
 
-export async function updateUserStatus(
-  this: PrismaService,
-  login: string,
-  status: boolean,
-) {
+export async function updateUserStatus(this: PrismaService, login: string, status: boolean) {
   try {
     await this.prisma.user.update({
       where: { login: login },
@@ -287,10 +269,7 @@ export async function updateUserStatus(
   }
 }
 
-export async function getBlockedUsers(
-  this: PrismaService,
-  login: string,
-): Promise<IAccount[]> {
+export async function getBlockedUsers(this: PrismaService, login: string): Promise<IAccount[]> {
   try {
     const blockedList = await this.prisma.user.findUnique({
       where: { login: login },
@@ -321,11 +300,7 @@ export async function getBlockedUsers(
   }
 }
 
-export async function uploadPhoto(
-  this: PrismaService,
-  userId: string,
-  file: any,
-) {
+export async function uploadPhoto(this: PrismaService, userId: string, file: any) {
   try {
     await this.prisma.photos.create({
       data: {
@@ -373,10 +348,7 @@ export async function getLastPhoto(this: PrismaService, login: string): Promise<
   }
 }
 
-export async function getFriends(
-  this: PrismaService,
-  login: string,
-): Promise<IAccount[]> {
+export async function getFriends(this: PrismaService, login: string): Promise<IAccount[]> {
   try {
     const friends = await this.prisma.user.findUnique({
       where: { login: login },
@@ -474,10 +446,67 @@ export async function getFriendsById(this: PrismaService, userId: string): Promi
   }
 }
 
-export async function getUserAccount(
-  this: PrismaService,
-  userId: string,
-): Promise<IAccount> {
+export async function deleteUser(this: PrismaService, userId: string) {
+  try {
+    await this.prisma.photos.deleteMany({
+      where: {user: {id: userId}}
+    });
+    await this.prisma.joinChannel.deleteMany({
+      where: {user: {id: userId}}
+    });
+    await this.prisma.muteUser.deleteMany({
+      where: {user: {id: userId}}
+    });
+    await this.prisma.makeAdmin.deleteMany({
+      where: {user: {id: userId}}
+    });
+    await this.prisma.match.deleteMany({
+      where: {
+        OR: [
+          { winner: {id: userId} },
+          { looser: {id: userId} }
+        ]
+      }
+    });
+    await this.prisma.channelMessage.deleteMany({
+      where: {user: {id: userId}}
+    });
+    await this.prisma.addFriend.deleteMany({
+      where: {
+        OR: [
+          { requested: {id: userId} },
+          { requester: {id: userId} }
+        ]
+      }
+    });
+    await this.prisma.blockUser.deleteMany({
+      where: {
+        OR: [
+          { blocked: {id: userId} },
+          { blocker: {id: userId} }
+        ]
+      }
+    });
+    await this.prisma.banUser.deleteMany({
+      where: {user: {id: userId}}
+    });
+    const channels = await this.prisma.channel.findMany({
+      where: { creatorId: userId },
+      select: { channelName: true }
+    });
+    for (let i in channels) {
+      await this.deleteChannel(channels[i].channelName);
+    }
+    await this.prisma.user.delete({
+      where: {id: userId}
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function getUserAccount(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -500,6 +529,12 @@ export async function getUserAccount(
         adminChannel: {
           select: {
             channelId: true,
+          },
+        },
+        _count: {
+          select: {
+            winnedMatchs: true,
+            lostMatchs: true,
           },
         },
         winnedMatchs: {
@@ -559,14 +594,8 @@ export async function getUserAccount(
       userAccount.avatar = user.imgUrl;
       userAccount.winnedMatch = user.winnedMatchs;
       userAccount.lostMatch = user.lostMatchs;
-      userAccount.win = 0;
-      for (let i = 0; user.winnedMatchs[i]; i++) {
-        userAccount.win++;
-      }
-      userAccount.lost = 0;
-      for (let i = 0; user.lostMatchs[i]; i++) {
-        userAccount.lost++;
-      }
+      userAccount.win = user._count.winnedMatchs;
+      userAccount.lost = user._count.lostMatchs;
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
       }

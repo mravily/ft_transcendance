@@ -39,13 +39,7 @@ export class TwoFactorAuthenticationController {
     @Req() req,
   ) {
     console.log('user.id.tfa', session.userid);
-    // console.log('user.email.tfa', req.email);
-    // const user = {} as IUser2FA;
-    // user.id = session.userid;
-    // user.email = 'mravily@student.42.fr';
-    const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
-      session.userid,
-    );
+    const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(session.userid);
     toDataURL(otpauthUrl, (err, dataUrl: string) => {
       if (err) throw err;
       return response.status(200).json({
