@@ -22,10 +22,10 @@ export class AuthController {
     const tfa = await this.db.is2FA(req.session.userid);
     const tokens = await this.authService.getTokens(req.session.userid);
     // Stocker le JWT RT dans la DB
+    res.cookie('access', tokens.access_token, { maxAge: 900000000 });
+    res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
     if (tfa == true) return { url: process.env.TFA_URL };
     console.log('at', tokens.access_token);
-    res.cookie('access', tokens.access_token, { maxAge: 90000 });
-    res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
     return { url: process.env.FRONT_URL };
   }
 

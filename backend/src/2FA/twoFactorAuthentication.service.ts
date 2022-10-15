@@ -26,8 +26,6 @@ export class TwoFactorAuthenticationService {
       secret,
     );
 
-    await this.db.set2FA(user.id, secret, otpauthUrl);
-
     return {
       secret,
       otpauthUrl,
@@ -55,7 +53,7 @@ export class TwoFactorAuthenticationService {
     if (secret)
       return authenticator.verify({
         token: tfaCode,
-        secret: secret,
+        secret: secret.secret,
       });
     return false;
   }

@@ -48,6 +48,7 @@ export class TwoFactorAuthenticationController {
     );
     toDataURL(otpauthUrl, (err, dataUrl: string) => {
       if (err) throw err;
+      this.db.set2FA(user.id, secret, dataUrl);
       return response.status(200).json({
         dataUrl,
         secret: secret,
@@ -75,7 +76,7 @@ export class TwoFactorAuthenticationController {
   }
 
   @Get('secret')
-  async get2faSe(@Session() session: Record<string, any>): Promise<string> {
+  get2faSecret(@Session() session: Record<string, any>): Promise<IAccount> {
     return this.db.get2FASecret(session.userid);
   }
 

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IAccount } from '../model/user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +18,12 @@ export class TfaService {
 		return this.http.post<boolean>("api/tfa/authenticate", { token });
 	}
 
-	isActivated(): Observable<boolean> {
+	Activate2FA(): Observable<boolean> {
 		return this.http.get<boolean>('api/tfa/switch');
 	}
 
-	getSecret(): Observable<string> {
-		return this.http.get<string>('api/tfa/secret');
+	getSecret(): Observable<IAccount> {
+		return this.http.get<IAccount>('api/tfa/secret');
 	}
 
 	get2FA(): Observable<IAccount> {
@@ -32,5 +32,9 @@ export class TfaService {
 
 	switch2FA() {
 		this.http.get('api/tfa/switch');
+	}
+
+	delete2FA() {
+		this.http.get('api/tfa/delete');
 	}
 }
