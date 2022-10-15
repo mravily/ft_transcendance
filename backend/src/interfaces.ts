@@ -14,15 +14,16 @@ export interface IAccount {
     matches?: any[];
     friends?: IAccount[];
     n_friends?: number;
-    blockUsers?: any[];
+    blockUsers?: string[];
+    blockedFrom?: string[];
     createdAt?: Date;
     isOnline?: boolean;
     isAdmin?: boolean;
     twoFA?: boolean;
     secret?: string;
     dataUrl?: string;
-    channelList?: any[];
-    channelAdmin?: any[];
+    channelList?: IChannel[];
+    channelAdmin?: string[];
     activities?: Activity[];
 }
 

@@ -44,6 +44,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public get2FA             = user.get2FA;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
+  public getBlockers        = user.getBlockers;
   public setMatch           = match.setMatch;
   public getNoWinnedMatchs  = match.getNoWinnedMatchs;
   public getNolostMatchs    = match.getNolostMatchs;
@@ -53,7 +54,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getChannelInfo     = channel.getChannelInfo;
   public getChannelMessages = channel.getChannelMessages;
   public createchannel      = channel.setChannel;
-  public deleleChannel      = channel.deleteChannel;
+  public deleteChannel      = channel.deleteChannel;
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;
   public setMuteUser        = channel.setMuteUser;

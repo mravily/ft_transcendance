@@ -59,7 +59,19 @@ export class ChatComponent implements OnInit {
         this.selectedChannel.messages = tmp;
       }
     });
-    this.contacts = this.chatServ.getChannelsObs();
+    this.contacts = this.chatServ.getChannelsObs().pipe(
+      map((channels: IChannel[]) => 
+        channels.map((channel: IChannel) => {
+          channel.imgUrl = this.getRoomPhoto(channel);
+          channel.realName = this.getRealName(channel);
+          console.log(channel.realName, channel.imgUrl);
+          return channel;
+        })
+      )
+    );
+    this.chatServ.getBlockersObs().subscribe((blockers: string[]) => {
+      this.myUser.blockedFrom = blockers;
+    });
     this.chatServ.getErrorObs().subscribe((error: string) => {
       console.log(error);
     });
@@ -95,14 +107,20 @@ export class ChatComponent implements OnInit {
     }
     return false;
   }
-  isMuted(login: string) {
+  isMuted(login: string): boolean {
     if (this.selectedChannel && this.selectedChannel.mutedUsers) {
       return this.selectedChannel.mutedUsers.map((user) => user.login).includes(login);
     }
+    if (this.selectedChannel && this.selectedChannel.isDirect) {
+      let other = this.selectedChannel.users?.find((user) => user.login != this.myUser.login)?.login;
+      if (other && this.myUser.blockedFrom) {
+        return this.myUser.blockedFrom?.includes(other);
+      }
+    }
     return false;
   }
-  isBlocked(login: string) {
-    if (this.myUser && this.myUser.blockUsers) {
+  isBlocked(login: string | undefined) {
+    if (this.myUser && this.myUser.blockUsers && login) {
       return this.myUser.blockUsers.includes(login);
     }
     return false;
@@ -166,12 +184,16 @@ export class ChatComponent implements OnInit {
   onRemovePassword() {
     this.chatServ.removePassword(this.selectedChannel.channelName);
   }
-  getDMname(room: IChannel) {
+  getRealName(room: IChannel) {
+    if (!room.isDirect) {
+      return room.channelName;
+    }
+    console.log(room.users?.find((user) => user.login != this.myUser.login)?.nickName);
     return room.users?.find((user) => user.login != this.myUser.login)?.nickName;
   }
   getRoomPhoto(room: IChannel) {
     if (!room.isDirect)
-      return "https://cdn0.iconfinder.com/data/icons/network-and-communication-2-8/66/139-512.png";
+      return "https://cdn-icons-png.flaticon.com/512/57/57269.png";
     return room.users?.find((user) => user.login != this.myUser.login)?.avatar;
   }
   onBlock(login: string) {

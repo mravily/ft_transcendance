@@ -103,6 +103,9 @@ export class ChatService {
   getChannelInfo(channelName: string) {
     this.socket.emit('getChannelInfo', channelName);
   }
+  getBlockersObs(): Observable<string[]> {
+    return this.socket.fromEvent<string[]>('blockers');
+  }
 
   // getChannelMutedObs(): Observable<string[]> {
   //   return this.socket.fromEvent<any>('muted');

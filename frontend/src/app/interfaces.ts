@@ -15,20 +15,24 @@ export interface IAccount {
     friends?: IAccount[];
     n_friends?: number;
     blockUsers?: string[];
+    blockedFrom?: string[];
     createdAt?: Date;
     isOnline?: boolean;
     isAdmin?: boolean;
     twoFA?: boolean;
     secret?: string;
     dataUrl?: string;
-    channelList?: any[];
-    channelAdmin?: any[];
+    channelList?: IChannel[];
+    channelAdmin?: string[];
     activities?: Activity[];
 }
 
 export interface IChannel {
     // basic info
     channelName: string;
+    realName?: string;
+    imgUrl?: string;
+
     isDirect?: boolean;
     isPrivate?: boolean;
     creator?: string;

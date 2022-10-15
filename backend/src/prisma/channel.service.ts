@@ -26,14 +26,14 @@ export async function deleteChannel(this: PrismaService, channel: string) {
     await this.prisma.makeAdmin.deleteMany({ 
       where: { channelId: channel }
      });
-    await this.prisma.bannedUsers.deleteMany({
+    await this.prisma.banUser.deleteMany({
       where: { channelId: channel }
     });
     await this.prisma.muteUser.deleteMany({
       where: { channelId: channel }
     });
     await this.prisma.channelMessage.deleteMany({
-      where: { channeltId: channel }
+      where: { channelId: channel }
     });
     await this.prisma.channel.delete({
       where: { channelName: channel }
@@ -56,8 +56,9 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
     });
     await this.prisma.channel.update(
       {
-        where:
-        {channelName: channel_name},
+        where:  {
+          channelName: channel_name
+        },
         data: {
           updatedAt: new Date(),
         }
@@ -354,6 +355,8 @@ export async function searchPublicChannels(this: PrismaService, key: string): Pr
           contains: key,
           mode: 'insensitive',
         },
+        isPrivate: false,
+        isDirect: false,
       },
       select: {
         channelName: true,
@@ -374,7 +377,23 @@ export async function getchannelsForUser(this: PrismaService, login: string, ski
       select: {
         channelList: {
           select: {
-            channelId: true,
+            channel: {
+              select: {
+                channelName: true,
+                isDirect: true,
+                userList: {
+                  select: {
+                    user: {
+                      select: {
+                        login: true,
+                        nickName: true,
+                        imgUrl: true,
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           orderBy: {
             channel: {
@@ -386,7 +405,12 @@ export async function getchannelsForUser(this: PrismaService, login: string, ski
         },
       },
     });
-    return channels.channelList.map((channel) => { return {channelName: channel.channelId}});
+    return channels.channelList.map((chan) => {
+      return {
+        ...chan.channel,
+        users: chan.channel.userList.map((user) => {return {...user.user, avatar: user.user.imgUrl}}),
+      }
+    });
   }
   catch (error) {
     console.log(error.message);

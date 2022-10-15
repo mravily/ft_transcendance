@@ -77,16 +77,48 @@ export async function isUser(this: PrismaService, login: string): Promise<boolea
 
 export async function setBlockUser(
   this: PrismaService,
-  login: string,
+  userId: string,
   block_login: string,
 ) {
   try {
     await this.prisma.blockUser.create({
       data: {
-        blockerId: login,
+        blockerId: userId,
         blockedLogin: block_login,
       },
     });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+export async function getBlockers(this: PrismaService, login: string): Promise<IAccount[]> {
+  try {
+    const blockedList = await this.prisma.user.findUnique({
+      where: { login: login },
+      select: {
+        blockedFrom: {
+          select: {
+            blocker: {
+              select: {
+                login: true,
+                nickName: true,
+                email: true,
+                score: true,
+                imgUrl: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    let list: IAccount[] = [];
+    for (let i = 0; blockedList.blockedFrom[i]; i++) {
+      list[i] = blockedList.blockedFrom[i].blocker;
+    }
+    return list;
   } catch (error) {
     console.log(error.message);
   }
@@ -488,6 +520,15 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
             blockedLogin: true,
           },
         },
+        blockedFrom: {
+          select: {
+            blocker: {
+              select: {
+                login:true,
+              }
+            },
+          },
+        },
       },
     });
     let userAccount = {} as IAccount;
@@ -511,6 +552,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         userAccount.friends.push(user.befriend[i].requester);
       }
       userAccount.blockUsers = user.blockedUsers.map((user) => user.blockedLogin);
+      userAccount.blockedFrom = user.blockedFrom.map((user) => user.blocker.login);
       userAccount.createdAt = user.createdAt;
       userAccount.twoFA = user.twoFA;
       userAccount.isAdmin = user.isAdmin;
