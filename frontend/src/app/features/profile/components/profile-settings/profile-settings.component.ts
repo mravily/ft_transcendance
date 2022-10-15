@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Profile } from '../../models/profile.user.model';
 import { ProfileService } from '../../services/profile.service';
 
@@ -40,7 +39,7 @@ export class ProfileSettingsComponent implements OnInit {
 			email: [this.user$.email, [Validators.required, Validators.pattern(this.urlRegex)]],
 			login: [this.user$.login],
 			nickname: [this.user$.displayName],
-			srcFile: [null]
+			srcFile: new FormControl('', {validators: [Validators.required]})
 		});
 	} 
 	
@@ -50,6 +49,6 @@ export class ProfileSettingsComponent implements OnInit {
 
 	onSubmitForm() {
 		this.profileService.upload(this.selectedFile);
-		// this.profileService.sendForm(this.settingsForm);
+		this.profileService.sendForm(this.settingsForm);
 	}
 }
