@@ -60,31 +60,31 @@ export class TwoFactorAuthenticationController {
 
   @Get('verify')
   async verify(@Session() session: Record<string, any>): Promise<boolean> {
-    return this.db.is2FA(session.userid);
+    return await this.db.is2FA(session.userid);
   }
 
   @Get('get2fa')
   async get2fa(@Session() session: Record<string, any>): Promise<IAccount> {
-    return this.db.get2FA(session.userid);
+    return await this.db.get2FA(session.userid);
   }
 
   @Get('secret')
-  async get2faSe(@Session() session: Record<string, any>): Promise<string> {
-    return this.db.get2FASecret(session.userid);
+  async get2faSe(@Session() session: Record<string, any>): Promise<IAccount> {
+    return await this.db.get2FASecret(session.userid);
   }
 
   @Post('delete')
   async delete2FA(@Session() session: Record<string, any>) {
-    this.db.delete2FA(session.userid);
+    await this.db.delete2FA(session.userid);
   }
 
   @Get('switch')
   async switch2fa(@Session() session: Record<string, any>) {
-    this.db.switch2FA(session.userid);
+    await this.db.switch2FA(session.userid);
   }
 
   @Get('issecret')
   async isSecret(@Session() session: Record<string, any>) {
-    return this.db.isSecret(session.userid);
+    return await this.db.isSecret(session.userid);
   }
 }

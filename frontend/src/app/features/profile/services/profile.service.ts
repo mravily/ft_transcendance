@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -25,17 +25,24 @@ export class ProfileService {
   }
 
   sendForm(settingsForm: FormGroup) {
-	var formData: any = new FormData();
+	// const headers = new HttpHeaders();
+	// headers.append('Content-Type', 'multipart/form-data');
+	// headers.append('Accept', 'application/json');
+	// var formData: any = new FormData();
 
-	formData.append('firstName', settingsForm.get('firstName')!.value);
-	formData.append('lastName', settingsForm.get('lastName')!.value);
-	formData.append('email', settingsForm.get('email')!.value);
-	formData.append('login', settingsForm.get('login')!.value);
-	formData.append('nickname', settingsForm.get('nickname')!.value);
+	// formData.append('firstName', settingsForm.get('firstName')!.value);
+	// formData.append('lastName', settingsForm.get('lastName')!.value);
+	// formData.append('email', settingsForm.get('email')!.value);
+	// formData.append('login', settingsForm.get('login')!.value);
+	// formData.append('nickName', settingsForm.get('nickname')!.value);
 
-	this.http
-		.post('api/update', formData)
-		.subscribe({
+	this.http.post('api/profile/update', {
+		firstName: settingsForm.get('firstName')!.value,
+		lastName: settingsForm.get('lastName')!.value,
+		email: settingsForm.get('email')!.value,
+		login: settingsForm.get('login')!.value,
+		nickName: settingsForm.get('nickname')!.value,
+	}).subscribe({
 		next: (response) => console.log(response),
 		error: (error) => console.log(error),
 		});

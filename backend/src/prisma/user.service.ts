@@ -35,6 +35,51 @@ export async function setUser(
   }
 }
 
+export async function getUserLogin(this: PrismaService, userId: string): Promise<string> {
+  try {
+    const usr = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { login: true },
+    });
+    return usr.login;
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function updateUserAccount(this: PrismaService, userId: string, user: IAccount) {
+  try {
+    if (user.firstName !== undefined) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { firstName: user.firstName }
+      });
+    }
+    if (user.lastName !== undefined) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { lastName: user.lastName }
+      });
+    }
+    if (user.email !== undefined) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { email: user.email }
+      });
+    }
+    if (user.nickName !== undefined) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { nickName: user.nickName }
+      });
+    }
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setUserToken(this: PrismaService, userId: string, token: string) {
   try {
     await this.prisma.user.update({
@@ -62,13 +107,17 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function get2FASecret(this: PrismaService, userId: string): Promise<string> {
+export async function get2FASecret(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { secret: true },
+      select: {
+        secret: true,
+        login: true,
+        twoFA: true,
+      },
     });
-    return user.secret;
+    return user;
   } catch (error) {
     console.log(error.message);
   }
@@ -317,7 +366,7 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
     });
     await this.prisma.user.update({
       where: { id: userId },
-      data: { imgUrl: 'http://localhost:3000/api/stream/' + usr.login },
+      data: { imgUrl: 'http://localhost:4200/api/stream/' + usr.login },
     });
   } catch (error) {
     console.log(error.message);

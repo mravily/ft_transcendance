@@ -1,13 +1,16 @@
-import { Controller, Get, Param, Post, Req, Session } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, Session } from "@nestjs/common";
+import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
+import { Request } from "@nestjs/common";
 
 @Controller('profile')
 export class ProfileController {
   constructor(private db: PrismaService) {}
 
     @Post('update')
-    updateProfile(@Session() session: Record<string, any>, @Req() req: Request) {
-        console.log(req);
+    async updateProfile(@Session() session: Record<string, any>, @Body() account: IAccount) {
+        console.log(account);
+		await this.db.updateUserAccount(session.userid, account);
     }
 
 	@Get(':id')

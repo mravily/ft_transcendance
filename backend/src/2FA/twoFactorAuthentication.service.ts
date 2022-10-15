@@ -54,7 +54,7 @@ export class TwoFactorAuthenticationService {
     if (secret)
       return authenticator.verify({
         token: tfaCode,
-        secret: secret,
+        secret: secret.secret,
       });
     return false;
   }
