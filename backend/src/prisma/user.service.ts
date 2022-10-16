@@ -1,6 +1,5 @@
 import { PrismaService } from '../prisma.service';
 import { IAccount, IPhoto } from '../interfaces';
-import { Prisma } from '@prisma/client';
 
 export async function setUser(
   this: PrismaService,

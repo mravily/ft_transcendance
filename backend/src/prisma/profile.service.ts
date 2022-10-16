@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma.service";
-import { IAccount, IMatch, IPersoMatch } from "../interfaces";
+import { IAccount, IPersoMatch } from "../interfaces";
 
 export async function getUserProfile(this: PrismaService, userId: string): Promise<IAccount> {
     try {

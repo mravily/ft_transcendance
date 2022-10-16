@@ -1,5 +1,4 @@
 import { Body, Controller, Post, Session } from "@nestjs/common";
-import { session } from "passport";
 import { PrismaService } from "../prisma.service";
 
 @Controller('user')
@@ -14,6 +13,16 @@ export class UserController {
     @Post('acceptfriend')
     async acceptFrienship(@Body() req, @Session() session: Record<string, any>) {
         await this.db.acceptFriendship(await this.db.getUserLogin(session.userid), req.login);
+    }
+
+    @Post('block')
+    async blockUser(@Body() bod, @Session() session: Record<string, any>) {
+        await this.db.setBlockUser(session.userid, bod.login);
+    }
+
+    @Post('unblock')
+    async unblockUser(@Body() bod, @Session() session: Record<string, any>) {
+        await this.db.deleteBlockUser(session.userid, bod.login);
     }
 
     @Post('isuser')
