@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User } from 'src/app/features/leaderboard/model/user.model';
 import { LeaderboardService } from 'src/app/features/leaderboard/services/leaderboard.service';
+import { IAccount } from 'src/app/model/user.model';
 
 @Component({
   selector: 'app-all-users',
@@ -10,7 +10,7 @@ import { LeaderboardService } from 'src/app/features/leaderboard/services/leader
 })
 export class AllUsersComponent implements OnInit {
 
-	usersList$!: Observable<User[]>;
+	usersList$!: Observable<IAccount[]>;
 	
 	constructor(private leaderboardService: LeaderboardService) { }
 

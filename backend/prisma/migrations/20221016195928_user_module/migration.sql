@@ -107,7 +107,7 @@ CREATE TABLE "AddFriend" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "isAccepted" BOOLEAN NOT NULL,
-    "requesterId" TEXT NOT NULL,
+    "requesterLogin" TEXT NOT NULL,
     "requestedLogin" TEXT NOT NULL,
 
     CONSTRAINT "AddFriend_pkey" PRIMARY KEY ("id")
@@ -156,6 +156,9 @@ CREATE UNIQUE INDEX "BanUser_channelId_login_key" ON "BanUser"("channelId", "log
 
 -- CreateIndex
 CREATE UNIQUE INDEX "JoinChannel_channelId_login_key" ON "JoinChannel"("channelId", "login");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AddFriend_requesterLogin_requestedLogin_key" ON "AddFriend"("requesterLogin", "requestedLogin");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "BlockUser_blockedLogin_blockerId_key" ON "BlockUser"("blockedLogin", "blockerId");
@@ -209,7 +212,7 @@ ALTER TABLE "ChannelMessage" ADD CONSTRAINT "ChannelMessage_userId_fkey" FOREIGN
 ALTER TABLE "ChannelMessage" ADD CONSTRAINT "ChannelMessage_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("channelName") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AddFriend" ADD CONSTRAINT "AddFriend_requesterId_fkey" FOREIGN KEY ("requesterId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AddFriend" ADD CONSTRAINT "AddFriend_requesterLogin_fkey" FOREIGN KEY ("requesterLogin") REFERENCES "User"("login") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AddFriend" ADD CONSTRAINT "AddFriend_requestedLogin_fkey" FOREIGN KEY ("requestedLogin") REFERENCES "User"("login") ON DELETE RESTRICT ON UPDATE CASCADE;

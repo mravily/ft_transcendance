@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { User } from 'src/app/features/leaderboard/model/user.model';
 import { IAccount } from 'src/app/model/user.model';
 
 @Component({

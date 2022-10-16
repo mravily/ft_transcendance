@@ -140,10 +140,11 @@ model AddFriend {
   createdAt DateTime @default(now())
   isAccepted Boolean
 // Relations:
-  requesterId String
+  requesterLogin String
   requestedLogin String
-  requester User @relation(name: "befriend", fields: [requesterId], references: [id])
+  requester User @relation(name: "befriend", fields: [requesterLogin], references: [login])
   requested User @relation(name: "friend", fields: [requestedLogin], references: [login])
+  @@unique([requesterLogin, requestedLogin])
 }
 
 model BlockUser {

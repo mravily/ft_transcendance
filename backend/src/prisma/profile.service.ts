@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IAccount, IMatch, IPersoMatch } from '../interfaces';
+import { IAccount, IPersoMatch } from '../interfaces';
 
 export async function getUserProfile(
   this: PrismaService,
@@ -32,15 +32,15 @@ export async function getUserProfile(
 
 export async function getUserRank(
   this: PrismaService,
-  userId: string,
+  login: string,
 ): Promise<number> {
   try {
     const rank = await this.prisma.user.findMany({
-      select: { id: true },
+      select: { login: true },
       orderBy: { score: 'desc' },
     });
     for (let i = 0; rank[i]; i++) {
-      if (rank[i].id == userId) {
+      if (rank[i].login == login) {
         return i + 1;
       }
     }

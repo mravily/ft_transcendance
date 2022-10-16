@@ -19,8 +19,8 @@ export class ProfilePublicComponent implements OnInit {
 				private route: ActivatedRoute) {
 		this.route.params.subscribe((params) => {
 			this.userID = params["id"]
-			this.
-		}
+			// this.
+		})
 	}
 	
 	ngOnInit(): void {

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from 'src/app/features/leaderboard/model/user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 
 @Component({
@@ -9,7 +9,7 @@ import { User } from 'src/app/features/leaderboard/model/user.model';
 })
 export class BlocAllUserComponent implements OnInit {
 
-	@Input() user!: User;
+	@Input() user!: IAccount;
 	@Input() rank!: number;
 
 	constructor() { }

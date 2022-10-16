@@ -7,6 +7,6 @@ export class SidebarController {
 
   @Get()
   getSidebar(@Session() session: Record<string, any>) {
-    return this.db.getSidebar(session.login);
+    return this.db.getSidebar(session.userid);
   }
 }
