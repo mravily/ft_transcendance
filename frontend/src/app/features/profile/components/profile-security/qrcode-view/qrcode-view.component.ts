@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
-import { TfaService } from 'src/app/features/tfa.service';
+import { TfaService } from 'src/app/features/tfa/services/tfa.service';
 import { tfa } from '../../../models/profile.user.model';
 
 @Component({
@@ -10,15 +11,20 @@ import { tfa } from '../../../models/profile.user.model';
 })
 export class QrcodeViewComponent implements OnInit {
 
-	@Input() alreadySet!: string;
-	tfa$!: Observable<tfa>;
-  	constructor(private tfaServices: TfaService) { }
+	@Input() alreadySet!: any;
+	@Output() setup = new EventEmitter<boolean>();
+
+ 	tfa$!: Observable<tfa>;
+  	constructor(private tfaServices: TfaService,
+				private sanitizer: DomSanitizer) { }
 
   	ngOnInit(): void {
-		console.log('alreadySet', this.alreadySet)
 		if (!this.alreadySet) this.tfa$ = this.tfaServices.generate();
 		else this.tfa$ = this.tfaServices.get2FA();
-		// console.log('tfa', this.tfa$.secret);
   	}
 
+	onDelete2FA() {
+		this.setup.emit(false);
+		this.tfaServices.delete2FA();
+	}
 }

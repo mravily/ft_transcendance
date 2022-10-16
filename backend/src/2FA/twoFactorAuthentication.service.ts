@@ -26,8 +26,6 @@ export class TwoFactorAuthenticationService {
       secret,
     );
 
-    await this.db.set2FA(user, secret, otpauthUrl);
-
     return {
       secret,
       otpauthUrl,
@@ -46,10 +44,6 @@ export class TwoFactorAuthenticationService {
   }
 
   async isTfaCodeValid(tfaCode: string, user: string) {
-    console.log('test code ', tfaCode);
-    console.log('test user ', user);
-    // const secret = '14b27644-875b-47c4-85ad-6052cf74b4a6';
-    if (!user || !tfaCode) return false;
     const secret = await this.db.get2FASecret(user);
     if (secret)
       return authenticator.verify({

@@ -107,7 +107,10 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function get2FASecret(this: PrismaService, userId: string): Promise<IAccount> {
+export async function get2FASecret(
+  this: PrismaService,
+  userId: string,
+): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -123,32 +126,35 @@ export async function get2FASecret(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function isUser(this: PrismaService, login: string): Promise<boolean> {
+export async function isUser(
+  this: PrismaService,
+  login: string,
+): Promise<boolean> {
   try {
     const user = await this.prisma.user.count({
       where: { login: login },
     });
     if (user) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getUserEmail(this: PrismaService, userId: string): Promise<string> {
+export async function getUserEmail(
+  this: PrismaService,
+  userId: string,
+): Promise<string> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { email: true, },
+      select: { email: true },
     });
     return user.email;
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 }
@@ -334,7 +340,7 @@ export async function updateUserScore(this: PrismaService, login: string, points
 export async function updateUserStatus(this: PrismaService, login: string, status: boolean) {
   try {
     await this.prisma.user.update({
-      where: { login: login },
+      where: { id: login },
       data: { isOnline: status },
     });
   } catch (error) {
@@ -397,7 +403,10 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
   }
 }
 
-export async function getLastPhoto(this: PrismaService, login: string): Promise<IPhoto> {
+export async function getLastPhoto(
+  this: PrismaService,
+  login: string,
+): Promise<IPhoto> {
   try {
     const tmp = await this.prisma.user.findUnique({
       where: { login: login },
@@ -470,7 +479,10 @@ export async function getFriends(this: PrismaService, login: string): Promise<IA
   }
 }
 
-export async function getFriendsById(this: PrismaService, userId: string): Promise<IAccount[]> {
+export async function getFriendsById(
+  this: PrismaService,
+  userId: string,
+): Promise<IAccount[]> {
   try {
     const friends = await this.prisma.user.findUnique({
       where: { id: userId },

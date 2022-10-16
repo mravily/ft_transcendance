@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import b64toBlob from 'b64-to-blob';
-import { first } from 'rxjs';
-import { Profile } from '../../models/profile.user.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { IAccount } from 'src/app/model/user.model';
 import { ProfileService } from '../../services/profile.service';
 
 
@@ -14,50 +13,35 @@ import { ProfileService } from '../../services/profile.service';
 })
 export class ProfileSettingsComponent implements OnInit {
 
-  settingsForm!: FormGroup;
-  user$!: Profile;
+  settingsForm!: FormGroup
+  user$!: Observable<IAccount>
   urlRegex!: RegExp;
-  file!: File;
+  selectedFile!: File
 
-  constructor(
-	private http: HttpClient,
-	private profileService: ProfileService,
-	private formBuilder: FormBuilder) { }
+  constructor(private profileService: ProfileService,
+			  private formBuilder: FormBuilder) { }
 
 	
 	ngOnInit(): void {
-		this.user$ = {
-			firstName: 'Medhi',
-			lastName: 'Ravily',
-			email: 'mravily@student.42.fr',
-			login: 'mravily',
-			displayName: 'Medhi Ravily',
-			avatar: 'https://cdn.intra.42.fr/users/mravily.jpg'
-		}
-		
-		this.settingsForm = this.formBuilder.group({
-			firstName: [this.user$.firstName],
-			lastName: [this.user$.lastName],
-			email: [this.user$.email, [Validators.pattern(this.urlRegex)]],
-			login: [this.user$.login],
-			nickname: [this.user$.displayName],
-			srcFile: new FormControl('')
+		this.user$ = this.profileService.getPrivateProfile()
+		this.user$.subscribe(v => {
+			this.settingsForm = this.formBuilder.group({
+				firstName: [v.firstName],
+				lastName: [v.lastName],
+				email: [v.email, [Validators.pattern(this.urlRegex)]],
+				login: [v.login],
+				nickname: [v.nickName],
+			});
 		});
 	} 
 	
 	uploadFile(event: any) {
-		this.file = event.target.files[0];
+		this.selectedFile = event.target.files[0];
 	}
 
 	onSubmitForm() {
-		const fileData = new FormData();
-		if (this.file !== undefined) {
-			fileData.append('file', this.file);
-			this.http.post('api/upload', fileData).subscribe({
-				next: (response) => console.log(response),
-				error: (error) => console.log(error),
-			});
-		}
+		if (this.selectedFile)
+			this.profileService.upload(this.selectedFile);
 		this.profileService.sendForm(this.settingsForm);
 	}
 }

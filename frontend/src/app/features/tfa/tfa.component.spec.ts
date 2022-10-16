@@ -3,21 +3,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TfaComponent } from './tfa.component';
 
 describe('TfaComponent', () => {
-  let component: TfaComponent;
-  let fixture: ComponentFixture<TfaComponent>;
+	let component: TfaComponent;
+	let fixture: ComponentFixture<TfaComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ TfaComponent ]
-    })
-    .compileComponents();
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [TfaComponent]
+		})
+			.compileComponents();
 
-    fixture = TestBed.createComponent(TfaComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+		fixture = TestBed.createComponent(TfaComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

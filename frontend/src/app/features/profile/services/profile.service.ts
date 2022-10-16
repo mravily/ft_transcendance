@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ProfileOverview } from '../models/profile.user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,28 +14,15 @@ export class ProfileService {
   upload(file: any) {
 	console.log('file', file);
   	// if (!file){
-		// const fileData = new FormData(); 
-		// fileData.append('file', file, file.name);
-		// this.http.post('api/upload', fileData).subscribe({
-		// 	next: (response) => console.log(response),
-		// 	error: (error) => console.log(error),
-		// 	});
-		console.log('out');
-	// }
+		let fileData = new FormData(); 
+		fileData.append('file', file);
+		this.http.post('api/upload', fileData).subscribe({
+			next: (response) => console.log(response),
+			error: (error) => console.log(error),
+			});
   }
 
   sendForm(settingsForm: FormGroup) {
-	// const headers = new HttpHeaders();
-	// headers.append('Content-Type', 'multipart/form-data');
-	// headers.append('Accept', 'application/json');
-	// var formData: any = new FormData();
-
-	// formData.append('firstName', settingsForm.get('firstName')!.value);
-	// formData.append('lastName', settingsForm.get('lastName')!.value);
-	// formData.append('email', settingsForm.get('email')!.value);
-	// formData.append('login', settingsForm.get('login')!.value);
-	// formData.append('nickName', settingsForm.get('nickname')!.value);
-
 	this.http.post('api/profile/update', {
 		firstName: settingsForm.get('firstName')!.value,
 		lastName: settingsForm.get('lastName')!.value,
@@ -48,7 +35,15 @@ export class ProfileService {
 		});
   }
 
-  getOverview() : Observable<ProfileOverview> {
-	return this.http.get<ProfileOverview>('api/profile/overview');
+  getOverview(): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/overview');
+  }
+
+  getPublicProfile(login: string): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/' + login);
+  }
+
+  getPrivateProfile(): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/private');
   }
 }

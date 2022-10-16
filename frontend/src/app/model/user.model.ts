@@ -1,7 +1,7 @@
 import { Activity } from "../features/profile/models/profile.user.model";
 
 export class IAccount {
-	login?: string;
+	login!: string;
 	firstName?: string;
 	lastName?: string;
 	nickName?: string;
@@ -27,4 +27,3 @@ export class IAccount {
 	channelAdmin?: any[];
 	activities?: Activity[];
   }
-  

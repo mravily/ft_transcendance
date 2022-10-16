@@ -1,17 +1,17 @@
 <div class="container-fluid">
 	<!-- Card stats -->
-	<div class="row g-6 mb-6">
-		<app-card-stats [data]="userData$.cardStats"></app-card-stats>
+	<div class="row g-6 mb-6" *ngIf="data$ | async as data">
+		<app-card-stats [data]="data"></app-card-stats>
 		<!-- <app-card-stats [data]="userData$.cardStats | async"></app-card-stats> -->
 		<!-- Last Activity -->
 		<div class="row g-6">
 			<div class="col-xl-4">
-				<app-last-activity [activities]="userData$.activities"></app-last-activity>
+				<app-last-activity [activities]="data.activities!"></app-last-activity>
 				<!-- <app-last-activity [activities]="userData$.activities | async"></app-last-activity> -->
 			</div>
 		<!-- Match Request -->
 			<div class="col-xl-8">
-				<app-match-history [matches]="userData$.matches"></app-match-history>
+				<app-match-history [matches]="data.matches!"></app-match-history>
 				<!-- <app-match-request [matches]="userData$.matches | async"></app-match-request> -->
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Redirect, Req, Res, Session, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '../prisma.service';
@@ -19,12 +19,11 @@ export class AuthController {
   @UseGuards(AuthGuard('42'))
   @Redirect('/')
   async fortyTwoAuthRedirect(@Res() res, @Req() req) {
-    const tfa = await this.db.is2FA(req.session.userid);
-    const tokens = await this.authService.getTokens(req.session.userid);
+    const tfa = await this.db.is2FA(req.session.userid).then();
     // Stocker le JWT RT dans la DB
     if (tfa == true) return { url: process.env.TFA_URL };
-    console.log('at', tokens.access_token);
-    res.cookie('access', tokens.access_token, { maxAge: 90000 });
+    const tokens = await this.authService.getTokens(req.session.userid);
+    res.cookie('access', tokens.access_token, { maxAge: 900000000 });
     res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
     return { url: process.env.FRONT_URL };
   }
@@ -44,6 +43,12 @@ export class AuthController {
   @Get('test')
   getToken(): Promise<Tokens> {
     return this.authService.getTokens('test');
+  }
+
+  @Get('sign-out')
+  loggingOut(@Req() req, @Session() session: Record<string, any>,) {
+    this.db.updateUserStatus(session.userid, false);
+    req.session.destroy();
   }
 }
 
