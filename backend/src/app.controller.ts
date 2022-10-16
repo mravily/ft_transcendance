@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
-import { Tokens } from './auth/types/tokens.type';
 import { PrismaService } from './prisma.service';
 
 @Controller()
@@ -34,7 +33,7 @@ export class AppController {
         'Ulysse',
         'Peyret',
         'upeyret@student.42.fr',
-        'https://cdn.intra.42.fr/users/jiglesia.jpg',
+        'https://cdn.intra.42.fr/users/upeyret.jpg',
       )
     ).then(tmp =>
       this.db.setUser(

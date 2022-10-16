@@ -1,6 +1,27 @@
 import { PrismaService } from "../prisma.service";
 import { IAccount, IPersoMatch } from "../interfaces";
 
+export interface IProfileFriends {
+    nickName: string,
+    login: string,
+    win: number,
+    lost: number,
+    rank: number,
+    isOnline: boolean,
+    isAccepted: boolean,
+}
+
+export async function getProfileFriends(this: PrismaService, userId: string): Promise<IProfileFriends[]> {
+    try {
+        const list = await this.prisma.addFriend.findMany();
+        let friends: IProfileFriends[] = [];
+        return friends;
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
 export async function getUserProfile(this: PrismaService, userId: string): Promise<IAccount> {
     try {
         const user = await this.prisma.user.findUnique({

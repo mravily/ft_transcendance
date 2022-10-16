@@ -13,7 +13,7 @@ export async function setUser(
   try {
     const user = await this.prisma.user.upsert({
       where: { login: login },
-      update: {},
+      update: { isOnline: true },
       create: {
         login: login,
         nickName: nickname,
