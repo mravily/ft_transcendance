@@ -1,5 +1,6 @@
 html {
   height: 100%;
+  width: 100%;
   color: gray;
 }
 
@@ -9,11 +10,13 @@ body{
   flex-direction: column;
   margin: 0;
   height: 100vh;
+  width: 100%;
 }
 
 .playercolumn {
   max-width: 100px;
   min-width: 100px;
+  flex: 1;
   height: 100%;
   text-align: center;
 
@@ -59,8 +62,9 @@ body{
 
   canvas  {
     // display: block;
-
     width: 100%;
+    flex: 1;
+    flex-shrink: 10;
     background: black;
   }
 }

@@ -41,7 +41,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         return;
       }
       const userId = await this.authService.getUseridFromToken(token);
-      console.log('userId...', userId);
+      // console.log('userId...', userId);
       if (!userId) {
         console.log('User not found');
         client.disconnect();
@@ -55,7 +55,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       client.disconnect();
       return;
     }
-    console.log('Client connected', {socketId: client.id, userId: client.data.userId});
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
       // console.log('User', user);
@@ -70,9 +69,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       console.log('Error', 'connection failed');
       return client.disconnect();
     }
+    console.log('Client connected to pong', {login: client.data.user.login, socketId: client.id, userId: client.data.userId});
   }
   
   async handleDisconnect(client: Socket) {
+    this.gameService.removeConnection(client);
     console.log('Client disconnected', client.id);
   }
 
@@ -87,21 +88,28 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.gameService.getMatchmakingGame(client, false);
     console.log('find', client.id );
   }
+
+  @SubscribeMessage('checkforgame')
+  checkforgame(client: Socket) {
+    let gameid = this.gameService.checkforgame(client.data.userId);
+    this.sendMatchId(client.id, gameid);
+  }
+
   @SubscribeMessage('findPUMatch')
   async findPUMatch(client: Socket) {
     this.gameService.getMatchmakingGame(client, true);
   }
-  async sendMatchId(client: Socket, gameId: number) {
-    client.emit('matchId', gameId);
+  async sendMatchId(sockId: string, gameId: number) {
+    this.wss.to(sockId).emit('matchId', gameId);
   }
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
     this.gameService.startGame(gameId, client);
   }
-  sendStart(clients: Socket[], compteur: number) {
-    for (var i = 0; i < clients.length; i++) {
-      clients[i].emit('startGame', compteur);
+  sendStart(sockIds: string[], compteur: number) {
+    for (var i = 0; i < sockIds.length; i++) {
+      this.wss.to(sockIds[i]).emit('startGame', compteur);
     }
   }
   async sendSpecMode(client: Socket)  {
@@ -111,20 +119,19 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   @SubscribeMessage('paddle')
   async handlePaddle(client: Socket, payload: GamePaddle) {
-    this.gameService.setPlayerPos(client, payload);
+    this.gameService.setPlayerPos(client.data.userId, payload);
   }
   
-  async sendPaddlePos(numPlayer: number, client: Socket, specs: Socket[], payload: GamePaddle)  {
-    if (client)
-      client.emit('paddle', payload);
+  async sendPaddlePos(numPlayer: number, sockIds: string[], specs: string[], payload: GamePaddle)  {
+    this.wss.to(sockIds[1 - numPlayer]).emit('paddle', payload);
     if (specs)  {
       let msg = (numPlayer == 0) ? 'myPaddle' : 'paddle';
-      specs.forEach(s => s.emit(msg, payload));
+      specs.forEach(s => this.wss.to(s).emit(msg, payload));
     }
   }
 
-  async sendGameStatus(client: Socket, payload: GameStatus) {
-    client.emit('gameState', payload);
+  async sendGameStatus(sockId: string, payload: GameStatus) {
+    this.wss.to(sockId).emit('gameState', payload);
   }
   powForPlayer2(powerUp: PowerUp): PowerUp {
     var pow: PowerUp = new PowerUp();
@@ -134,34 +141,36 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     pow.y = powerUp.y;
     return pow;
   }
-  newPowerUp(playerSockets: Socket[], spectators: Socket[], powerUp: any) {
-    playerSockets[0].emit('powerUp', {subject: "add", ...powerUp});
-    playerSockets[1].emit('powerUp', {subject: "add", ...this.powForPlayer2(powerUp)});
+  newPowerUp(playerSockets: string[], spectators: string[], powerUp: any) {
+    this.wss.to(playerSockets[0]).emit('powerUp', {subject: "add", ...powerUp});
+    this.wss.to(playerSockets[1]).emit('powerUp', {subject: "add", ...this.powForPlayer2(powerUp)});
     for (var i = 0; i < spectators.length; i++) {
-      spectators[i].emit('powerUp', {subject: "add", ...powerUp});
+      this.wss.to(spectators[i]).emit('powerUp', {subject: "add", ...powerUp});
     }
   }
-  removePowerUp(playerSockets: Socket[], spectators: Socket[], powerUp: PowerUp, idPlayer: boolean) {
-    playerSockets[0].emit('powerUp', {subject: idPlayer?"1":"0", ...powerUp});
-    playerSockets[1].emit('powerUp', {subject: (!idPlayer)?"1":"0", ...this.powForPlayer2(powerUp)});
+  removePowerUp(playerSockets: string[], spectators: string[], powerUp: PowerUp, idPlayer: boolean) {
+    this.wss.to(playerSockets[0]).emit('powerUp', {subject: idPlayer?"1":"0", ...powerUp});
+    this.wss.to(playerSockets[1]).emit('powerUp', {subject: (!idPlayer)?"1":"0", ...this.powForPlayer2(powerUp)});
     for (var i = 0; i < spectators.length; i++) {
-      spectators[i].emit('powerUp', {subject: idPlayer?"1":"0", ...powerUp});
+      this.wss.to(spectators[i]).emit('powerUp', {subject: idPlayer?"1":"0", ...powerUp});
     }
   }
-  sendEndofPowerUp(playerSockets: Socket[], spectators: Socket[], idPlayer: boolean, type: number){
-    playerSockets[0].emit('powerUp', {subject: idPlayer?"1":"0", type: type, size: 0});
-    playerSockets[1].emit('powerUp', {subject: (!idPlayer)?"1":"0", type: type, size: 0});
+  sendEndofPowerUp(playerSockets: string[], spectators: string[], idPlayer: boolean, type: number){
+    this.wss.to(playerSockets[0]).emit('powerUp', {subject: idPlayer?"1":"0", type: type, size: 0});
+    this.wss.to(playerSockets[1]).emit('powerUp', {subject: (!idPlayer)?"1":"0", type: type, size: 0});
     for (var i = 0; i < spectators.length; i++) {
-      spectators[i].emit('powerUp', {subject: idPlayer?"1":"0", type: type, size: 0});
+      this.wss.to(spectators[i]).emit('powerUp', {subject: idPlayer?"1":"0", type: type, size: 0});
     }
   }
-  sendEnd(playerSockets: Socket[], spectators: Socket[], player1Score: number, player2Score: number) {
-    playerSockets[0].emit('endGame', {yourScore: player1Score, opponentScore: player2Score});
-    playerSockets[1].emit('endGame', {yourScore: player2Score, opponentScore: player1Score});
-    for (var i = 0; i < spectators.length; i++) {
-      spectators[i].emit('endGame', {yourScore: player1Score, opponentScore: player2Score});
-    }
-    this.gameService.removeGame(playerSockets[0]);
+  sendEnd(socketIds: string[], sockIdsSpec: string[], player1Score: number, player2Score: number) {
+    this.wss.to(socketIds[0]).emit('endGame', {yourScore: player1Score, opponentScore: player2Score});
+    this.wss.to(socketIds[1]).emit('endGame', {yourScore: player2Score, opponentScore: player1Score});
+    sockIdsSpec.forEach(sockId => {
+      this.wss.to(sockId).emit('endGame', {yourScore: player1Score, opponentScore: player2Score});
+    });
+  }
+  removeGame(userId: string) {
+    this.gameService.removeGame(userId);
   }
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: string)  {
@@ -169,12 +178,4 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
 }
-
-// function fetchSession(req: Request) {
-//   return new Promise((resolve, reject) => {
-//     session(req, {} as Response, () => {
-//       resolve(req.session);
-//     });
-//   }
-// }
 

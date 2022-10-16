@@ -17,17 +17,6 @@ import { IAccount, IChannel, IMessage, eventI } from '../../interfaces';
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
 /*
-Général :
- - Pourquoi on se déco toutes les minutes ?
- - 
-
-Back :
-
-
-Front : 
- - Désactiver le bouton admember quand il n'y a pas de login ?
-
- - 
 
 */
 
@@ -75,16 +64,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       client.disconnect();
       return;
     }
-    console.log('Client connected', {socketId: client.id, userId: client.data.userId});
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
-      console.log('User', user);
+      // console.log('User', user);
       if (user == undefined) {
         return this.disconnect(client);
       }
       client.data.user = user; // save user in client
       client.emit('myUser', user);
-      // Save connection            
+      // Save connection
       if (!this.connectedUsers.has(user.login)) {
         this.connectedUsers.set(user.login, new Set());
       }
@@ -97,7 +85,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('Error', 'connection failed');
       return this.disconnect(client);
     }
+    console.log('Client connected to chat', {login: client.data.user.login, socketId: client.id, userId: client.data.userId});
   }
+  // dan sle front faire un isready pour empecher de renvoyer
 
   async handleDisconnect(socket: Socket) {
     // remove connection
@@ -542,12 +532,4 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     let blockers: string[] = (await this.db.getBlockers(blockedLogin)).map(user => user.login);
     this.sendTo(blockedLogin, 'blockers', blockers);
   }
-
-  private handleIncomingPageRequest(page: PageI) {
-    page.limit = page.limit > 100 ? 100 : page.limit;
-    // add page +1 to match angular material paginator
-    page.page = page.page + 1;
-    return page;
-  }
-
 }

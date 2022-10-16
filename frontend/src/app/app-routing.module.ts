@@ -13,8 +13,8 @@ const routes: Routes = [
 	{ path: 'sign-in', component: SignInComponent },
 	// { path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
 	{ path: 'messages', component: ChatComponent, canActivate: [AuthGuard]},
-	{ path: 'play', component: LandingPageComponent},
-	{ path: 'play/:gameId', component: PongComponent,},
+	{ path: 'play', component: LandingPageComponent, canActivate: [AuthGuard]},
+	{ path: 'play/:gameId', component: PongComponent, canActivate: [AuthGuard]},
 	{ path: 'view', loadChildren: () => import('./features/leaderboard/leaderboard.module').then(m => m.LeaderboardModule) },
 	{ path: 'profile', loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule), canActivate: [AuthGuard] },
 ];
