@@ -1,5 +1,6 @@
 import { PrismaService } from '../prisma.service';
 import { IAccount, IPhoto } from '../interfaces';
+import { Prisma } from '@prisma/client';
 
 export async function setUser(
   this: PrismaService,
@@ -183,14 +184,38 @@ export async function deleteBlockUser(this: PrismaService, userId: string, login
 
 export async function sendFriendReq(this: PrismaService, requester: string, requested: string) {
   try {
-    await this.prisma.addFriend.create({
-      data: {
+    await this.prisma.addFriend.upsert({
+      where: {
+        requesterLogin_requestedLogin: {
+          requestedLogin: requested,
+          requesterLogin: requester,
+        }
+      },
+      update: {},
+      create: {
         requestedLogin: requested,
-        requesterId: requester,
+        requesterLogin: requester,
         isAccepted: false,
       },
     });
   } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function acceptFiendship(this: PrismaService, requersted: string, requester: string) {
+  try {
+    await this.prisma.addFriend.update({
+      where: {
+        requesterLogin_requestedLogin: {
+          requestedLogin: requersted,
+          requesterLogin: requester,
+        }
+      },
+      data: { isAccepted: true },
+    });
+  }
+  catch (error) {
     console.log(error.message);
   }
 }

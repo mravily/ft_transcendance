@@ -18,16 +18,19 @@ export class AppController {
       'Iglesias',
       'jiglesia@student.42.fr',
       'https://cdn.intra.42.fr/users/jiglesia.jpg',
-    );
-    this.db.setUser(
+    ).then(
+    tmp => this.db.setUser(
       'mravily',
       'titi toto',
       'titi',
       'toto',
       'toto@student.42.fr',
       'https://cdn.intra.42.fr/users/mravily.jpg',
-    );
-    // this.db.setFriend("jiglesia", "mravily");
+    )).then( tmp =>
+      this.db.sendFriendReq('mravily', "jiglesia")
+    ).then( tmp =>
+      this.db.acceptFriendship('jiglesia', 'mravily')
+    )
   }
 
   @Get()

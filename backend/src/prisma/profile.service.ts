@@ -28,14 +28,14 @@ export async function getUserProfile(this: PrismaService, userId: string): Promi
     catch (error) {}
 }
 
-export async function getUserRank(this: PrismaService, userId: string): Promise<number> {
+export async function getUserRank(this: PrismaService, login: string): Promise<number> {
     try {
         const rank = await this.prisma.user.findMany({
-            select: { id: true },
+            select: { login: true },
             orderBy: {score: 'desc'}
         });
         for (let i = 0; rank[i]; i++) {
-            if (rank[i].id == userId) {
+            if (rank[i].login == login) {
                 return (i + 1);
             }
         }

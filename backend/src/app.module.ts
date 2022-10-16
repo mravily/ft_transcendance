@@ -11,6 +11,7 @@ import { ProfileModule } from './profile/profile.module';
 import { SidebarModule } from './sidebar/sidebar.module';
 import { StreamModule } from './stream/stream.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UploadsModule } from './uploads/uploads.module';
     SidebarModule,
     UploadsModule,
     StreamModule,
+    UserModule,
     TwoFactorAuthenticationModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'upload'),

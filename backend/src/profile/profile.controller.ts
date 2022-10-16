@@ -13,18 +13,20 @@ export class ProfileController {
 		await this.db.updateUserAccount(session.userid, account);
     }
 
-	@Get(':id')
-	  getPublicProfile(@Param('id') login: string) {
-    return this.db.getPublicProfile(login);
-	}
-
 	@Get('private')
-	getProfile(@Session() session: Record<string, any>) {
-		return this.db.getUserProfile(session.userid);
+	async getProfile(@Session() session: Record<string, any>) {
+		return await this.db.getUserProfile(session.userid);
+	}
+	
+	@Get('overview')
+	async getOverview(@Session() session: Record<string, any>): Promise<IAccount> {
+		const tmp = await this.db.getProfileOverview(session.userid);
+		console.log(tmp);
+		return tmp;
 	}
 
-	@Get('overview')
-	getOverview(@Session() session: Record<string, any>) {
-		return this.db.getProfileOverview(session.userid);
+	@Get(':id')
+	async getPublicProfile(@Param('id') login: string) {
+	return await this.db.getPublicProfile(login);
 	}
 }

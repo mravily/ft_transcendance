@@ -49,6 +49,6 @@ export class ProfileService {
   }
 
   getOverview() : Observable<ProfileOverview> {
-	return this.http.get<ProfileOverview>('api/overview');
+	return this.http.get<ProfileOverview>('api/profile/overview');
   }
 }
