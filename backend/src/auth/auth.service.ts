@@ -45,7 +45,7 @@ export class AuthService {
   //   }
 
   //   async refreshTokens(userId: string, refreshToken: string) {
-  //     const user = await this.db.getUser(userId);
+  //     const user = await this.db.getUserToken(userId);
   //     if (!user || !user.rtoken) throw new ForbiddenException('Access Denied');
   //     const refreshTokenMatches = await argon2.verify(user.rtoken, refreshToken);
   //     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');

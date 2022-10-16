@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { User } from 'src/app/features/leaderboard/model/user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Component({
   selector: 'app-bloc-friend',
@@ -8,7 +9,7 @@ import { User } from 'src/app/features/leaderboard/model/user.model';
 })
 export class BlocFriendComponent implements OnInit {
 
-	@Input() friend!: User;
+	@Input() friend!: IAccount;
 	@Input() rank!: number;
 	
 	constructor() { }

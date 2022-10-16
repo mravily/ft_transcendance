@@ -8,7 +8,7 @@ import { Match } from 'src/app/features/profile/models/profile.user.model';
 })
 export class MatchHistoryComponent implements OnInit {
 
-	@Input() matches!: Match [];
+	@Input() matches!: any[];
 
 	constructor() { }
 

@@ -9,6 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { TfaComponent } from './features/tfa/tfa.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
 	declarations: [AppComponent, TfaComponent],
@@ -18,7 +19,8 @@ import { TfaComponent } from './features/tfa/tfa.component';
 		AppRoutingModule,
 		HttpClientModule,
 		ReactiveFormsModule,
-		NgOtpInputModule
+		NgOtpInputModule,
+		RouterModule
 	],
 	providers: [CookieService],
 	bootstrap: [AppComponent]

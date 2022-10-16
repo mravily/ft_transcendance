@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
-import { Tokens } from './auth/types/tokens.type';
 import { PrismaService } from './prisma.service';
 
 @Controller()
@@ -11,14 +10,14 @@ export class AppController {
     private db: PrismaService,
     private authService: AuthService,
   ) {
-    // this.db.setUser(
-    //   'jiglesia',
-    //   'Juan Iglesias',
-    //   'Juan',
-    //   'Iglesias',
-    //   'jiglesia@student.42.fr',
-    //   'https://cdn.intra.42.fr/users/jiglesia.jpg',
-    // );
+    this.db.setUser(
+      'jiglesia',
+      'Juan Iglesias',
+      'Juan',
+      'Iglesias',
+      'jiglesia@student.42.fr',
+      'https://cdn.intra.42.fr/users/jiglesia.jpg',
+    );
     // this.db.setUser(
     //   'mravily',
     //   'titi toto',

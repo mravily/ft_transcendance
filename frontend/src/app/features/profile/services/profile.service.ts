@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ProfileOverview } from '../models/profile.user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,24 +23,27 @@ export class ProfileService {
   }
 
   sendForm(settingsForm: FormGroup) {
-	var formData: any = new FormData();
-
-	formData.append('firstName', settingsForm.get('firstName')!.value);
-	formData.append('lastName', settingsForm.get('lastName')!.value);
-	formData.append('email', settingsForm.get('email')!.value);
-	formData.append('login', settingsForm.get('login')!.value);
-	formData.append('nickname', settingsForm.get('nickname')!.value);
-
-	this.http
-		.post('api/update', formData)
-		.subscribe({
+	this.http.post('api/profile/update', {
+		firstName: settingsForm.get('firstName')!.value,
+		lastName: settingsForm.get('lastName')!.value,
+		email: settingsForm.get('email')!.value,
+		login: settingsForm.get('login')!.value,
+		nickName: settingsForm.get('nickname')!.value,
+	}).subscribe({
 		next: (response) => console.log(response),
 		error: (error) => console.log(error),
 		});
   }
 
-  getOverview() : Observable<ProfileOverview> {
-	return this.http.get<ProfileOverview>('api/overview');
+  getOverview(): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/overview');
   }
 
+  getPublicProfile(login: string): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/' + login);
+  }
+
+  getPrivateProfile(): Observable<IAccount> {
+	return this.http.get<IAccount>('api/profile/private');
+  }
 }

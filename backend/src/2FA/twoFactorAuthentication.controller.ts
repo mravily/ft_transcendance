@@ -22,6 +22,7 @@ import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
 import { request } from 'http';
 import { IAccount } from '../interfaces';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -29,6 +30,7 @@ export class TwoFactorAuthenticationController {
   constructor(
     private readonly tfaService: TwoFactorAuthenticationService,
     private db: PrismaService,
+    private authService: AuthService,
   ) {}
 
   @Post('generate')
@@ -39,16 +41,12 @@ export class TwoFactorAuthenticationController {
     @Req() req,
   ) {
     console.log('user.id.tfa', session.userid);
-    // console.log('user.email.tfa', req.email);
-    const user = {} as IUser2FA;
-    user.id = session.userid;
-    user.email = 'mravily@student.42.fr';
     const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
-      user,
+      session.userid,
     );
     toDataURL(otpauthUrl, (err, dataUrl: string) => {
       if (err) throw err;
-      this.db.set2FA(user.id, secret, dataUrl);
+      this.db.set2FA(session.userid, secret, dataUrl);
       return response.status(200).json({
         dataUrl,
         secret: secret,
@@ -58,10 +56,17 @@ export class TwoFactorAuthenticationController {
 
   @Post('authenticate')
   //   @UseGuards(JwtAuthenticationGuard)
-  authenticate(
+  async authenticate(
     @Session() session: Record<string, any>,
     @Body() { token }: TwoFactorAuthenticationDto,
+    @Res({ passthrough: true }) res: Response,
   ) {
+    const isValid = await this.tfaService.isTfaCodeValid(token, session.userid);
+    if (isValid) {
+      const tokens = await this.authService.getTokens(session.userid);
+      res.cookie('access', tokens.access_token, { maxAge: 900000000 });
+      res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
+    }
     return this.tfaService.isTfaCodeValid(token, session.userid);
   }
 
@@ -82,11 +87,18 @@ export class TwoFactorAuthenticationController {
 
   @Post('delete')
   async delete2FA(@Session() session: Record<string, any>) {
-    this.db.delete2FA(session.userid);
+    await this.db.delete2FA(session.userid);
+    return { msg: '2FA Deleted' };
   }
 
   @Get('switch')
   async switch2fa(@Session() session: Record<string, any>) {
-    this.db.switch2FA(session.userid);
+    await this.db.switch2FA(session.userid);
+    return { msg: '2FA Status Change' };
+  }
+
+  @Get('issecret')
+  async isSecret(@Session() session: Record<string, any>) {
+    return this.db.isSecret(session.userid);
   }
 }

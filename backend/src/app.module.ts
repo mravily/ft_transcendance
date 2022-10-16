@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
+import { ProfileModule } from './profile/profile.module';
 import { SidebarModule } from './sidebar/sidebar.module';
 import { StreamModule } from './stream/stream.module';
 import { UploadsModule } from './uploads/uploads.module';
@@ -14,6 +15,7 @@ import { UploadsModule } from './uploads/uploads.module';
 @Module({
   imports: [
     AuthModule,
+    ProfileModule,
     LeaderBoardModule,
     AccountModule,
     SidebarModule,

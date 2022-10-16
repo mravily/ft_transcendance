@@ -5,6 +5,7 @@ import { SignInComponent } from './features/sign-in/sign-in.component';
 import { AuthGuard } from './guards/auth.guard';
 import { TfaComponent } from './features/tfa/tfa.component';
 import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
+import { NotFoundComponent } from './core/components/not-found/not-found.component';
 
 const routes: Routes = [
 	{ path: 'qrcode', component: QrcodeViewComponent },
@@ -13,6 +14,8 @@ const routes: Routes = [
 	{ path: 'sign-in', component: SignInComponent },
 	{ path: 'view', loadChildren: () => import('./features/leaderboard/leaderboard.module').then(m => m.LeaderboardModule) },
 	{ path: 'profile', loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule), canActivate: [AuthGuard] },
+	{ path: '404', component: NotFoundComponent },
+	{ path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

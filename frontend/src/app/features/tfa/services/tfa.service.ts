@@ -18,10 +18,6 @@ export class TfaService {
 		return this.http.post<boolean>("api/tfa/authenticate", { token });
 	}
 
-	Activate2FA(): Observable<boolean> {
-		return this.http.get<boolean>('api/tfa/switch');
-	}
-
 	getSecret(): Observable<IAccount> {
 		return this.http.get<IAccount>('api/tfa/secret');
 	}
@@ -34,7 +30,7 @@ export class TfaService {
 		this.http.get('api/tfa/switch');
 	}
 
-	delete2FA() {
-		this.http.get('api/tfa/delete');
+	delete2FA(): void {
+		this.http.post('api/tfa/delete', { observe: 'response' }).subscribe();
 	}
 }

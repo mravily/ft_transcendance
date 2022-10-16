@@ -27,6 +27,10 @@ export class ProfileSecurityComponent implements OnInit {
 		this.tfaService.switch2FA();
 	}
 
+	changeSetup(value: boolean) {
+		this.setup = value;
+	}
+	
 	onSetup() {
 		this.alreadySet$ = this.tfaService.getSecret();
 		if (!this.setup)

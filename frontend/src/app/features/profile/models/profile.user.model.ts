@@ -1,11 +1,4 @@
 
-export class CardStats {
-	win!: number
-	lost!: number
-	rank!: number
-	friends!: number
-}
-
 export class Activity {
 	avatar!: any
 	displayName!: string
@@ -21,18 +14,6 @@ export class Match {
 	opAvatar!: any
 	opDisplayName!: string
 	opLogin!: string
-}
-
-export class ProfileOverview {
-	cardStats!: CardStats
-	activities!: Activity []
-	matches!: Match []
-}
-
-export class ProfilePublic {
-	cardStats!: CardStats
-	friends!: Friend []
-	matches!: Match []
 }
 
 export class friendsList {
@@ -53,21 +34,6 @@ export class ProfileSettings {
 	lastName!: string
 	email!: string
 	login!: string
-}
-
-export class Friend {
-	displayName!: string
-	avatar!: string
-	login!: string
-}
-
-export class Profile {
-	firstName!: string
-	lastName!: string
-	email!: string
-	login!: string
-	displayName!: string
-	avatar!: any
 }
 
 export class tfa {

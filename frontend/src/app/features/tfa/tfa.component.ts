@@ -20,7 +20,7 @@ export class TfaComponent implements OnInit {
 	otp!: string;
 	inputDigitLeft: string = "Verify code";
 	btnStatus: string = "btn-light";
-
+	isValid$!: Observable<boolean>
 	public configOptions = {
 		length: 6,
 		inputClass: 'digit-otp',
@@ -45,18 +45,23 @@ export class TfaComponent implements OnInit {
 		}
 	}
 
-	previousUrl!: string;
 	isValid!: boolean;
 	onSubmit() {
+	// 	this.tfaServices.verifyAuth(this.otp).subscribe(v => {
+	// 		console.log('v', v);
+	// 	  this.isValid = v;
+	// 	  if (v) {
+	// 		this.router.navigateByUrl('view');
+	// 	  }
+	// 	});
+	// }
+	this.tfaServices.verifyAuth(this.otp).subscribe(v => {
+		console.log('v', v);
+	  this.isValid = v;
+	  if (v) {
+		this.router.navigateByUrl('view');
+	  }
+	});
+}
 
-		const token = this.otp;
-		this.tfaServices.verifyAuth(token).subscribe(v => this.isValid = v);
-		console.log('isValid', this.isValid);
-		if (this.isValid)
-			this.router.navigateByUrl(this.previousUrl);
-	}
-
-	ngOnDestroy() {
-		// this.subscription.unsubscribe();
-	}
 }

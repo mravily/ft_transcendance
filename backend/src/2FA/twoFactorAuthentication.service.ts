@@ -17,11 +17,11 @@ export class TwoFactorAuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async generateTfaSecret(user: IUser2FA) {
+  public async generateTfaSecret(user: string) {
     const secret = authenticator.generateSecret();
 
     const otpauthUrl = authenticator.keyuri(
-      user.email,
+      await this.db.getUserEmail(user),
       this.configService.get('APP_NAME'),
       secret,
     );
@@ -44,12 +44,7 @@ export class TwoFactorAuthenticationService {
   }
 
   async isTfaCodeValid(tfaCode: string, user: string) {
-    console.log('test code ', tfaCode);
-    console.log('test user ', user);
-    // const secret = '14b27644-875b-47c4-85ad-6052cf74b4a6';
-    // if (!user || !tfaCode) return false;
     const secret = await this.db.get2FASecret(user);
-    console.log('secret-verify', secret);
     if (secret)
       return authenticator.verify({
         token: tfaCode,

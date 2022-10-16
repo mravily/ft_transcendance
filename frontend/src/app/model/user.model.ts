@@ -27,4 +27,3 @@ export class IAccount {
 	channelAdmin?: any[];
 	activities?: Activity[];
   }
-  

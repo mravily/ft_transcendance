@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CardStats } from 'src/app/features/profile/models/profile.user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Component({
   selector: 'app-card-stats',
@@ -8,7 +8,7 @@ import { CardStats } from 'src/app/features/profile/models/profile.user.model';
 })
 export class CardStatsComponent implements OnInit {
 
-  @Input() data!: CardStats;
+  @Input() data!: IAccount;
 
   constructor() {}
 

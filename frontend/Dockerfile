@@ -13,5 +13,4 @@ RUN npm run build
 
 EXPOSE 4200
 
-# Delete si utiliser dans docker-compose
 CMD [ "npm", "run", "start" ]

@@ -14,8 +14,10 @@ export class StreamController {
         const file = createReadStream(join(process.cwd(), photo.path));
         res.set({
             'Content-Type': photo.mimetype,
-            'Content-Disposition': 'attachment; filename="' + photo.filename + '"',
+            'Content-Disposition': 'inline'
+            // 'Content-Disposition': 'form-data; name=image ; filename="' + photo.filename + '"',
           });
+          // file.pipe(res);
         return new StreamableFile(file);
     }
 }
