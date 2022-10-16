@@ -78,6 +78,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     console.log('Client connected', {socketId: client.id, userId: client.data.userId});
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
+      console.log('User', user);
       if (user == undefined) {
         return this.disconnect(client);
       }
@@ -408,7 +409,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (message.message == null || message.message == '' || message.message == '\n') {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    await this.db.setChannelMessage(socket.data.userId, channel.channelName, message.message); 
+    await this.db.setChannelMessage(socket.data.userId, channel.channelName, message.message, false); 
     this.sendToChan(message.channelId, 'message', message);
   }
 
@@ -435,7 +436,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channelId: channelName,
       createdAt: new Date()
     };
-    await this.db.setChannelMessage(userId, channelName, text);
+    await this.db.setChannelMessage(userId, channelName, text, true);
     this.sendToChan(channelName, 'message', createdMessage);
   }
 

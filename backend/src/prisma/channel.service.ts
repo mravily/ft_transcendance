@@ -44,14 +44,14 @@ export async function deleteChannel(this: PrismaService, channel: string) {
   }
 }
 
-export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string) {
+export async function setChannelMessage(this: PrismaService, userId: string, channel_name: string, message: string, isNotif: boolean) {
   try {
     await this.prisma.channelMessage.create({
       data: {
         message: message,
         userId: userId,
         channelId: channel_name,
-        isRead: false,
+        isNotif: isNotif,
       },
     });
     await this.prisma.channel.update(
@@ -514,6 +514,7 @@ export async function getChannelMessages(this: PrismaService, channel_name: stri
         createdAt: true,
         message: true,
         user: {select : {login: true}},
+        isNotif: true,
       },
       orderBy: {
         createdAt: 'asc',
@@ -526,6 +527,7 @@ export async function getChannelMessages(this: PrismaService, channel_name: stri
         message: mess.message,
         from: mess.user.login,
         channelId: channel_name,
+        isNotif: mess.isNotif,
       }
     });
   }

@@ -8,6 +8,8 @@ import { GameService } from './game.service';
 // import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { parse } from 'cookie';
+import { IAccount } from '../interfaces';
+import { PrismaService } from '../prisma.service';
 
 
 @WebSocketGateway( { namespace: '/pong',
@@ -19,8 +21,10 @@ import { parse } from 'cookie';
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
   
-  constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService, private authService: AuthService ) {
-  }
+  constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService,
+          private authService: AuthService,
+          private db: PrismaService) {  }
+
   afterInit(server: Server) {
     console.log('GameGateway initialized');
     this.wss = server;
@@ -28,27 +32,44 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   // , @Session() session: Record<string, any>,
   async handleConnection(client: Socket)  {
-    // try {
-    //   const cookie = parse(client.handshake.headers.cookie);
-    //   const token = cookie['token'];
-    //   if (!token) {
-    //     console.log('token not found');
-    //     client.disconnect();
-    //     return;
-    //   }
-    //   const userId = await this.authService.getUseridFromToken(token);
-    //   if (!userId) {
-    //     console.log('User not found');
-    //     client.disconnect();
-    //     return;
-    //   }
-    //   client.data.userId = userId;
-    // }
-    // catch (e) {
-    //   console.log('Error', e);
-    //   client.disconnect();
-    // }
-    console.log('Client connected', client.id, client.data);
+    try {
+      const cookie = parse(client.handshake.headers.cookie);
+      const token = cookie['token'];
+      if (!token) {
+        console.log('token not found');
+        client.disconnect();
+        return;
+      }
+      const userId = await this.authService.getUseridFromToken(token);
+      console.log('userId...', userId);
+      if (!userId) {
+        console.log('User not found');
+        client.disconnect();
+        return;
+      }
+      client.data.userId = userId;
+      // client.emit('myId', userId);
+    }
+    catch (e) {
+      console.log('Error', e);
+      client.disconnect();
+      return;
+    }
+    console.log('Client connected', {socketId: client.id, userId: client.data.userId});
+    try {
+      const user: IAccount = await this.db.getUserAccount(client.data.userId);
+      // console.log('User', user);
+      if (user == undefined) {
+        return client.disconnect();
+      }
+      client.data.user = user; // save user in client
+      client.emit('myUser', user);
+      // Save connection            
+      // this.gameService.addConnection(client);
+    } catch {
+      console.log('Error', 'connection failed');
+      return client.disconnect();
+    }
   }
   
   async handleDisconnect(client: Socket) {

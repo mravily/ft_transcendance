@@ -60,15 +60,13 @@
 
     <div class="inboxContainer" #messageContainer>
       <div *ngFor="let message of selectedChannel.messages; let i = index;"
-            class="message" [ngClass]="{isMine: message.from === myUser.login}">
-        <h4 *ngIf="(i === 0 || selectedChannel.messages[i-1].from !== message.from) && !message.isNotif">
+            class="message" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
+          <!-- <div class="message-header-time" *ngIf="i == 0 || selectedChannel.messages[i].createdAt + 60000 < message.createdAt">{{message.createdAt}}</div> -->
+        <h4 *ngIf="(i === 0 || (selectedChannel.messages[i-1].from !== message.from || selectedChannel.messages[i-1].isNotif)) && !message.isNotif">
           {{message.from}}
         </h4>
-        <!-- 
-          <div class="message-header-time">{{message.time}}</div>
-        -->
-        <div class="message-body" [ngClass]="{isMine: message.from === myUser.login, isNotif: message.isNotif}">
-          <div class="message-body-text">{{(!isBlocked(message.from)) ? message.message : 'blocked'}}</div>
+        <div class="message-body" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
+          {{(!isBlocked(message.from)) ? message.message : 'blocked'}}
         </div>
       </div>
     </div>

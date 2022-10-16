@@ -93,7 +93,7 @@ CREATE TABLE "ChannelMessage" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "message" TEXT NOT NULL,
-    "isRead" BOOLEAN NOT NULL,
+    "isNotif" BOOLEAN NOT NULL,
     "userId" TEXT NOT NULL,
     "channelId" TEXT NOT NULL,
 

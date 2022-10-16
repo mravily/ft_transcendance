@@ -39,7 +39,7 @@ export class ChatComponent implements OnInit {
     });
     this.chatServ.getMessagesObs().subscribe((messages: IMessage[]) => {
       if (this.selectedChannel && messages[0].channelId == this.selectedChannel.channelName)
-        this.selectedChannel.messages = messages;
+        this.selectedChannel.messages = messages
     });
     this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
       this.selectedChannel = channel;
