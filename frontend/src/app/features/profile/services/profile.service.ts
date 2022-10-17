@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
+import { IProfileFriends } from '../models/profile.user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -61,5 +62,17 @@ export class ProfileService {
 
   isUser(login: string) {
 	return this.http.post('api/user/isuser', { login });
+  }
+
+  getProfileFriends(): Observable<IProfileFriends[]> {
+	return this.http.get<IProfileFriends[]>('api/profile/friends');
+  }
+
+  isMyProfile(login: string): Observable<boolean> {
+	return this.http.post<boolean>('api/profile/ismypage', { login })
+  }
+
+  getBlockedUser(): Observable<IAccount[]> {
+	return this.http.get<IAccount[]>('api/profile/blockeduser');
   }
 }

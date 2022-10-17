@@ -83,6 +83,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getUserRank        = profile.getUserRank;
   public getUserProfile     = profile.getUserProfile;
   public getPublicProfile   = profile.getPublicProfile;
+  public getProfileFriends  = profile.getProfileFriends;
   public getTotalFriends    = overview.getTotalFiends;
   public getProfileOverview = overview.getProfileOverview;
 }

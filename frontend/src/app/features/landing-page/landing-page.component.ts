@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-declare var anime: any;  
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-landing-page',
@@ -7,22 +6,13 @@ declare var anime: any;
   styleUrls: ['./landing-page.component.scss']
 })
 
-export class LandingPageComponent implements AfterViewInit {
+export class LandingPageComponent implements OnInit {
 
   	constructor() {}
-
-	ngAfterViewInit(): void {
-		anime.timeline({ loop: true })
-		.add({
-			target: '#btn',
-			top: '100px',
-			duration: 500,
-			easing: ''
-		})
-	  }
+	ngOnInit(): void {
+	}
 
 	onPLay() {
-
 	}
 }
 

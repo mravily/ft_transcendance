@@ -1,7 +1,7 @@
 <div class="wrapper d-flex container-fluid">
 	<div class="one">
 		<img alt="..." src="{{ user.avatar }}" class="avatar avatar-sm rounded-circle me-2">
-		<a class="text-heading font-semibold" href="#">
+		<a class="text-heading font-semibold" [routerLink]="['../../user/', user.login]">
 		  {{ user.nickName }}
 		</a>
 	</div>

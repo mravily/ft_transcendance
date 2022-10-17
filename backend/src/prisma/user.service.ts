@@ -13,7 +13,7 @@ export async function setUser(
   try {
     const user = await this.prisma.user.upsert({
       where: { login: login },
-      update: {},
+      update: { isOnline: true },
       create: {
         login: login,
         nickName: nickname,
@@ -126,10 +126,7 @@ export async function get2FASecret(
   }
 }
 
-export async function isUser(
-  this: PrismaService,
-  login: string,
-): Promise<boolean> {
+export async function isUser(this: PrismaService, login: string): Promise<boolean> {
   try {
     const user = await this.prisma.user.count({
       where: { login: login },
@@ -339,10 +336,12 @@ export async function updateUserScore(this: PrismaService, login: string, points
 
 export async function updateUserStatus(this: PrismaService, login: string, status: boolean) {
   try {
-    await this.prisma.user.update({
+   const user = await this.prisma.user.update({
       where: { id: login },
       data: { isOnline: status },
     });
+    console.log('user', user);
+    console.log('login', login);
   } catch (error) {
     console.log(error.message);
   }

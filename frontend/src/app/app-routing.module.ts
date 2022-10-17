@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProfilePublicComponent } from './features/profile/components/profile-public/profile-public.component';
 import { SignInComponent } from './features/sign-in/sign-in.component';
 import { AuthGuard } from './guards/auth.guard';
 import { TfaComponent } from './features/tfa/tfa.component';
 import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { LandingPageComponent } from './features/landing-page/landing-page.component';
+import { ProfilePublicComponent } from './features/profile/components/profile-public/components/profile-public.component';
 
 const routes: Routes = [
 	{ path: '', component: LandingPageComponent },

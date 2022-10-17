@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
-import { ProfileService } from '../../services/profile.service';
+import { ProfileService } from '../../../services/profile.service';
 
 @Component({
   selector: 'app-profile-public',
@@ -17,20 +17,13 @@ export class ProfilePublicComponent implements OnInit {
 	userID!: string;
 	actionBlock: string = 'Block';
 	actionAdd: string = 'Add Friend';
-
+	myProfile!: boolean;
+	
 	constructor(private profileService: ProfileService,
-				private route: ActivatedRoute,
-				private cookieService: CookieService,
-				private router: Router) {
-		this.route.params.subscribe((params) => {
-			this.userID = params["id"]
-			console.log('userID', this.userID);
-			this.profileService.isUser(this.userID).subscribe(v => {
-				console.log('v-test', v);
-				if (!v)
-					this.router.navigateByUrl('/404');
-			})	
-		})
+		private route: ActivatedRoute,
+		private cookieService: CookieService,
+		private router: Router) {
+		this.getInfoProfile();
 	}
 	
 	ngOnInit(): void {
@@ -39,6 +32,24 @@ export class ProfilePublicComponent implements OnInit {
 
 	isLogin() {
 		return this.cookieService.check('access');
+	}
+
+	getInfoProfile() {
+		this.route.params.subscribe((params) => {
+			this.userID = params["id"]
+			this.isMyProfile();
+			this.profileService.isUser(this.userID).subscribe(v => {
+				if (!v)
+					this.router.navigateByUrl('/404');
+			})	
+		})
+	}
+
+	isMyProfile() {
+		this.profileService.isMyProfile(this.userID).subscribe(v => {
+			console.log('v', v)
+			this.myProfile = v
+		});
 	}
 
 	onClickBlockUser() {

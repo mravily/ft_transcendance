@@ -28,7 +28,7 @@ export class AuthController {
     // Stocker le JWT RT dans la DB
     if (tfa == true) return { url: process.env.TFA_URL };
     const tokens = await this.authService.getTokens(req.session.userid);
-    res.cookie('access', tokens.access_token, { maxAge: 9000000 });
+    res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
     return { url: process.env.FRONT_URL };
   }
 

@@ -17,7 +17,7 @@ export class SidebarMenuService {
 	}
 
 	signOut() {
-		this.http.get('api/auth/sign-out');
+		this.http.get('api/auth/sign-out').subscribe();
 		this.cookieService.deleteAll();
 	}
 }

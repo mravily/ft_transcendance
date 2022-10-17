@@ -1,5 +1,4 @@
-import { Body, Controller, Post, Session, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Post, Session } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 @Controller('user')
@@ -7,7 +6,6 @@ export class UserController {
   constructor(private db: PrismaService) {}
 
   @Post('friendrequest')
-//   @UseGuards(AuthGuard('42'))
   async sendFriendReques(@Body() req, @Session() session: Record<string, any>) {
     await this.db.sendFriendReq(
       await this.db.getUserLogin(session.userid),
@@ -16,7 +14,6 @@ export class UserController {
   }
 
   @Post('acceptfriend')
-//   @UseGuards(AuthGuard('42'))
   async acceptFrienship(@Body() req, @Session() session: Record<string, any>) {
     await this.db.acceptFriendship(
       await this.db.getUserLogin(session.userid),
@@ -24,14 +21,16 @@ export class UserController {
     );
   }
 
+  @Post('deletefriend')
+  async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {}
+
   @Post('block')
-//   @UseGuards(AuthGuard('42'))
   async blockUser(@Body() bod, @Session() session: Record<string, any>) {
     await this.db.setBlockUser(session.userid, bod.login);
   }
 
   @Post('unblock')
-//   @UseGuards(AuthGuard('42'))
+  //   @UseGuards(AuthGuard('42'))
   async unblockUser(@Body() bod, @Session() session: Record<string, any>) {
     await this.db.deleteBlockUser(session.userid, bod.login);
   }

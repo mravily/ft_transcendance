@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Session,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Get, Param, Post, Session } from '@nestjs/common';
 import { IAccount } from '../interfaces';
 import { PrismaService } from '../prisma.service';
 
@@ -16,7 +7,6 @@ export class ProfileController {
   constructor(private db: PrismaService) {}
 
   @Post('update')
-//   @UseGuards(AuthGuard('42'))
   async updateProfile(
     @Session() session: Record<string, any>,
     @Body() account: IAccount,
@@ -25,15 +15,31 @@ export class ProfileController {
   }
 
   @Get('private')
-//   @UseGuards(AuthGuard('42'))
   getProfile(@Session() session: Record<string, any>) {
     return this.db.getUserProfile(session.userid);
   }
 
   @Get('overview')
-  @UseGuards(AuthGuard('42'))
   getOverview(@Session() session: Record<string, any>) {
     return this.db.getProfileOverview(session.userid);
+  }
+
+  @Get('friends')
+  getFriends(@Session() session: Record<string, any>) {
+    return this.db.getProfileFriends(session.userid);
+  }
+
+  @Post('ismypage')
+  async isMyPage(@Session() session, @Body() bod): Promise<boolean> {
+    if (bod.login == (await this.db.getUserLogin(session.userid))) return true;
+    return false;
+  }
+
+  @Get('blockedusers')
+  async getBlockedUsers(@Session() session): Promise<IAccount[]> {
+    return await this.db.getBlockedUsers(
+      await this.db.getUserLogin(session.userid),
+    );
   }
 
   @Get(':id')
