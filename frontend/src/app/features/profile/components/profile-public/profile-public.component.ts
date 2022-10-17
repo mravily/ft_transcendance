@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
-import { ProfileService } from '../../../services/profile.service';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-profile-public',
@@ -27,7 +27,7 @@ export class ProfilePublicComponent implements OnInit {
 	}
 	
 	ngOnInit(): void {
-		this.data$ = this.profileService.getPublicProfile(this.userID)
+		this.data$ = this.profileService.getPublicProfile(this.userID);
 	}
 
 	isLogin() {

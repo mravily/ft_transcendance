@@ -7,6 +7,7 @@ export class UserController {
 
   @Post('friendrequest')
   async sendFriendReques(@Body() req, @Session() session: Record<string, any>) {
+	console.log('in');
     await this.db.sendFriendReq(
       await this.db.getUserLogin(session.userid),
       req.login,
@@ -21,8 +22,10 @@ export class UserController {
     );
   }
 
-  @Post('deletefriend')
-  async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {}
+    @Post('deletefriend')
+    async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
+        await this.db.deleteFriend(session.userid, bod.login);
+    }
 
   @Post('block')
   async blockUser(@Body() bod, @Session() session: Record<string, any>) {

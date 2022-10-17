@@ -30,6 +30,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public deleteBlockUser    = user.deleteBlockUser;
   public getBlockedUsers    = user.getBlockedUsers;
   public setBlockUser       = user.setBlockUser;
+  public isBlocked          = user.isBlocked;
   public sendFriendReq      = user.sendFriendReq;
   public acceptFriendship   = user.acceptFiendship;
   public is2FA              = user.is2FA;
@@ -43,6 +44,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public updateUserStatus   = user.updateUserStatus;
   public getFriends         = user.getFriends;
   public getFriendsById     = user.getFriendsById;
+  public deleteFriend       = user.deleteFriend;
+  public isFriend           = user.isFriend;
   public uploadPhoto        = user.uploadPhoto;
   public getLastPhoto       = user.getLastPhoto;
   public setUserToken       = user.setUserToken;

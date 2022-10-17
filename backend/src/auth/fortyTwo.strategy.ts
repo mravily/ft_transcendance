@@ -16,7 +16,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(
-    request: { session: { userid: string; jwt: any } },
+    request: { session: { userid: string; jwt: any; firstTime: boolean } },
     // request: { session: { userid: string } },
     accessToken: string,
     refreshToken: string,
@@ -24,6 +24,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     cb: VerifyCallback,
   ): Promise<any> {
     try {
+      request.session.firstTime = !(await this.db.isUser(profile.username));
+      console.log('42 stategie', request.session.firstTime);
       const id = await this.db.setUser(
         profile.username,
         profile.displayName,

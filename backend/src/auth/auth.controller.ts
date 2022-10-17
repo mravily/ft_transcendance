@@ -23,18 +23,23 @@ export class AuthController {
   @Get('42/return')
   @UseGuards(AuthGuard('42'))
   @Redirect('/')
-  async fortyTwoAuthRedirect(@Res() res, @Req() req) {
-    const tfa = await this.db.is2FA(req.session.userid).then();
+  async fortyTwoAuthRedirect(
+    @Res() res,
+    @Session() session: Record<string, any>,
+  ) {
+    const tfa = await this.db.is2FA(session.userid).then();
     // Stocker le JWT RT dans la DB
     if (tfa == true) return { url: process.env.TFA_URL };
-    const tokens = await this.authService.getTokens(req.session.userid);
+    const tokens = await this.authService.getTokens(session.userid);
     res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
+    console.log('FirstTime Baby ?', session.firstTime);
+    if (session.firstTime) return { url: process.env.FRONT_SETTINGS };
     return { url: process.env.FRONT_URL };
   }
 
   @Get('sign-out')
   loggingOut(@Req() req, @Session() session: Record<string, any>) {
     this.db.updateUserStatus(session.userid, false);
-    req.session.destroy();
+    session.destroy();
   }
 }

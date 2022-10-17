@@ -6,7 +6,7 @@ import { TfaComponent } from './features/tfa/tfa.component';
 import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 import { LandingPageComponent } from './features/landing-page/landing-page.component';
-import { ProfilePublicComponent } from './features/profile/components/profile-public/components/profile-public.component';
+import { ProfilePublicComponent } from './features/profile/components/profile-public/profile-public.component';
 
 const routes: Routes = [
 	{ path: '', component: LandingPageComponent },

@@ -22,7 +22,7 @@ export class ProfileButtonComponent implements OnInit {
 
   reload() {
 	this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
-		this.router.navigate(['/profile/settings']);
+		this.router.navigate([this.router.url]);
 	}); 
 }
 

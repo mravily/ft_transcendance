@@ -50,7 +50,6 @@ export class IProfileFriends {
 	rank!: number
     isOnline!: boolean
     isAccepted!: boolean
-	isBlocked!: boolean
     score!: number
     isSent!: boolean
 }

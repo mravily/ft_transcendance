@@ -49,7 +49,7 @@ export class ProfileService {
   }
 
   sendFriendRequest(login: string) {
-	this.http.post('api/user/friendrequest', { login });
+	this.http.post('api/user/friendrequest', { login }).subscribe();
   }
 
   blockUser(login: string) {

@@ -296,14 +296,14 @@ export async function getChannelUsers(this: PrismaService, channel_name: string)
     });
     let list: IAccount[] = [];
     for (let i = 0; channel.userList[i]; i++) {
-      let tmp = {} as IAccount;
-      tmp.login = channel.userList[i].user.login;
-      tmp.nickName = channel.userList[i].user.nickName;
-      tmp.email = channel.userList[i].user.email;
-      tmp.score = channel.userList[i].user.score;
-      tmp.avatar = channel.userList[i].user.imgUrl;
-      tmp.isOnline = channel.userList[i].user.isOnline;
-      list.push(tmp);
+      list.push({
+        login: channel.userList[i].user.login,
+        nickName: channel.userList[i].user.nickName,
+        email: channel.userList[i].user.email,
+        score: channel.userList[i].user.score,
+        avatar: channel.userList[i].user.imgUrl,
+        isOnline: channel.userList[i].user.isOnline,
+      });
     }
     return list;
   }
@@ -352,8 +352,7 @@ export async function getchannelsForUser(this: PrismaService, userid: string, sk
     });
     let list: IChannel[] = [];
     for (let i = 0; channels.channelList[i]; i++) {
-      let tmp: IChannel = { channelName: channels.channelList[i].channelId };
-      list.push(tmp);
+      list.push({ channelName: channels.channelList[i].channelId });
     }
     return list;
   }
