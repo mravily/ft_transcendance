@@ -1,49 +1,49 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Global, Inject, Injectable } from '@nestjs/common';
 import { GamePaddle, GameStatus } from './game.interface';
 import { GameGateway } from './game.gateway';
 import { Socket } from 'socket.io';
 import { Ball, Paddle, PowerUp } from './entities';
+import { ChatGateway } from '../chat/gateway/chat.gateway';
+import { IMatch } from '../../interfaces';
 
 @Injectable()
-
 export class GameService  {
   games: Map<number, GameMatch>;
-  gameIdByUserId: Map<string, number>;
+  gameIdByLogin: Map<string, number>;
+  invites: Map<string, string>;
   queue: Socket[];
   PUqueue: Socket[];
 
-  constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway) { 
+  constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
+  @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway) { 
+    console.log("game service created");
     this.games = new Map<number, GameMatch>();
+    this.invites = new Map<string, string>();
     this.queue = [];
     this.PUqueue = [];
-    this.gameIdByUserId = new Map<string, number>();
+    this.gameIdByLogin = new Map<string, number>();
   }
 
   startGame(gameId: number, client: Socket) {
     if (!this.games.has(gameId)) {
-      return;
-    }
+      return this.wsg.redirectToLobby(client);
+    }    
+    this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
-    this.gameIdByUserId.set(client.data.userId, gameId);
     // else  {
     //   this.games.set(gameId, new GameMatch(this.wsg, [client], true));
     //   this.games.get(gameId).startGame(client);
     // }
   }
-  checkforgame(userId: string): number {
-    if (this.gameIdByUserId.has(userId)) {
-      return this.gameIdByUserId.get(userId);
-    }
-    return -1;
-  }
+
   createGame(players: string[], powerUps: boolean): number {
     var gameId = Math.floor(Math.random() * 1000000);
     while (this.games.has(gameId)) {
       gameId = Math.floor(Math.random() * 1000000);
     }
     this.games.set(gameId, new GameMatch(this.wsg, players, powerUps));
-    this.gameIdByUserId.set(players[0], gameId);
-    this.gameIdByUserId.set(players[1], gameId);
+    // this.gameIdByLogin.set(players[0], gameId);
+    // this.gameIdByLogin.set(players[1], gameId);
     return gameId;
   }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
@@ -51,7 +51,7 @@ export class GameService  {
     console.log("queue", queue);
     if (queue.length > 0) {
       var oppo = queue.pop();
-      var gameId = this.createGame([client.data.userId, oppo.data.userId], powerUps);
+      var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
       console.log('creating', client.data.user.login, "vs", oppo.data.user.login);
@@ -61,15 +61,29 @@ export class GameService  {
     }
     client.emit('queuing');
   }
-  removeGame(userId: string) {
-    if (this.gameIdByUserId.has(userId)) {
-      var gameId = this.gameIdByUserId.get(userId);
+  invitePlayer(client: Socket, login: string) {
+    this.invites.set(client.data.user.login, login);
+  }
+  acceptInvite(client: Socket, login: string) {
+    if (!this.invites.has(login))
+      return;
+    var invited = this.invites.get(login);
+    if (invited != client.data.user.login)
+      return;
+    console.log("invite accepted", client.data.user.login, "vs", login);
+    let gameId = this.createGame([login, client.data.user.login], false);
+    this.chatGW.sendMatchId(client.data.user.login, gameId);
+    this.chatGW.sendMatchId(login, gameId);
+  }
+  removeGame(login: string) {
+    if (this.gameIdByLogin.has(login)) {
+      var gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         for (var player of this.games.get(gameId).playerIds) {
-          this.gameIdByUserId.delete(player);
+          this.gameIdByLogin.delete(player);
         }
         for (var player of this.games.get(gameId).playerIds) {
-          this.gameIdByUserId.delete(player);
+          this.gameIdByLogin.delete(player);
         }
         this.games.delete(gameId);
       }
@@ -77,11 +91,11 @@ export class GameService  {
     console.log("running games remaining", this.games.size);
   }
 
-  setPlayerPos(userId: string, paddle: GamePaddle) {
-    if (this.gameIdByUserId.has(userId)) {
-      var gameId = this.gameIdByUserId.get(userId);
+  setPlayerPos(login: string, paddle: GamePaddle) {
+    if (this.gameIdByLogin.has(login)) {
+      var gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
-        this.games.get(gameId).setPlayerPos(userId, paddle);
+        this.games.get(gameId).setPlayerPos(login, paddle);
       }
     }
   }
@@ -93,18 +107,36 @@ export class GameService  {
       this.PUqueue.splice(this.queue.indexOf(socket), 1);
     }
   }
+  getLiveGames(): IMatch[] {
+    var res: IMatch[] = [];
+
+    for (var gameId of this.games.keys()) {
+      let game = this.games.get(gameId);
+      res.push({
+        gameId: gameId,
+        winner: game.playerIds[0],
+        winnerScore: game.player2Score,
+        looser: game.playerIds[1],
+        looserScore: game.player2Score,
+      });
+    } 
+    return res;
+  }
 }
 
 export class GameMatch {
   
   startGame(socket: Socket): void {
-    let i = this.playerIds.indexOf(socket.data.userId);
+    let i = this.playerIds.indexOf(socket.data.user.login);
+    
+    console.log("starting game", this.playerIds);
+    
     if (i != -1)  {
-      console.log("starting game", this.socketIds);
       if (!this.socketIds.includes(socket.id)) {
         this.socketIds[i] = socket.id;
-        console.log((i==0) ? 'player1' : 'player2', 'ready to start', socket.data.login);
+        console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
       }
+      console.log("starting game", i, this.socketIds, this.playerIds, socket.id);
       if (!this.socketIds.includes('') && !this.idInterval)
         this.start();
       else if (!this.idInterval)
@@ -114,7 +146,7 @@ export class GameMatch {
       this.socketIdsSpec.push(socket.id);
       console.log(socket.data.user.login, 'spectating');
       this.wsg.sendSpecMode(socket);
-      this.wsg.sendGameStatus(socket.id, this.getGameStatus(socket.data.userId));
+      this.wsg.sendGameStatus(socket.id, this.getGameStatus(socket.data.user.login));
     }
   }
   
@@ -241,8 +273,8 @@ export class GameMatch {
     }
   }
 
-  getGameStatus(userId: string): GameStatus {
-    if (userId == this.playerIds[1])
+  getGameStatus(login: string): GameStatus {
+    if (login == this.playerIds[1])
       return {
         timeStamp: this.cur,
         myScore: this.player2Score,
@@ -263,8 +295,8 @@ export class GameMatch {
         ballYVel: this.ball.yVel,
       };
   }
-  setPlayerPos(userId: string, paddle: GamePaddle): void {
-    if (userId == this.playerIds[0])
+  setPlayerPos(login: string, paddle: GamePaddle): void {
+    if (login == this.playerIds[0])
     {
       this.player1.y = paddle.y;
       this.player1.yVel = paddle.yVel;
@@ -274,7 +306,7 @@ export class GameMatch {
         paddle.timeStamp += this.period;
       }
     }
-    else if (userId == this.playerIds[1])
+    else if (login == this.playerIds[1])
     {
       this.player2.y = paddle.y;
       this.player2.yVel = paddle.yVel;

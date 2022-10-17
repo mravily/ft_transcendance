@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Req, Session, Sse } from '@nestjs/common';
+import { forwardRef, Global, Inject, Req, Session, Sse } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { session } from 'passport';
 import { Socket, Server } from 'socket.io';
@@ -6,11 +6,11 @@ import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
 import { GameService } from './game.service';
 // import type { Request } from 'express';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { parse } from 'cookie';
-import { IAccount } from '../interfaces';
-import { PrismaService } from '../prisma.service';
-
+import { IAccount } from '../../interfaces';
+import { PrismaService } from '../../prisma.service';
+// import { ChatGateway } from 'src/chat/gateway/chat.gateway';
 
 @WebSocketGateway( { namespace: '/pong',
                       cors: { origin: [ 'localhost:4200', '*'],},
@@ -23,6 +23,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   constructor( @Inject(forwardRef(() => GameService)) private gameService: GameService,
           private authService: AuthService,
+          // private chatgw: ChatGateway,
           private db: PrismaService) {  }
 
   afterInit(server: Server) {
@@ -82,17 +83,34 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     client.emit('sync', Date.now());
     console.log('sync', client.id );
   }
+  // @SubscribeMessage('checkforgame')
+  // checkforgame(client: Socket) {
+  //   let gameid = this.gameService.checkforgame(client.data.user.login);
+  //   this.sendMatchId(client.id, gameid);
+  // }
+
+  // @SubscribeMessage('invite')
+  // async handleInvite(client: Socket, login: string)  {
+  //   if (!(await this.db.isUser(login)))
+  //     return client.emit('Error', 'User not found');
+  //   this.gameService.invitePlayer(client, login);
+  //   this.chatgw.sendInvite(client, login);
+  // }
+  // @SubscribeMessage('acceptInvite')
+  // async acceptInvite(client: Socket, login: string) {
+  //   this.gameService.acceptInvite(client, login);
+  //   this.gameService.createGame([client.data.user.login, login], false);
+  // }
+  @SubscribeMessage('getLiveGames')
+  async getLiveGames(client: Socket) {
+    let games = this.gameService.getLiveGames();
+    client.emit('liveGames', games);
+  }
 
   @SubscribeMessage('findMatch')
   async findMatch(client: Socket) {
     this.gameService.getMatchmakingGame(client, false);
-    console.log('find', client.id );
-  }
-
-  @SubscribeMessage('checkforgame')
-  checkforgame(client: Socket) {
-    let gameid = this.gameService.checkforgame(client.data.userId);
-    this.sendMatchId(client.id, gameid);
+    // console.log('find', client.id );
   }
 
   @SubscribeMessage('findPUMatch')
@@ -112,6 +130,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.wss.to(sockIds[i]).emit('startGame', compteur);
     }
   }
+
+  async redirectToLobby(client: Socket) {
+    client.emit('redirectToLobby');
+  }
   async sendSpecMode(client: Socket)  {
     client.emit('specMode');
     client.emit('startGame', 0);
@@ -119,7 +141,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   @SubscribeMessage('paddle')
   async handlePaddle(client: Socket, payload: GamePaddle) {
-    this.gameService.setPlayerPos(client.data.userId, payload);
+    this.gameService.setPlayerPos(client.data.user.login, payload);
   }
   
   async sendPaddlePos(numPlayer: number, sockIds: string[], specs: string[], payload: GamePaddle)  {
@@ -169,8 +191,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.wss.to(sockId).emit('endGame', {yourScore: player1Score, opponentScore: player2Score});
     });
   }
-  removeGame(userId: string) {
-    this.gameService.removeGame(userId);
+  removeGame(login: string) {
+    this.gameService.removeGame(login);
   }
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: string)  {

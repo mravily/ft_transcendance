@@ -3,15 +3,16 @@
 import { Socket, Server } from 'socket.io';
 // import { UserI } from '../model/user.interface';
 // import { IAccount } from '../model/user.interface';
-import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Global, Inject, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
 // import { channelI, eventI } from '../model/channel.interface';
 // import { MessageI } from '../model/message.interface';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../../../prisma.service';
 import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
-import { AuthService } from '../../auth/auth.service';
-import { IAccount, IChannel, IMessage, eventI } from '../../interfaces';
+import { AuthService } from '../../../auth/auth.service';
+import { IAccount, IChannel, IMessage, eventI } from '../../../interfaces';
+import { GameService } from '../../game/game.service';
 // import { IChannel, IAccount } from '../../prisma/interfaces';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
@@ -21,7 +22,6 @@ import { IAccount, IChannel, IMessage, eventI } from '../../interfaces';
 */
 
 let DMPREFIX = '##DM##';
-
 
 @WebSocketGateway({ namespace: '/chat',
              cors: { origin: [ 'localhost:4200']  }})
@@ -34,6 +34,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   constructor(
         private authService: AuthService,
+        @Inject(forwardRef(() => GameService)) private gameServ: GameService,
         private db: PrismaService) { }
 
   async onModuleInit() {
@@ -260,9 +261,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) { //Est-ce qu'il faut que je mette dans des boucles tous les includes ? NON les map c'est swag
-      return this.server.to(socket.id).emit('Error', new UnauthorizedException());
-    }
+    // if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) { //Est-ce qu'il faut que je mette dans des boucles tous les includes ? NON les map c'est swag
+    //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    // }
     if (channel.users.map(user => user.login).includes(addMemberInfo.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
@@ -291,6 +292,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     if (!channel.users.map(user => user.login).includes(delMemberInfo.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
+    }
+    if (channel.creator == delMemberInfo.login) {
+      return socket.emit('Error', new UnauthorizedException()); 
     }
     this.sendNotif(socket.data.user.login + " removed " + delMemberInfo.login + " from the channel", delMemberInfo.channelName, socket.data.userId);
     await this.db.leaveChannel(delMemberInfo.login, delMemberInfo.channelName);
@@ -441,6 +445,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
+    if (channel.creator == muteEvent.to){
+      return socket.emit('Error', new UnauthorizedException()); 
+    }
     muteEvent.eventDuration = 10000;
     console.log(muteEvent);
     await this.db.setMuteUser(muteEvent.from, muteEvent.to, muteEvent.eventDuration);
@@ -475,8 +482,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!channel.admins.map(user => user.login).includes(socket.data.user.login)) {
       return socket.emit('Error', new UnauthorizedException());  
     }
+    if (channel.creator == banEvent.to){
+      return socket.emit('Error', new UnauthorizedException()); 
+    }
     this.sendNotif(banEvent.to + " got banned", banEvent.from, socket.data.userId);
-    await this.db.leaveChannel(banEvent.to, banEvent.from); // Pas besoin de protéger contre le ban des creators / admins car pas de bouton dans le front ;
+    await this.db.leaveChannel(banEvent.to, banEvent.from);
     banEvent.eventDuration = 10000;
     await this.db.setBanUser(banEvent.from, banEvent.to, banEvent.eventDuration);
     // avertir le mec qui a été ban
@@ -531,5 +541,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     socket.emit('myUser', socket.data.user);
     let blockers: string[] = (await this.db.getBlockers(blockedLogin)).map(user => user.login);
     this.sendTo(blockedLogin, 'blockers', blockers);
+  }
+  
+  @SubscribeMessage('invite')
+  async handleInvite(client: Socket, login: string)  {
+    console.log("invite", login);
+    
+    if (!(await this.db.isUser(login)))
+      return client.emit('Error', 'User not found');
+    this.gameServ.invitePlayer(client, login);
+    this.sendTo(login, 'invite', client.data.user.login);
+  }
+  @SubscribeMessage('acceptInvite')
+  async acceptInvite(client: Socket, login: string) {
+    let socketIds: Set<string> = this.connectedUsers.get(login);
+    console.log("acceptInvite", login, socketIds);
+    if (!socketIds) {
+      return client.emit('Error', 'User not connected');
+    }
+    this.gameServ.acceptInvite(client, login);
+  }
+  async sendMatchId(login: string, gameId: number) {
+    this.sendTo(login, 'matchId', gameId);
   }
 }
