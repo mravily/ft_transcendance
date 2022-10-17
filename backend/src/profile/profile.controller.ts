@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Session } from "@nestjs/common";
 import { session } from "passport";
 import { throwIfEmpty } from "rxjs";
+import { IProfileFriends } from "src/prisma/profile.service";
 import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
 
@@ -17,17 +18,17 @@ export class ProfileController {
   }
 
   @Get('private')
-  getProfile(@Session() session: Record<string, any>) {
+  getProfile(@Session() session: Record<string, any>): Promise<IAccount> {
     return this.db.getUserProfile(session.userid);
   }
 
   @Get('overview')
-  getOverview(@Session() session: Record<string, any>) {
+  getOverview(@Session() session: Record<string, any>): Promise<IAccount> {
     return this.db.getProfileOverview(session.userid);
   }
 
   @Get('friends')
-  getFriends(@Session() session: Record<string, any>) {
+  getFriends(@Session() session: Record<string, any>): Promise<IProfileFriends[]> {
     return this.db.getProfileFriends(session.userid);
   }
 
@@ -39,7 +40,7 @@ export class ProfileController {
   }
 
   @Post('isfriend')
-  async isMyFriend(@Session() session, @Body() bod) {
+  async isMyFriend(@Session() session, @Body() bod): Promise<boolean> {
     return await this.db.isFriend(session.userid, bod.login);
   }
 
@@ -49,7 +50,7 @@ export class ProfileController {
   }
 
   @Get('blockedusers')
-  async getBlockedUsers(@Session() session) {
+  async getBlockedUsers(@Session() session): Promise<IAccount[]> {
     return await this.db.getBlockedUsers(await this.db.getUserLogin(session.userid));
   }
 
