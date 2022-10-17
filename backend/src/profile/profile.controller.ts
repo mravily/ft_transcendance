@@ -4,6 +4,7 @@ import { throwIfEmpty } from "rxjs";
 import { IProfileFriends } from "../prisma/profile.service";
 import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
+import { isFriend } from "src/prisma/user.service";
 
 @Controller('profile')
 export class ProfileController {
@@ -40,8 +41,9 @@ export class ProfileController {
   }
 
   @Post('isfriend')
-  async isMyFriend(@Session() session, @Body() bod): Promise<boolean> {
-    return await this.db.isFriend(session.userid, bod.login);
+  async isMyFriend(@Session() session, @Body() bod): Promise<[boolean, boolean]> {
+    const tuple =  await this.db.isFriend(session.userid, bod.login);
+    return tuple;
   }
 
   @Post('isblocked')
