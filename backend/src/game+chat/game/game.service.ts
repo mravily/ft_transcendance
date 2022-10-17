@@ -17,7 +17,7 @@ export class GameService  {
 
   constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
   @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway, public db: PrismaService) { 
-    console.log("game service created");
+    console.log("Game Service created");
     this.games = new Map<number, GameMatch>();
     this.invites = new Map<string, string>();
     this.queue = [];
@@ -31,12 +31,9 @@ export class GameService  {
     }    
     this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
-    
-    this.wsg.sendMatchUsers(client.id, await this.games.get(gameId).getPlayersAccounts());
-    // else  {
-    //   this.games.set(gameId, new GameMatch(this.wsg, [client], true));
-    //   this.games.get(gameId).startGame(client);
-    // }
+    let users = await this.games.get(gameId).getPlayersAccounts();
+    users.sort((a, b) => ((a.login == client.data.user.login)?0:1) - ((b.login == client.data.user.login)?0:1));
+    this.wsg.sendMatchUsers(client.id, users);
   }
 
   createGame(players: string[], powerUps: boolean): number {
@@ -125,6 +122,15 @@ export class GameService  {
     } 
     return res;
   }
+  sendMessage(login: string, message: string) {
+    if (this.gameIdByLogin.has(login)) {
+      console.log("sending message", login, message);
+      var gameId = this.gameIdByLogin.get(login);
+      if (this.games.has(gameId)) {
+        this.games.get(gameId).sendMessage(login, message);
+      }
+    }
+  }
 }
 
 export class GameMatch {
@@ -156,9 +162,13 @@ export class GameMatch {
   async getPlayersAccounts(): Promise<IAccount[]> {
     var res: IAccount[] = [];
     for (var player of this.playerIds) {
-      res.push(await this.db.getUserAccount(player));
+      res.push(await this.db.getPublicProfile(player));
     }
     return res;
+  }
+
+  sendMessage(login: string, message: string) {
+    this.wsg.sendMessage(this.socketIds, this.socketIdsSpec, login, message);
   }
   
   private idInterval!: NodeJS.Timer;

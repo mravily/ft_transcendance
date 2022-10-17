@@ -5,12 +5,13 @@ import { map, Observable, Subscription } from 'rxjs';
 import { PongService } from '../../services/pong.service';
 
 @Component({
-  selector: 'app-landing-page',
-  templateUrl: './landing-page.component.html',
-  styleUrls: ['./landing-page.component.scss']
+  selector: 'app-lobby',
+  templateUrl: './lobby.component.html',
+  styleUrls: ['./lobby.component.scss']
 })
-export class LandingPageComponent implements OnInit, OnDestroy {
+export class LobbyComponent implements OnInit, OnDestroy {
   searchUser!: string;
+
 
   @ViewChild('findMatch')
   findMatchButton!: ElementRef<HTMLButtonElement>;

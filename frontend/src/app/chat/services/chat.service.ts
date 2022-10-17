@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { IMessage, IChannel, IAccount } from '../../interfaces';
-// import { channelI } from '../models/channel.model';
 import { PageI } from '../models/chat.model';
 
 @Injectable({

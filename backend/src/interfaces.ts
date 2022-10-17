@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, IsString, IsOptional, IsDate, IsBoolean} from "class-validator";
+import { IsNumber, IsNotEmpty, IsString, IsOptional, IsDate, IsBoolean, MaxLength} from "class-validator";
 import { Type } from 'class-transformer';
 
 // https://github.com/typestack/class-validator#validation-decorators

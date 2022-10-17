@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
 import { PongService } from '../../pong/services/pong.service';
 import { IAccount, IChannel, IMessage } from '../../interfaces';
-// import { channelI } from '../models/channel.model';
-// import { MessageI } from '../models/chat.model';
 import { ChatService } from '../services/chat.service';
 
 @Component({

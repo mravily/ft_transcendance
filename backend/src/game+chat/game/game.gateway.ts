@@ -35,7 +35,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(client: Socket)  {
     try {
       const cookie = parse(client.handshake.headers.cookie);
-      const token = cookie['token'];
+      const token = cookie['access'];
       if (!token) {
         console.log('token not found');
         client.disconnect();
@@ -198,10 +198,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   removeGame(login: string) {
     this.gameService.removeGame(login);
   }
+
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: string)  {
-    this.wss.emit('message', {sender: client.data.login, body: payload});
+    this.gameService.sendMessage(client.data.user.login, payload);
   }
-
+  sendMessage(sockIds: string[], specs: string[], sender: string, payload: string)  {
+    sockIds.forEach(s => this.wss.to(s).emit('message', {sender: sender, body: payload}));
+    specs.forEach(s => this.wss.to(s).emit('message', {sender: sender, body: payload}));
+  }
 }
 

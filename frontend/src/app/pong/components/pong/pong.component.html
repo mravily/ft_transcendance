@@ -6,7 +6,7 @@
     <body>
         <div class='game' style="font-family: Orbitron;">
             <div class="playercolumn">
-                <div class="player" *ngFor="let p of players">
+                <div class="player" [ngClass]="{player: !isSpec}" *ngFor="let p of players">
                     <img [src]="p.avatar">
                     <div class="playername">{{p.login}}</div>
                     <div class="playerratio">{{p.win}} / {{p.lost}}</div>

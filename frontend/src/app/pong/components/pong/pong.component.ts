@@ -30,7 +30,6 @@ export class PongComponent implements AfterViewInit {
       this.game.update_direction();
     }
   }
-
   @HostListener('window:keyup', ['$event'])
   keyUp(event: KeyboardEvent) {
     if (event.key != "ArrowUp" && event.key != "ArrowDown")
@@ -48,18 +47,21 @@ export class PongComponent implements AfterViewInit {
   gameCanvas!: ElementRef<HTMLCanvasElement>;
 
   private game!: PongMatch;
+  isSpec: boolean = false;
 
   players: IAccount[] = [];
 
   constructor(private route: ActivatedRoute, private pongService: PongService, private router: Router) {
     this.pongService.specModeEvent.subscribe(() => {
       console.log("spec mode");
+      this.isSpec = true;
       this.game = new PongMatch(this.route, this.pongService, this.gameCanvas);
     });
     this.pongService.redirectToLobbyEvent.subscribe(() => {
       this.router.navigate(["/play"]);
     });
     this.pongService.matchUsersEvent.subscribe((users: IAccount[]) => {
+      console.log("users", users);
       this.players = users;
     });
 

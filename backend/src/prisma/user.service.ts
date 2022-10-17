@@ -812,7 +812,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         channelList: [],
         channelAdmin: [],
       }
-      for (let i = 0; user.befriend[i]; i++) {
+      for (let i = 0; user.friends[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
       }
       for (let i = 0; user.befriend[i]; i++) {

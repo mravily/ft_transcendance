@@ -1,19 +1,14 @@
-  import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 // import { AuthService } from 'src/auth/service/auth.service';
 import { Socket, Server } from 'socket.io';
-// import { UserI } from '../model/user.interface';
-// import { IAccount } from '../model/user.interface';
 import { forwardRef, Global, Inject, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { PageI } from '../model/page.interface';
-// import { channelI, eventI } from '../model/channel.interface';
-// import { MessageI } from '../model/message.interface';
 import { PrismaService } from '../../../prisma.service';
 import { parse } from 'cookie';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
 import { AuthService } from '../../../auth/auth.service';
 import { IAccount, IChannel, IMessage, eventI } from '../../../interfaces';
 import { GameService } from '../../game/game.service';
-// import { IChannel, IAccount } from '../../prisma/interfaces';
 
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
@@ -44,7 +39,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async handleConnection(client: Socket) {
     try {
       const cookie = parse(client.handshake.headers.cookie);
-      const token = cookie['token'];
+      const token = cookie['access'];
       if (!token) {
         console.log('token not found');
         client.disconnect();

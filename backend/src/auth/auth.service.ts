@@ -7,22 +7,22 @@ import { Tokens } from './types/tokens.type';
 export class AuthService {
   constructor(private jwtService: JwtService, private db: PrismaService) {}
 
-  async getTokens(userId: string): Promise<Tokens> {
-    const [at] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-        },
-        {
-          expiresIn: '900s',
-          secret: process.env.ACCESS_SECRET,
-        },
-      ),
-    ]);
-    return {
-      access_token: at,
-    };
-  }
+  // async getTokens(userId: string): Promise<Tokens> {
+  //   const [at] = await Promise.all([
+  //     this.jwtService.signAsync(
+  //       {
+  //         login: userId,
+  //       },
+  //       {
+  //         expiresIn: '900s',
+  //         secret: process.env.ACCESS_SECRET,
+  //       },
+  //     ),
+  //   ]);
+  //   return {
+  //     access_token: at,
+  //   };
+  // }
 
   getUseridFromToken(token: string): any {
     const id = this.jwtService.decode(token);

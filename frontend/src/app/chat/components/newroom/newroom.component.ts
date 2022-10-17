@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, Observable, Subscription } from 'rxjs';
 import { IChannel } from '../../../interfaces';
-// import { channelI } from '../../models/channel.model';
-
 import { ChatService } from '../../services/chat.service';
 
 @Component({

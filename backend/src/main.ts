@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, ValidationError } from '@nestjs/common';
+import { ValidationException, ValidationFilter } from './validation.filter';
 
 import * as session from 'express-session';
 import * as passport from 'passport';
@@ -23,7 +24,17 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new ValidationFilter());
+  app.useGlobalPipes(new ValidationPipe({
+    skipMissingProperties: false,
+    exceptionFactory: (errors: ValidationError[]) => {
+      const errMsg = {};
+      errors.forEach(err => {
+        errMsg[err.property] = [...Object.values(err.constraints)];
+      });
+      return new ValidationException(errMsg);
+    }
+  }));
   app.useStaticAssets(join(__dirname, 'upload'), {
     index: false,
     prefix: '/upload',

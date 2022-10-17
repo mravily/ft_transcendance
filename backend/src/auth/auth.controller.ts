@@ -29,8 +29,8 @@ export class AuthController {
   ) {
     const tfa = await this.db.is2FA(session.userid).then();
     if (tfa == true) return { url: process.env.TFA_URL };
-    const tokens = await this.authService.getTokens(session.userid);
-    res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
+    // const tokens = await this.authService.getTokens(session.userid);
+    res.cookie('access', session.jwt, { maxAge: 900000000000000 });
     if (session.firstTime) return { url: process.env.FRONT_SETTINGS };
     return { url: process.env.FRONT_URL };
   }
