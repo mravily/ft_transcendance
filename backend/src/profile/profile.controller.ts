@@ -48,6 +48,11 @@ export class ProfileController {
     return await this.db.isBlocked(session.userid, bod.login);
   }
 
+  @Get('blockedusers')
+  async getBlockedUsers(@Session() session) {
+    return await this.db.getBlockedUsers(await this.db.getUserLogin(session.userid));
+  }
+
   @Get(':id')
   async getPublicProfile(@Param('id') login: string) {
     const isValid = await this.db.isUser(login);

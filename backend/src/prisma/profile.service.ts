@@ -10,7 +10,6 @@ export interface IProfileFriends {
     isAccepted: boolean,
     score: number,
     avatar: string,
-    isBlocked: boolean,
     isSent: boolean,
 }
 
@@ -66,32 +65,34 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
     let friends: IProfileFriends[] = [];
     if (list) {
       for (let i in list.befriend) {
-        friends.push({
-            nickName:list.befriend[i].requested.nickName,
-            login: list.befriend[i].requested.login,
-            win: list.befriend[i].requested._count.winnedMatchs,
-            lost: list.befriend[i].requested._count.lostMatchs,
-            isOnline: list.befriend[i].requested.isOnline,
-            isAccepted: list.befriend[i].isAccepted,
-            score: list.befriend[i].requested.score,
-            avatar: list.befriend[i].requested.imgUrl,
-            isBlocked: await this.isBlocked(userId, list.befriend[i].requested.login),
-            isSent: true,
-        });
+        if (await this.isBlocked(userId, list.befriend[i].requested.login) == false) {
+          friends.push({
+              nickName:list.befriend[i].requested.nickName,
+              login: list.befriend[i].requested.login,
+              win: list.befriend[i].requested._count.winnedMatchs,
+              lost: list.befriend[i].requested._count.lostMatchs,
+              isOnline: list.befriend[i].requested.isOnline,
+              isAccepted: list.befriend[i].isAccepted,
+              score: list.befriend[i].requested.score,
+              avatar: list.befriend[i].requested.imgUrl,
+              isSent: true,
+          });
+        }
       }
       for (let i in list.friends) {
-        friends.push({
-            nickName:list.friends[i].requester.nickName,
-            login: list.friends[i].requester.login,
-            win: list.friends[i].requester._count.winnedMatchs,
-            lost: list.friends[i].requester._count.lostMatchs,
-            isOnline: list.friends[i].requester.isOnline,
-            isAccepted: list.friends[i].isAccepted,
-            score: list.friends[i].requester.score,
-            avatar: list.friends[i].requester.imgUrl,
-            isBlocked: await this.isBlocked(userId, list.friends[i].requester.login),
-            isSent: false,
-        });
+        if (await this.isBlocked(userId, list.friends[i].requester.login) == false) {
+          friends.push({
+              nickName:list.friends[i].requester.nickName,
+              login: list.friends[i].requester.login,
+              win: list.friends[i].requester._count.winnedMatchs,
+              lost: list.friends[i].requester._count.lostMatchs,
+              isOnline: list.friends[i].requester.isOnline,
+              isAccepted: list.friends[i].isAccepted,
+              score: list.friends[i].requester.score,
+              avatar: list.friends[i].requester.imgUrl,
+              isSent: false,
+          });
+        }
       }
     }
     return friends.sort((a, b) => (a.score > b.score ? -1 : 1));
