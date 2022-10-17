@@ -126,10 +126,7 @@ export async function get2FASecret(
   }
 }
 
-export async function isUser(
-  this: PrismaService,
-  login: string,
-): Promise<boolean> {
+export async function isUser(this: PrismaService, login: string): Promise<boolean> {
   try {
     const user = await this.prisma.user.count({
       where: { login: login },

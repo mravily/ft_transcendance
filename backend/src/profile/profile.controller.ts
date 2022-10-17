@@ -24,6 +24,18 @@ export class ProfileController {
     return this.db.getProfileOverview(session.userid);
   }
 
+  @Get('friends')
+  getFriends(@Session() session: Record<string, any>) {
+    return this.db.getProfileFriends(session.userid);
+  }
+
+  @Post('ismypage')
+  async isMyPage(@Session() session, @Body() bod): Promise<boolean> {
+    if (bod.login == await this.db.getUserLogin(session.userid))
+      return true;
+    return false;
+  }
+
   @Get(':id')
   async getPublicProfile(@Param('id') login: string) {
     const isValid = await this.db.isUser(login);

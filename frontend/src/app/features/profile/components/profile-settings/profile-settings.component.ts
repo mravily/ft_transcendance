@@ -21,8 +21,7 @@ export class ProfileSettingsComponent implements OnInit {
   constructor(private profileService: ProfileService,
 			  private formBuilder: FormBuilder) { }
 
-	
-	ngOnInit(): void {
+	initForm() {
 		this.user$ = this.profileService.getPrivateProfile()
 		this.user$.subscribe(v => {
 			this.settingsForm = this.formBuilder.group({
@@ -33,6 +32,10 @@ export class ProfileSettingsComponent implements OnInit {
 				nickname: [v.nickName],
 			});
 		});
+	}
+
+	ngOnInit(): void {
+		this.initForm();
 	} 
 	
 	uploadFile(event: any) {
@@ -43,5 +46,6 @@ export class ProfileSettingsComponent implements OnInit {
 		if (this.selectedFile)
 			this.profileService.upload(this.selectedFile);
 		this.profileService.sendForm(this.settingsForm);
+		this.initForm();
 	}
 }

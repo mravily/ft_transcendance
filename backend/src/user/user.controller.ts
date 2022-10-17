@@ -15,6 +15,11 @@ export class UserController {
         await this.db.acceptFriendship(await this.db.getUserLogin(session.userid), req.login);
     }
 
+    @Post('deletefriend')
+    async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
+        
+    }
+
     @Post('block')
     async blockUser(@Body() bod, @Session() session: Record<string, any>) {
         await this.db.setBlockUser(session.userid, bod.login);
