@@ -9,6 +9,8 @@ export interface IProfileFriends {
     isOnline: boolean,
     isAccepted: boolean,
     score: number,
+    avatar: string,
+    isBlocked: boolean,
     isSent: boolean,
 }
 
@@ -26,6 +28,7 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
                 login: true,
                 score: true,
                 isOnline: true,
+                imgUrl: true,
                 _count: {
                   select: {
                     lostMatchs: true,
@@ -46,6 +49,7 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
                 login: true,
                 score: true,
                 isOnline: true,
+                imgUrl: true,
                 _count: {
                   select: {
                     lostMatchs: true,
@@ -70,6 +74,8 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
             isOnline: list.befriend[i].requested.isOnline,
             isAccepted: list.befriend[i].isAccepted,
             score: list.befriend[i].requested.score,
+            avatar: list.befriend[i].requested.imgUrl,
+            isBlocked: await this.isBlocked(userId, list.befriend[i].requested.login),
             isSent: true,
         });
       }
@@ -82,6 +88,8 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
             isOnline: list.friends[i].requester.isOnline,
             isAccepted: list.friends[i].isAccepted,
             score: list.friends[i].requester.score,
+            avatar: list.friends[i].requester.imgUrl,
+            isBlocked: await this.isBlocked(userId, list.friends[i].requester.login),
             isSent: false,
         });
       }
