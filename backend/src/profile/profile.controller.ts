@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Session } from "@nestjs/common";
 import { session } from "passport";
 import { throwIfEmpty } from "rxjs";
-import { IProfileFriends } from "src/prisma/profile.service";
+import { IProfileFriends } from "../prisma/profile.service";
 import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
 
