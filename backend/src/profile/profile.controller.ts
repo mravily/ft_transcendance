@@ -1,4 +1,6 @@
 import { Body, Controller, Get, Param, Post, Session } from "@nestjs/common";
+import { session } from "passport";
+import { throwIfEmpty } from "rxjs";
 import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
 
@@ -34,6 +36,16 @@ export class ProfileController {
     if (bod.login == await this.db.getUserLogin(session.userid))
       return true;
     return false;
+  }
+
+  @Post('isfriend')
+  async isMyFriend(@Session() session, @Body() bod) {
+    return await this.db.isFriend(session.userid, bod.login);
+  }
+
+  @Post('isblocked')
+  async isBlocked(@Session() session, @Body() bod): Promise<boolean> {
+    return await this.db.isBlocked(session.userid, bod.login);
   }
 
   @Get(':id')

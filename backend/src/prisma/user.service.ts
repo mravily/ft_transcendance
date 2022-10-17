@@ -351,10 +351,10 @@ export async function updateUserScore(this: PrismaService, login: string, points
   }
 }
 
-export async function updateUserStatus(this: PrismaService, login: string, status: boolean) {
+export async function updateUserStatus(this: PrismaService, userId: string, status: boolean) {
   try {
     await this.prisma.user.update({
-      where: { id: login },
+      where: { id: userId },
       data: { isOnline: status },
     });
   } catch (error) {
@@ -389,6 +389,33 @@ export async function getBlockedUsers(this: PrismaService, login: string): Promi
     }
     return list;
   } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function isBlocked(this: PrismaService, userId: string, login: string): Promise<boolean> {
+  try {
+    const count = await this.prisma.blockUser.count({
+      where: {
+        OR: [
+          {
+            blockerId: userId,
+            blockedLogin: login,
+          },
+          {
+            blocked: {
+              id: userId,
+            },
+            blocker: {
+              login: login,
+            },
+          },
+        ]
+      },
+    });
+    return (count > 0 ? true : false);
+  }
+  catch (error) {
     console.log(error.message);
   }
 }
@@ -437,6 +464,40 @@ export async function getLastPhoto(this: PrismaService, login: string): Promise<
     });
     return tmp.photo[0];
   } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function isFriend(this: PrismaService, userId: string, login: string): Promise<boolean> {
+  try {
+    const friend = await this.prisma.addFriend.findMany({
+      where: {
+        OR: [
+          {
+            requested: {
+              id: userId,
+            },
+            requesterLogin: login,
+          },
+          {
+            requestedLogin: login,
+            requester: {
+              id: userId,
+            },
+          },
+        ]
+      },
+      select: {
+        isAccepted: true,
+      },
+    });
+    for (let i in friend){
+      if (friend[i].isAccepted == true)
+        return true;
+    }
+    return false;
+  }
+  catch (error) {
     console.log(error.message);
   }
 }

@@ -48,7 +48,7 @@ export class AuthController {
   @Get('sign-out')
   loggingOut(@Req() req, @Session() session: Record<string, any>,) {
     this.db.updateUserStatus(session.userid, false);
-    req.session.destroy();
+    session.destroy();
   }
 }
 

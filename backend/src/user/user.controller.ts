@@ -17,7 +17,7 @@ export class UserController {
 
     @Post('deletefriend')
     async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
-        
+        await this.db.deleteFriend(session.userid, bod.login);
     }
 
     @Post('block')
