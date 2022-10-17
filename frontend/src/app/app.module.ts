@@ -12,9 +12,10 @@ import { TfaComponent } from './features/tfa/tfa.component';
 import { RouterModule } from '@angular/router';
 import { ChatModule } from './chat/chat.module';
 import { PongModule } from './pong/pong.module';
+import { LandingPageComponent } from './features/landing-page/landing-page.component';
 
 @NgModule({
-	declarations: [AppComponent, TfaComponent],
+	declarations: [AppComponent, TfaComponent, LandingPageComponent],
 	imports: [
 		BrowserModule,
 		CoreModule,

@@ -18,13 +18,13 @@
 				</div>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" routerLink="" >
-				  <i class="bi bi-house me-3"></i>Home
+				  <i (click)="reload()" class="bi bi-house me-3"></i>Home
 				</a>
 				<a class="dropdown-item" routerLink="profile">
-				  <i class="bi bi-pencil me-3"></i>Profile
+				  <i (click)="reload()" class="bi bi-pencil me-3"></i>Profile
 				</a>
 				<a class="dropdown-item" routerLink="profile/settings">
-				  <i class="bi bi-gear me-3"></i>Settings
+				  <i (click)="reload()" class="bi bi-gear me-3"></i>Settings
 				</a>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" (click)="isLogout()">

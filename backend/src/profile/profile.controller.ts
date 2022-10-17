@@ -1,6 +1,4 @@
 import { Body, Controller, Get, Param, Post, Session } from "@nestjs/common";
-import { session } from "passport";
-import { throwIfEmpty } from "rxjs";
 import { IProfileFriends } from "../prisma/profile.service";
 import { IAccount } from "../interfaces";
 import { PrismaService } from "../prisma.service";
@@ -34,8 +32,7 @@ export class ProfileController {
 
   @Post('ismypage')
   async isMyPage(@Session() session, @Body() bod): Promise<boolean> {
-    if (bod.login == await this.db.getUserLogin(session.userid))
-      return true;
+    if (bod.login == (await this.db.getUserLogin(session.userid))) return true;
     return false;
   }
 
