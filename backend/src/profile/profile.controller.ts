@@ -23,7 +23,9 @@ export class ProfileController {
   }
 
   @Get('friends')
-  getFriends(@Session() session: Record<string, any>): Promise<IProfileFriends[]> {
+  getFriends(
+    @Session() session: Record<string, any>,
+  ): Promise<IProfileFriends[]> {
     return this.db.getProfileFriends(session.userid);
   }
 

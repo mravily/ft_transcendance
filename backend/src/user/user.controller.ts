@@ -18,8 +18,8 @@ export class UserController {
   }
 
     @Post('deletefriend')
-    deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
-        this.db.deleteFriend(session.userid, bod.login);
+    async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
+      await this.db.deleteFriend(session.userid, bod.login);
     }
 
   @Post('block')
@@ -30,6 +30,7 @@ export class UserController {
 
   @Post('unblock')
   async unblockUser(@Body() bod, @Session() session: Record<string, any>) {
+    console.log('in-unblock', bod);
     await this.db.deleteBlockUser(session.userid, bod.login);
   }
 

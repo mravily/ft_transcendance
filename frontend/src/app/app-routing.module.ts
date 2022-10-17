@@ -16,8 +16,7 @@ const routes: Routes = [
 	{ path: 'sign-in', component: SignInComponent },
 	{ path: 'view', loadChildren: () => import('./features/leaderboard/leaderboard.module').then(m => m.LeaderboardModule) },
 	{ path: 'profile', loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule), canActivate: [AuthGuard] },
-	{ path: '404', component: NotFoundComponent },
-	{ path: '**', redirectTo: '/404' }
+	{ path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({

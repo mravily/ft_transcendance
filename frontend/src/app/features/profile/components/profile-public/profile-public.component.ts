@@ -16,7 +16,7 @@ export class ProfilePublicComponent implements OnInit {
 	data$!: Observable<IAccount>;
 	userID!: string;
 	actionBlock: string = 'Block';
-	actionAdd: string = 'Add Friend';
+	actionAdd!: string;
 	myProfile!: boolean;
 	
 	constructor(private profileService: ProfileService,
@@ -24,14 +24,34 @@ export class ProfilePublicComponent implements OnInit {
 		private cookieService: CookieService,
 		private router: Router) {
 		this.getInfoProfile();
+		this.isFriend(this.userID);
+		this.isBlocked(this.userID);
 	}
 	
 	ngOnInit(): void {
 		this.data$ = this.profileService.getPublicProfile(this.userID);
+		this.reload();
 	}
 
+	isFriend(login: string) {
+		this.profileService.isFriend(login).subscribe(v => {
+			if (v[0] || v[1]) this.actionAdd = 'UnBlock';
+			else this.actionAdd = 'Block';
+		})
+	}
+
+	isBlocked(login: string) {
+		this.profileService.isBlocked(login).subscribe(v => {
+			if (v) this.actionAdd = 'Remove Friend';
+			else this.actionAdd = 'Add Friend';
+		})
+	}
 	isLogin() {
 		return this.cookieService.check('access');
+	}
+
+	reload() {
+		this.data$ = this.profileService.getPublicProfile(this.userID);
 	}
 
 	getInfoProfile() {
@@ -60,15 +80,19 @@ export class ProfilePublicComponent implements OnInit {
 		  this.actionBlock = 'Block';
 		  this.profileService.blockUser(this.userID);   
 		}
+		this.reload();
 	}
 
-	onClickAddUser() {
+	onClickAddUser(login: string) {
+
 		if(this.actionAdd == 'Add Friend') {
 		  this.actionAdd = 'Remove Friend';
 		  this.profileService.sendFriendRequest(this.userID);
 		} else {
 		  this.actionAdd = 'Add Friend';
-		//   this.profileService.removeFriendship(this.userID);
+		  this.profileService.removeFriend(this.userID);
 		}
+		this.reload();
 	}
+
 }
