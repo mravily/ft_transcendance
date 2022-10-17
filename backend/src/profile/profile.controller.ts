@@ -46,8 +46,8 @@ export class ProfileController {
   }
 
   @Post('isblocked')
-  async isBlocked(@Session() session, @Body() bod): Promise<boolean> {
-    return await this.db.isBlocked(session.userid, bod.login);
+  isBlocked(@Session() session, @Body() bod): Promise<boolean> {
+    return this.db.isBlocked(session.userid, bod.login);
   }
 
   @Get('blockedusers')
