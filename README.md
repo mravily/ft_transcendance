@@ -19,7 +19,6 @@ Pour ce projet, nous avons choisies d'utiliser différent langage:
 - [NestJS](#nestjs) pour le back-end (On y étais un peux obligées 😅)
 - [Prisma](#prisma) pour simplifier la communication entre notre DB et NestJs
 - [PostgresSQL](https://www.postgresql.org) comme base de données SQL
-- [pgAdmin](https://www.pgadmin.org/) pour visualiser notre DB
 - [Docker](https://docs.docker.com/) comme environnement de dévelopement
 
 ## Installation Frameworks
