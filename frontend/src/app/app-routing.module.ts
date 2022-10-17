@@ -8,7 +8,6 @@ import { QrcodeViewComponent } from './features/profile/components/profile-secur
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
 
 const routes: Routes = [
-	{ path: 'qrcode', component: QrcodeViewComponent },
 	{ path: 'tfa', component: TfaComponent },
 	{ path: 'user/:id', component: ProfilePublicComponent },
 	{ path: 'sign-in', component: SignInComponent },
