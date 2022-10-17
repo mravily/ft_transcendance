@@ -23,17 +23,16 @@
           </div>
           <h6>Members</h6>
           <div *ngFor="let member of selectedChannel.users">
-            <button class="addbutton">{{member.login}}</button>
+            <button class="addbutton" (click)="onProfileClick(member.login)">{{member.login}}</button>
             <button (click)="onLeave()" *ngIf="member.login == myUser.login">Leave this room</button>
             <button *ngIf="member.login != myUser.login" (click)="onDMclick(member.login)">Send Message</button>
             <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
             <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
-
-            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
-            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
-            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onRemove(member.login)">Remove</button>
-            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onBan(member.login)">Ban</button>
-            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+            <button *ngIf="isAdmin(myUser.login) && !isCreator(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
+            <button *ngIf="isAdmin(myUser.login) && !isCreator(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
+            <button *ngIf="isAdmin(myUser.login) && !isCreator(member.login)" (click)="onRemove(member.login)">Remove</button>
+            <button *ngIf="isAdmin(myUser.login) && !isCreator(member.login)" (click)="onBan(member.login)">Ban</button>
+            <button *ngIf="isAdmin(myUser.login) && !isCreator(member.login)" (click)="onPromote(member.login)">Promote</button>
           </div>
           <div *ngIf="isAdmin(myUser.login)">
             <div *ngIf="!selectedChannel.isPrivate && amICreator()">
@@ -50,7 +49,8 @@
         </div>
         <div *ngIf="selectedChannel.isDirect">
           <div *ngFor="let member of selectedChannel.users">
-            <button>{{member.login}}</button>
+            <button  (click)="onProfileClick(member.login)" class="addbutton">{{member.login}}</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login)">Invite in a pong match</button>
             <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
             <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
           </div>

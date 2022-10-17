@@ -1,4 +1,5 @@
-import {IsNotEmpty, IsString, IsOptional, IsDate, IsBoolean} from "class-validator";
+import { IsNumber, IsNotEmpty, IsString, IsOptional, IsDate, IsBoolean} from "class-validator";
+import { Type } from 'class-transformer';
 
 // https://github.com/typestack/class-validator#validation-decorators
 
@@ -18,15 +19,23 @@ export class IAccount {
     @IsString()
     email?: string;
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     score?: number;
     @IsOptional()
     @IsString()
     avatar?: string;
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     win?: number;
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     lost?: number;
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     rank?: number;
     @IsOptional()
     winnedMatch?: any[];
@@ -37,6 +46,8 @@ export class IAccount {
     @IsOptional()
     friends?: IAccount[];
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     n_friends?: number;
     @IsOptional()
     blockUsers?: string[];
@@ -159,7 +170,11 @@ export class IPersoMatch {
     usrAvatar: string;
     @IsString()
     usrDisplayName: string;
+    @Type(() => Number)
+    @IsNumber()
     usrScore: number;
+    @Type(() => Number)
+    @IsNumber()
     opScore: number;
     @IsString()
     opDisplayName: string;
@@ -172,12 +187,18 @@ export class IPersoMatch {
 export class IMatch {
     @IsOptional()
     createdAt?: Date;
+    @Type(() => Number)
+    @IsNumber()
     gameId?: number;
     @IsString()
     winner: string;
+    @Type(() => Number)
+    @IsNumber()
     winnerScore: number;
     @IsString()
     looser: string;
+    @Type(() => Number)
+    @IsNumber()
     looserScore: number;
 }
 
@@ -189,5 +210,7 @@ export class eventI {
     @IsOptional()
     eventDate?: Date;
     @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
     eventDuration?: number;
 }

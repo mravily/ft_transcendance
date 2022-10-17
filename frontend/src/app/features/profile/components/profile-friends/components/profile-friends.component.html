@@ -8,8 +8,8 @@
 			<div class="text">STATUS</div>
 			<div class="text">ACTION</div>
 		</div>
-		<div class="card-body py-0 position-relative scrollable-y" style="min-height: 70vh; max-height: 70vh">
-			<app-bloc-friend *ngFor="let friendIt of friendsList$; let i = index" [friend]="friendIt" [rank]="(i + 1)"></app-bloc-friend>
+		<div class="card-body py-0 position-relative scrollable-y" style="min-height: 70vh; max-height: 70vh" *ngIf="usersList$ | async as usersList">
+			<app-bloc-friend *ngFor="let friendIt of usersList.friends; let i = index" [friend]="friendIt" [rank]="(i + 1)"></app-bloc-friend>
 			<!-- <app-bloc-all-use r *ngFor="let UserIt of usersList$ | async; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-all-user> -->
 		</div>
 </div>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { IAccount } from 'src/app/model/user.model';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/pong/models/pong.models';
 import { Message } from '../models/chat.models';
 
@@ -20,6 +21,8 @@ export class PongService {
   powerUpEvent: Observable<PowerUpEvent>;
   endEvent: Observable<Results>;
   syncEvent: Observable<number>;
+  redirectToLobbyEvent: Observable<void>;
+  matchUsersEvent: Observable<IAccount[]>;
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
@@ -35,6 +38,8 @@ export class PongService {
     this.powerUpEvent = this.socket.fromEvent<PowerUpEvent>('powerUp');
     this.endEvent = this.socket.fromEvent<Results>('endGame');
     this.syncEvent = this.socket.fromEvent<number>('sync');
+    this.redirectToLobbyEvent = this.socket.fromEvent<void>('redirectToLobby');
+    this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
   }
 
   getNewMatchmaking(): void {

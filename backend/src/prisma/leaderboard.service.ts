@@ -17,7 +17,7 @@ export async function getTopTen(this: PrismaService) {
   });
   let users: IAccount[] = [];
   for (let i in list) {
-    const user: IAccount = {
+    users.push({
       score: list[i].score,
       login: list[i].login,
       nickName: list[i].nickName,
@@ -26,8 +26,7 @@ export async function getTopTen(this: PrismaService) {
       isOnline: list[i].isOnline,
       win: list[i]._count.winnedMatchs,
       lost: list[i]._count.lostMatchs,
-    };
-    users.push(user);
+    });
   }
   return users;
 }
@@ -47,17 +46,16 @@ export async function getUsersRanking(this: PrismaService) {
   });
   let users: IAccount[] = [];
   for (let i in list) {
-    const user: IAccount = {
+    users.push({
       score: list[i].score,
       login: list[i].login,
       nickName: list[i].nickName,
       email: list[i].email,
       avatar: list[i].imgUrl,
       isOnline: list[i].isOnline,
-      win: list[i]._count.winnedMatchs, //await this.getNoWinnedMatchs(list[i].login),
-      lost: list[i]._count.lostMatchs, //await this.getNolostMatchs(list[i].login),
-    };
-    users.push(user);
+      win: list[i]._count.winnedMatchs,
+      lost: list[i]._count.lostMatchs,
+    });
   }
   return users;
 }

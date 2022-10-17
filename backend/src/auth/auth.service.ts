@@ -1,13 +1,61 @@
 import { JwtService } from "@nestjs/jwt";
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
+import { Tokens } from './types/tokens.type';
+// import * as argon2 from 'argon2';
 
 @Injectable()
 export class AuthService {
+  constructor(private jwtService: JwtService, private db: PrismaService) {}
 
-    constructor(private jwtService: JwtService) {}
+  async getTokens(userId: string): Promise<Tokens> {
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+        },
+        {
+          expiresIn: '900s',
+          secret: process.env.ACCESS_SECRET,
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+        },
+        {
+          expiresIn: '7d',
+          secret: process.env.RT_SECRET,
+        },
+      ),
+    ]);
+    return {
+      access_token: at,
+      refresh_token: rt,
+    };
+  }
 
-    getUseridFromToken(token: string): any {
-        const id = this.jwtService.decode(token);
-        return id['userid'];
-    }
+  getUseridFromToken(token: string): any {
+    const id = this.jwtService.decode(token);
+    return id['userid'];
+  }
+
+  // hashData(data: string) {
+  //   // return argon2.hash(data);
+  // }
+
+  //   async updateRefreshToken(userId: string, refreshToken: string) {
+  //     const hashedRefreshToken = await this.hashData(refreshToken);
+  //     // await Update le RefreshToken dans le model User
+  //   }
+
+  //   async refreshTokens(userId: string, refreshToken: string) {
+  //     const user = await this.db.getUserToken(userId);
+  //     if (!user || !user.rtoken) throw new ForbiddenException('Access Denied');
+  //     const refreshTokenMatches = await argon2.verify(user.rtoken, refreshToken);
+  //     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+  //     const tokens = await this.getTokens(userId);
+  //     await this.updateRefreshToken(user.id, tokens.refresh_token);
+  //     return tokens;
+  //   }
 }

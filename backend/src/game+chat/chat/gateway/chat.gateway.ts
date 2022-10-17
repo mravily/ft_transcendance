@@ -51,14 +51,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return;
       }
       const userId = await this.authService.getUseridFromToken(token);
-      console.log('userId...', userId);
+      // console.log('userId...', userId);
       if (!userId) {
         console.log('User not found');
         client.disconnect();
         return;
       }
       client.data.userId = userId;
-      // client.emit('myId', userId);
     }
     catch (e) {
       console.log('Error', e);
@@ -67,8 +66,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
-      // console.log('User', user);
-      if (user == undefined) {
+      if (user.login == undefined) {
+        console.log('User', user);
         return this.disconnect(client);
       }
       client.data.user = user; // save user in client
@@ -93,7 +92,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async handleDisconnect(socket: Socket) {
     // remove connection
     if (socket.data.user == undefined) {
-      socket.disconnect();
+      // socket.disconnect();
       return;
     }
     this.connectedUsers.get(socket.data.user.login).delete(socket.id);

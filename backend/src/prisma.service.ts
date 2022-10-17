@@ -20,9 +20,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       await app.close();
     });
   }
-  
+
   protected prisma = new PrismaClient();
-  
+
   public getSidebar         = sidebar.getSidebar;
   public getTopTen          = leaderboard.getTopTen;
   public getUsersRanking    = leaderboard.getUsersRanking;
@@ -32,49 +32,67 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public setBlockUser       = user.setBlockUser;
   public deleteBlockUser    = user.deleteBlockUser;
   public getUserAccount     = user.getUserAccount;
+  public getBlockedUsers    = user.getBlockedUsers;
+  public isBlocked          = user.isBlocked;
   public sendFriendReq      = user.sendFriendReq;
+  public acceptFriendship   = user.acceptFiendship;
   public is2FA              = user.is2FA;
+  public set2FA             = user.set2FA;
+  public get2FA             = user.get2FA;
+  public delete2FA          = user.delete2FA;
+  public switch2FA          = user.switch2FA;
+  public get2FASecret       = user.get2FASecret;
+  public isSecret           = user.isSecret;
   public updateUserScore    = user.updateUserScore;
   public updateUserStatus   = user.updateUserStatus;
-  public getBlockedUsers    = user.getBlockedUsers;
   public getFriends         = user.getFriends;
-  public set2FA             = user.set2FA;
+  public getFriendsById     = user.getFriendsById;
+  public deleteFriend       = user.deleteFriend;
+  public isFriend           = user.isFriend;
   public uploadPhoto        = user.uploadPhoto;
-  public getLastPhotoPath   = user.getLastPhotoPath;
-  public get2FA             = user.get2FA;
+  public getLastPhoto       = user.getLastPhoto;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
   public getBlockers        = user.getBlockers;
+  public getUserEmail       = user.getUserEmail;
+  public deleteUser         = user.deleteUser;
+  public updateUserAccount  = user.updateUserAccount;
+  public getUserLogin       = user.getUserLogin;
   public setMatch           = match.setMatch;
+  public setMatchWinner     = match.setMatchWinner;
+  public setMatchLooser     = match.setMatchLooser;
   public getNoWinnedMatchs  = match.getNoWinnedMatchs;
   public getNolostMatchs    = match.getNolostMatchs;
   public getMatchHistory    = match.getMatchHistory;
   public getRatio           = match.getRatio;
+  public getRatioById       = match.getRatioById;
   public setChannelPass     = channel.setChannelPass;
+  public removeChannelPass  = channel.removeChannelPass;
   public getChannelInfo     = channel.getChannelInfo;
   public getChannelMessages = channel.getChannelMessages;
+  public getChannelUsers    = channel.getChannelUsers;
   public createchannel      = channel.setChannel;
   public deleteChannel      = channel.deleteChannel;
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;
   public setMuteUser        = channel.setMuteUser;
-  public setMakeAdmin       = channel.setMakeAdmin;
-  public getChannelUsers    = channel.getChannelUsers;
-  public leaveChannel       = channel.leaveChannel;
   public deleteMuteUser     = channel.deleteMuteUser;
   public getMuteInfo        = channel.getMuteInfo;
+  public setMakeAdmin       = channel.setMakeAdmin;
+  public deleteMakeAdmin    = channel.deleteMakeAdmin;
+  public leaveChannel       = channel.leaveChannel;
   public setBanUser         = channel.setBanUser;
   public deleteBan          = channel.deleteBan;
   public getBanInfo         = channel.getBanInfo;
   public isAdmin            = channel.isAdmin;
   public isCreator          = channel.isCreator;
-  public removeChannelPass  = channel.removeChannelPass;
   public getPublicChannels  = channel.getPublicChannels;
   public searchPublicChannels = channel.searchPublicChannels;
   public getChannelsForUser = channel.getchannelsForUser;
   public getUserRank        = profile.getUserRank;
   public getUserProfile     = profile.getUserProfile;
   public getPublicProfile   = profile.getPublicProfile;
+  public getProfileFriends  = profile.getProfileFriends;
   public getTotalFriends    = overview.getTotalFiends;
   public getProfileOverview = overview.getProfileOverview;
 }

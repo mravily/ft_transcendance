@@ -4,7 +4,8 @@ import { GameGateway } from './game.gateway';
 import { Socket } from 'socket.io';
 import { Ball, Paddle, PowerUp } from './entities';
 import { ChatGateway } from '../chat/gateway/chat.gateway';
-import { IMatch } from '../../interfaces';
+import { IAccount, IMatch } from '../../interfaces';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
 export class GameService  {
@@ -15,7 +16,7 @@ export class GameService  {
   PUqueue: Socket[];
 
   constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
-  @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway) { 
+  @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway, public db: PrismaService) { 
     console.log("game service created");
     this.games = new Map<number, GameMatch>();
     this.invites = new Map<string, string>();
@@ -24,12 +25,14 @@ export class GameService  {
     this.gameIdByLogin = new Map<string, number>();
   }
 
-  startGame(gameId: number, client: Socket) {
+  async startGame(gameId: number, client: Socket) {
     if (!this.games.has(gameId)) {
       return this.wsg.redirectToLobby(client);
     }    
     this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
+    
+    this.wsg.sendMatchUsers(client.id, await this.games.get(gameId).getPlayersAccounts());
     // else  {
     //   this.games.set(gameId, new GameMatch(this.wsg, [client], true));
     //   this.games.get(gameId).startGame(client);
@@ -41,7 +44,7 @@ export class GameService  {
     while (this.games.has(gameId)) {
       gameId = Math.floor(Math.random() * 1000000);
     }
-    this.games.set(gameId, new GameMatch(this.wsg, players, powerUps));
+    this.games.set(gameId, new GameMatch(this.wsg, players, powerUps, this.db));
     // this.gameIdByLogin.set(players[0], gameId);
     // this.gameIdByLogin.set(players[1], gameId);
     return gameId;
@@ -149,6 +152,14 @@ export class GameMatch {
       this.wsg.sendGameStatus(socket.id, this.getGameStatus(socket.data.user.login));
     }
   }
+
+  async getPlayersAccounts(): Promise<IAccount[]> {
+    var res: IAccount[] = [];
+    for (var player of this.playerIds) {
+      res.push(await this.db.getUserAccount(player));
+    }
+    return res;
+  }
   
   private idInterval!: NodeJS.Timer;
   private socketIds:  string[];
@@ -171,7 +182,7 @@ export class GameMatch {
 
   private period: number = 1000 / 60;
   
-  constructor(private readonly wsg: GameGateway, public playerIds: string[], public custom: boolean = false) {
+  constructor(private readonly wsg: GameGateway, public playerIds: string[], public custom: boolean = false,  private db: PrismaService) {
     
     this.canvasWidth = 1400;
     this.canvasHeight = 800;
@@ -218,6 +229,8 @@ export class GameMatch {
   }
   end(): void {
     clearInterval(this.idInterval);
+    // this.db.setMatch();
+
     this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
     this.wsg.removeGame(this.playerIds[0]);
   }

@@ -1,66 +1,72 @@
-import { PrismaService } from "../prisma.service";
-import { IAccount } from "../interfaces";
-
+import { PrismaService } from '../prisma.service';
+import { IAccount } from '../interfaces';
 
 export async function getSidebar(this: PrismaService, id: string): Promise<IAccount> {
-    const usr = await this.prisma.user.findFirst({
-        where: { id: id },
-        select: {
-            login: true,
-            nickName: true,
-            imgUrl: true,
-            friends: {
-                select: {
-                    requested: {
-                        select: {
-                            login: true,
-                            nickName: true,
-                            imgUrl: true,
-                            isOnline: true,
-                        }
-                    }
-                }
+  try {
+    const usr = await this.prisma.user.findUnique({
+      where: { id: id },
+      select: {
+        login: true,
+        nickName: true,
+        imgUrl: true,
+        friends: {
+          select: {
+            requester: {
+              select: {
+                login: true,
+                nickName: true,
+                imgUrl: true,
+                isOnline: true,
+              },
             },
-            befriend: {
-                select: {
-                    requester: {
-                        select: {
-                            login: true,
-                            nickName: true,
-                            imgUrl: true,
-                            isOnline: true,
-                        }
-                    }
-                }
-            }
-        }
+          },
+        },
+        befriend: {
+          select: {
+            requested: {
+              select: {
+                login: true,
+                nickName: true,
+                imgUrl: true,
+                isOnline: true,
+              },
+            },
+          },
+        },
+      },
     });
     let sidebar = {} as IAccount;
     if (usr) {
-        sidebar.login = usr.login;
-        sidebar.nickName = usr.nickName;
-        sidebar.avatar = usr.imgUrl;
-        sidebar.friends = [];
-        let count = 0;
-        for (let i = 0; usr.friends && usr.friends[i]; i++) {
-            let tmp: IAccount;
-            tmp.login = usr.friends[i].requested.login;
-            tmp.nickName = usr.friends[i].requested.nickName;
-            tmp.isOnline = usr.friends[i].requested.isOnline;
-            tmp.avatar = usr.friends[i].requested.imgUrl;
-            count++;
-            sidebar.friends.push(tmp);
-        }
-        for (let i = 0; usr.befriend && usr.befriend[i]; i++) {
-            let tmp: IAccount;
-            tmp.login = usr.befriend[i].requester.login;
-            tmp.nickName = usr.befriend[i].requester.nickName;
-            tmp.isOnline = usr.befriend[i].requester.isOnline;
-            tmp.avatar = usr.befriend[i].requester.imgUrl;
-            count++;
-            sidebar.friends.push(tmp);
-        }
-        sidebar.n_friends = count;
+      sidebar = {
+        login: usr.login,
+        nickName: usr.nickName,
+        avatar: usr.imgUrl,
+        friends: [],
+        n_friends: 0,
+      }
+      for (let i in usr.friends) {
+        sidebar.n_friends++;
+        sidebar.friends.push({
+          login: usr.friends[i].requester.login,
+          nickName: usr.friends[i].requester.nickName,
+          isOnline: usr.friends[i].requester.isOnline,
+          avatar: usr.friends[i].requester.imgUrl,
+        });
+      }
+      for (let i in usr.befriend) {
+        sidebar.n_friends++,
+        sidebar.friends.push({
+          login: usr.befriend[i].requested.login,
+          nickName: usr.befriend[i].requested.nickName,
+          isOnline: usr.befriend[i].requested.isOnline,
+          avatar: usr.befriend[i].requested.imgUrl,
+        });
+      }
     }
     return sidebar;
+  }
+  catch (error) {
+    console.log('Sidebar service', error.message);
+    return {} as IAccount;
+  }
 }

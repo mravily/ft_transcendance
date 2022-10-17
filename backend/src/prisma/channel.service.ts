@@ -51,6 +51,7 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
         message: message,
         userId: userId,
         channelId: channel_name,
+        isRead: false,
         isNotif: isNotif,
       },
     });
@@ -270,6 +271,22 @@ export async function setMakeAdmin(this: PrismaService, login: string, channel_n
   }
 }
 
+export async function deleteMakeAdmin(this: PrismaService, login: string, channel_name: string) {
+  try {
+    await this.prisma.makeAdmin.delete({
+      where: {
+        channelId_login: {
+          login: login,
+          channelId: channel_name,
+        }
+      }
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function setChannelPass(this: PrismaService, channel_name: string, pwd: string) {
   try {
     await this.prisma.channel.update({
@@ -313,14 +330,14 @@ export async function getChannelUsers(this: PrismaService, channel_name: string)
     });
     let list: IAccount[] = [];
     for (let i = 0; channel.userList[i]; i++) {
-      let tmp = {} as IAccount;
-      tmp.login = channel.userList[i].user.login;
-      tmp.nickName = channel.userList[i].user.nickName;
-      tmp.email = channel.userList[i].user.email;
-      tmp.score = channel.userList[i].user.score;
-      tmp.avatar = channel.userList[i].user.imgUrl;
-      tmp.isOnline = channel.userList[i].user.isOnline;
-      list.push(tmp);
+      list.push({
+        login: channel.userList[i].user.login,
+        nickName: channel.userList[i].user.nickName,
+        email: channel.userList[i].user.email,
+        score: channel.userList[i].user.score,
+        avatar: channel.userList[i].user.imgUrl,
+        isOnline: channel.userList[i].user.isOnline,
+      });
     }
     return list;
   }

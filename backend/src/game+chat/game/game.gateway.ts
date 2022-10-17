@@ -59,7 +59,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
       // console.log('User', user);
-      if (user == undefined) {
+      if (user.login == undefined) {
+        console.log('User', user);
         return client.disconnect();
       }
       client.data.user = user; // save user in client
@@ -130,6 +131,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.wss.to(sockIds[i]).emit('startGame', compteur);
     }
   }
+  sendMatchUsers(sockId: string, users: IAccount[]) {
+    this.wss.to(sockId).emit('matchUsers', users);
+  }
 
   async redirectToLobby(client: Socket) {
     client.emit('redirectToLobby');
@@ -196,7 +200,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: string)  {
-    this.wss.emit('message', {sender: client.id, body: payload});
+    this.wss.emit('message', {sender: client.data.login, body: payload});
   }
 
 }

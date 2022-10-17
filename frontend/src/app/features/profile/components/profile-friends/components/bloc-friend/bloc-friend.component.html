@@ -2,7 +2,7 @@
 	<div class="one">
 		<img alt="..." src="{{ friend.avatar }}" class="avatar avatar-sm rounded-circle me-2">
 		<a class="text-heading font-semibold" href="#">
-		  {{ friend.fullName }}
+		  {{ friend.nickName }}
 		</a>
 	</div>
 	<div class="two">
@@ -34,7 +34,7 @@
 	</div>
 	<div class="six">
 		<td class="text-end">
-		<a href="#" class="btn btn-sm btn-neutral">View</a>
+		<a [routerLink]="['../../user/', friend.login]" class="btn btn-sm btn-neutral">View</a>
 		<button  *ngIf="friend.isOnline" type="button" class="btn btn-sm btn-square btn-neutral text-danger-hover">
 		  <i class="bi bi-controller"></i>
 		</button>

@@ -7,8 +7,13 @@ import { PongComponent } from './pong/components/pong/pong.component';
 import { LandingPageComponent } from './pong/components/lobby/landing-page.component';
 import { ChatComponent } from './chat/components/chat.component';
 // import { LeaderboardComponent } from './features/leaderboard/components/leaderboard/leaderboard.component';
+import { TfaComponent } from './features/tfa/tfa.component';
+import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
+import { NotFoundComponent } from './core/components/not-found/not-found.component';
 
 const routes: Routes = [
+	{ path: 'qrcode', component: QrcodeViewComponent },
+	{ path: 'tfa', component: TfaComponent },
 	{ path: 'user/:id', component: ProfilePublicComponent },
 	{ path: 'sign-in', component: SignInComponent },
 	// { path: 'leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
@@ -17,10 +22,12 @@ const routes: Routes = [
 	{ path: 'play/:gameId', component: PongComponent, canActivate: [AuthGuard]},
 	{ path: 'view', loadChildren: () => import('./features/leaderboard/leaderboard.module').then(m => m.LeaderboardModule) },
 	{ path: 'profile', loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule), canActivate: [AuthGuard] },
+	{ path: '404', component: NotFoundComponent },
+	{ path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule]
 })
 export class AppRoutingModule { }

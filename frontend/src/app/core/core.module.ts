@@ -6,6 +6,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { ContactListComponent } from './components/sidebar-menu/components/contact-list/contact-list.component';
 import { SidebarMenuComponent } from './components/sidebar-menu/components/sidebar-menu/sidebar-menu.component';
 import { ProfileButtonComponent } from './components/sidebar-menu/components/profile-button/profile-button.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { ProfileButtonComponent } from './components/sidebar-menu/components/pro
 	FooterComponent,
   	ContactListComponent,
 	SidebarMenuComponent,
-	ProfileButtonComponent
+	ProfileButtonComponent,
+ 	NotFoundComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +24,8 @@ import { ProfileButtonComponent } from './components/sidebar-menu/components/pro
   exports: [
 	HeaderComponent,
 	FooterComponent,
-	SidebarMenuComponent
+	SidebarMenuComponent,
+	NotFoundComponent
   ],
 })
 export class CoreModule { }

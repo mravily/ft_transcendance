@@ -7,13 +7,13 @@
         <div class='game' style="font-family: Orbitron;">
             <div class="playercolumn">
                 <div class="player" *ngFor="let p of players">
-                    <img [src]="p.imgUrl">
-                    <div class="playername">{{p.name}}</div>
-                    <div class="playerratio">{{p.ratio}}</div>
+                    <img [src]="p.avatar">
+                    <div class="playername">{{p.login}}</div>
+                    <div class="playerratio">{{p.win}} / {{p.lost}}</div>
                 </div>
             </div>
 
-            <canvas #canvas playing-pong width=1400 height=800 (click)="ready()"></canvas>
+            <canvas #canvas playing-pong width=1400 height=800></canvas>
             <!-- <button #readyButton (click)="ready()">I'm ready</button> -->
             <!-- <h4>Move left paddle up and down with the arrow keys</h4> -->
 

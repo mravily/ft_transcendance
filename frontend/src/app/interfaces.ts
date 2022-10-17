@@ -62,7 +62,7 @@ export interface IMessage {
     message: string;
     from: string; // Est-ce que c'est l'ID ou le login ?
     channelId: string;
-    isNotif?: boolean; //=> JUAN
+    isNotif?: boolean;
 
 
 }
@@ -98,6 +98,7 @@ export interface IPersoMatch {
 }
 
 export interface IMatch {
+    matchId?: number;
     createdAt?: Date;
     winner: string;
     winnerScore: number;

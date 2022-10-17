@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs';
-import { Profile } from '../../models/profile.user.model';
+import { Observable } from 'rxjs';
+import { IAccount } from 'src/app/model/user.model';
 import { ProfileService } from '../../services/profile.service';
 
 
@@ -13,38 +13,39 @@ import { ProfileService } from '../../services/profile.service';
 })
 export class ProfileSettingsComponent implements OnInit {
 
-  settingsForm!: FormGroup;
-  user$!: Profile;
+  settingsForm!: FormGroup
+  user$!: Observable<IAccount>
   urlRegex!: RegExp;
+  selectedFile!: File
 
-  constructor(
-	private http: HttpClient,
-	private profileService: ProfileService,
-	private formBuilder: FormBuilder) { }
+  constructor(private profileService: ProfileService,
+			  private formBuilder: FormBuilder) { }
+
+	initForm() {
+		this.user$ = this.profileService.getPrivateProfile()
+		this.user$.subscribe(v => {
+			this.settingsForm = this.formBuilder.group({
+				firstName: [v.firstName],
+				lastName: [v.lastName],
+				email: [v.email, [Validators.pattern(this.urlRegex)]],
+				login: [v.login],
+				nickname: [v.nickName],
+			});
+		});
+	}
+
+	ngOnInit(): void {
+		this.initForm();
+	} 
+	
+	uploadFile(event: any) {
+		this.selectedFile = event.target.files[0];
+	}
 
 	onSubmitForm() {
-		console.log(this.settingsForm.value);
+		if (this.selectedFile)
+			this.profileService.upload(this.selectedFile);
+		this.profileService.sendForm(this.settingsForm);
+		this.initForm();
 	}
-
-  ngOnInit(): void {
-	this.user$ = {
-		firstName: 'Medhi',
-		lastName: 'Ravily',
-		email: 'mravily@student.42.fr',
-		login: 'mravily',
-		displayName: 'Medhi Ravily',
-		avatar: 'https://cdn.intra.42.fr/users/mravily.jpg'
-	}
-
-
-	this.settingsForm = this.formBuilder.group({
-			firstName: [this.user$.firstName],
-			lastName: [this.user$.lastName],
-			email: [this.user$.email, [Validators.required, Validators.pattern(this.urlRegex)]],
-			login: [this.user$.login],
-			displayName: [this.user$.displayName],
-			formFile: [null]
-	});
-  }
-
 }

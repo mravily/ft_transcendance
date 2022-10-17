@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
+import { PongService } from '../../pong/services/pong.service';
 import { IAccount, IChannel, IMessage } from '../../interfaces';
 // import { channelI } from '../models/channel.model';
 // import { MessageI } from '../models/chat.model';
@@ -28,7 +30,10 @@ export class ChatComponent implements OnInit {
   userSearchResult$!: Observable<string[]>;
   searchSubcription!: Subscription;
 
-  constructor(private chatServ: ChatService, private builder: FormBuilder) { }
+  constructor(private chatServ: ChatService,
+      // private pongServ: PongService,
+      private builder: FormBuilder,
+      private router: Router) { }
   
   ngOnInit(): void {
     this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
@@ -82,6 +87,17 @@ export class ChatComponent implements OnInit {
       this.chatServ.searchUsers(search);
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
+    this.chatServ.getInviteObs().subscribe((login: string) => {
+      // a refaire avec medhi
+      console.log('invite', login);
+  
+      this.chatServ.acceptInvite(login);
+    });
+    this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
+      console.log('game found', gameId);
+      this.router.navigate(['play', gameId]);
+    });
+
   }
 
   ngAfterViewChecked() {
@@ -98,6 +114,12 @@ export class ChatComponent implements OnInit {
   isAdmin(login: string) {
     if (this.selectedChannel && this.selectedChannel.admins) {
       return this.selectedChannel.admins.map((user) => user.login).includes(login);
+    }
+    return false;
+  }
+  isCreator(login: string) {
+    if (this.selectedChannel) {
+      return this.selectedChannel.creator == login;
     }
     return false;
   }
@@ -192,5 +214,14 @@ export class ChatComponent implements OnInit {
   }
   onUnblock(login: string) {
     this.chatServ.unblockUser(login);
+  }
+  onProfileClick(login: string) {
+    this.router.navigateByUrl("/profile/" + login);
+  }
+  onInvite(login: string) {
+    this.chatServ.inviteUser(login);
+  }
+  onAcceptInvite(login: string) {
+    this.chatServ.acceptInvite(login);
   }
 }

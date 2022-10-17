@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Friend } from 'src/app/features/profile/models/profile.user.model';
+import { IAccount } from 'src/app/model/user.model';
 
 @Component({
 	selector: 'app-bloc-friend-public',
@@ -8,7 +8,7 @@ import { Friend } from 'src/app/features/profile/models/profile.user.model';
 })
 export class BlocFriendPublicComponent implements OnInit {
 
-	@Input() friend!: Friend;
+	@Input() friend!: IAccount;
 
 	constructor() { }
 

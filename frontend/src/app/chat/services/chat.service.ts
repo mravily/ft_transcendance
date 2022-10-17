@@ -126,7 +126,19 @@ export class ChatService {
   getMyUserObs(): Observable<IAccount> {
     return this.socket.fromEvent<IAccount>('myUser');
   }
-  // userblocked userunblocked
+  
+  inviteUser(login: string) {
+    this.socket.emit('invite', login);
+  }
+  acceptInvite(login: string) {
+    this.socket.emit('acceptInvite', login);
+  }
+  getInviteObs(): Observable<string> {
+    return this.socket.fromEvent<string>('invite');
+  }
+  getMatchFoundObs(): Observable<number>{
+    return this.socket.fromEvent<number>('matchId');
+  }
 
 
 

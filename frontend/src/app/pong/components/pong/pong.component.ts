@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Directive, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { map, tap, take, Subscription } from 'rxjs';
+import { IAccount } from 'src/app/model/user.model';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from "../../models/pong.models";
 import { PongService } from '../../services/pong.service';
 import { Paddle, Ball, PowerUp } from './entities';
@@ -48,25 +49,27 @@ export class PongComponent implements AfterViewInit {
 
   private game!: PongMatch;
 
-  players: any[] = [
-    {name: "adesvall", imgUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Head_Odysseus_MAR_Sperlonga.jpg", ratio: "51V / 52"},
-    {name: "upeyret", imgUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Head_Odysseus_MAR_Sperlonga.jpg", ratio: "19V / 43"}
-  ];
+  players: IAccount[] = [];
 
-  constructor(private route: ActivatedRoute, private pongService: PongService) {
+  constructor(private route: ActivatedRoute, private pongService: PongService, private router: Router) {
     this.pongService.specModeEvent.subscribe(() => {
       console.log("spec mode");
       this.game = new PongMatch(this.route, this.pongService, this.gameCanvas);
     });
-  }
-  
-  ngAfterViewInit(): void {
-    this.game = new PlayingPongMatch(this.route, this.pongService, this.gameCanvas);
+    this.pongService.redirectToLobbyEvent.subscribe(() => {
+      this.router.navigate(["/play"]);
+    });
+    this.pongService.matchUsersEvent.subscribe((users: IAccount[]) => {
+      this.players = users;
+    });
+
   }
 
-  ready() {
+  ngAfterViewInit(): void {
+    this.game = new PlayingPongMatch(this.route, this.pongService, this.gameCanvas);
     this.game.ready();
   }
+
 }
 
 export class PongMatch {
@@ -203,20 +206,19 @@ export class PongMatch {
     }));
     this.otherSubcriptions.push(this.wss.syncEvent.subscribe((servertime: number) => {
       let t = Date.now();
-      console.log('1', this.clockdiff, '2', servertime, '3', t);
-      console.log('servertime attendu', (this.clockdiff + t) / 2, 'latency aller retour', (t - this.clockdiff) / 2);
+      // console.log('1', this.clockdiff, '2', servertime, '3', t);
+      // console.log('servertime attendu', (this.clockdiff + t) / 2, 'latency aller retour', (t - this.clockdiff) / 2);
       this.clockdiff = servertime - (this.clockdiff + t) / 2;
-      console.log('difference', this.clockdiff);
+      // console.log('difference', this.clockdiff);
       this.clockdifftab.push(this.clockdiff);
 
-      if (this.clockdifftab.length < 9) {
-        console.log('Ulysse en redemande !');
+      if (this.clockdifftab.length < 5) {
         this.clockdiff = this.wss.sendSync();
       }
       else {
-        console.log(this.clockdifftab);
+        // console.log(this.clockdifftab);
         this.clockdifftab.sort();
-        this.clockdiff = this.clockdifftab[4];
+        this.clockdiff = this.clockdifftab[2];
         console.log('clockdiff median', this.clockdiff);
       }
     }));

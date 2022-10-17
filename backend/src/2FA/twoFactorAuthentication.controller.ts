@@ -1,41 +1,104 @@
 import {
-    ClassSerializerInterceptor,
-    Controller,
-    Post,
-    UseInterceptors,
-    Res,
-    UseGuards,
-    Req,
-    Session,
-    Get,
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  UseInterceptors,
+  Res,
+  Req,
+  Session,
+  UnauthorizedException,
+  HttpCode,
+  Body,
+  Get,
+  Redirect,
 } from '@nestjs/common';
-import { IUser2FA, TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
-import { Response } from 'express';
+import {
+  IUser2FA,
+  TwoFactorAuthenticationService,
+} from './twoFactorAuthentication.service';
+import { response, Response } from 'express';
+import TwoFactorAuthenticationDto from './dto/2fa.dto';
+import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
-// import { AuthGuard } from '@nestjs/passport';
- 
-@Controller('2fa')
+import { request } from 'http';
+import { IAccount } from '../interfaces';
+import { AuthService } from '../auth/auth.service';
+
+@Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
   constructor(
-    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly tfaService: TwoFactorAuthenticationService,
     private db: PrismaService,
+    private authService: AuthService,
   ) {}
- 
+
   @Post('generate')
-//   @UseGuards(AuthGuard('42'))
-  async register(@Res() response: Response, @Session() session: Record<string, any>, @Req() req) {
-    let user = {} as IUser2FA;
-    console.log(session.userid);
-    user.id = session.userid;
-    user.email = req.email;
-    const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(user);
- 
-    return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+  //   @UseGuards(AuthGuard('42'))
+  async register(
+    @Res() response: Response,
+    @Session() session: Record<string, any>,
+    @Req() req,
+  ) {
+    console.log('user.id.tfa', session.userid);
+    const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
+      session.userid,
+    );
+    toDataURL(otpauthUrl, (err, dataUrl: string) => {
+      if (err) throw err;
+      this.db.set2FA(session.userid, secret, dataUrl);
+      return response.status(200).json({
+        dataUrl,
+        secret: secret,
+      });
+    });
+  }
+
+  @Post('authenticate')
+  //   @UseGuards(JwtAuthenticationGuard)
+  async authenticate(
+    @Session() session: Record<string, any>,
+    @Body() { token }: TwoFactorAuthenticationDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const isValid = await this.tfaService.isTfaCodeValid(token, session.userid);
+    if (isValid) {
+      const tokens = await this.authService.getTokens(session.userid);
+      res.cookie('access', tokens.access_token, { maxAge: 900000000 });
+      res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
+    }
+    return this.tfaService.isTfaCodeValid(token, session.userid);
   }
 
   @Get('verify')
   async verify(@Session() session: Record<string, any>): Promise<boolean> {
-    return this.db.is2FA(session.userid);
+    return await this.db.is2FA(session.userid);
+  }
+
+  @Get('get2fa')
+  async get2fa(@Session() session: Record<string, any>): Promise<IAccount> {
+    return await this.db.get2FA(session.userid);
+  }
+
+  @Get('secret')
+  get2faSecret(@Session() session: Record<string, any>): Promise<IAccount> {
+    return this.db.get2FASecret(session.userid);
+  }
+
+  @Post('delete')
+  async delete2FA(@Session() session: Record<string, any>) {
+    await this.db.delete2FA(session.userid);
+    return { msg: '2FA Deleted' };
+  }
+
+  @Get('switch')
+  async switch2fa(@Session() session: Record<string, any>) {
+    await this.db.switch2FA(session.userid);
+    return { msg: '2FA Status Change' };
+  }
+
+  @Get('issecret')
+  async isSecret(@Session() session: Record<string, any>) {
+    return await this.db.isSecret(session.userid);
   }
 }

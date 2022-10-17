@@ -1,72 +1,74 @@
 <main class="py-6 bg-surface-secondary">
-	<div class="container-fluid">
-	  <div class="row">
-		<div class="col-xl-7 mx-auto">
-		  <!-- Profile picture -->
-		  <div class="card shadow border-0 mt-4 mb-10">
-			<div class="card-body">
-			  <div class="d-flex align-items-center">
-				<div>
-				  <div class="d-flex align-items-center">
-					<a routerLink="../" class="avatar avatar-lg bg-warning rounded-circle text-white">
-					  <img alt="profile-avatar" src="{{ user$.avatar }}">
-					</a>
-					<div class="ms-4">
-					  <span class="h4 d-block mb-0">{{ user$.displayName }}</span>
-					  <a routerLink="../" class="text-sm font-semibold text-muted">View Profile</a>
+	<div class="container-fluid" *ngIf="user$ | async as user">
+		<div class="row">
+			<div class="col-xl-7 mx-auto">
+				<!-- Profile picture -->
+				<div class="card shadow border-0 mt-4 mb-10">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<div class="d-flex align-items-center">
+									<a routerLink="../" class="avatar avatar-lg bg-warning rounded-circle text-white">
+										<img alt="profile-avatar" src="{{ user.avatar }}">
+									</a>
+									<div class="ms-4">
+										<span class="h4 d-block mb-0">{{ user.nickName }}</span>
+										<a routerLink="../" class="text-sm font-semibold text-muted">View Profile</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				  </div>
 				</div>
-			  </div>
-			</div>
-		  </div>
-		  <!-- Form -->
-		  <div class="mb-5">
-			<h5 class="mb-0">Profile Information</h5>
-		  </div>
-		  <form [formGroup]="settingsForm" class="mb-6">
-			<div class="row mb-5">
-			  <div class="col-md-6">
-				<div class="form-group">
-				  <label class="form-label" for="firstName">First name</label>
-				  <input type="text" class="form-control" id="firstName" formControlName="firstName">
+				<!-- Form -->
+				<div class="mb-5">
+					<h5 class="mb-0">Profile Information</h5>
 				</div>
-			  </div>
-			  <div class="col-md-6">
-				<div class="form-group">
-				  <label class="form-label" for="lastName">Last name</label>
-				  <input type="text" class="form-control" id="lastName" formControlName="lastName">
-				</div>
-			  </div>
-			</div>
-			<div class="row g-5">
-			  <div class="col-md-6">
-				<div class="form-group">
-				  <label class="form-label" for="email">Email</label>
-				  <input type="email" class="form-control" id="email" formControlName="email">
-				</div>
-			  </div>
-			  <div class="col-md-6">
-				<div class="form-group">
-				  <label class="form-label" for="login">Login</label>
-				  <input type="text" class="form-control" id="login" formControlName="login">
-				</div>
-			  </div>
-			  <div class="col-6">
-				<div class="form-group">
-				  <label class="form-label" for="displayName">Display Name</label>
-				  <input type="text" class="form-control" id="displayName" formControlName="displayName">
-				</div>
-			  </div>
-			  <div class="col-md-12">
-				<div class="form-group mb-3">
-					<label for="formFile" class="form-label">Upload Image</label>
-					<input class="form-control" type="file" id="formFile" formControlName="formFile">
-				  </div>
-			  </div>
-			</div>
-			<div class="text-end">
-			  <button type="submit" class="btn btn-sm btn-gold" (click)="onSubmitForm()" [disabled]="settingsForm.invalid">Save</button>
-			</div>
-		</form>
-		  <hr class="my-10" />
+				<form [formGroup]="settingsForm" class="mb-6">
+					<div class="row mb-5">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label" for="firstName">First name</label>
+								<input type="text" class="form-control" id="firstName" formControlName="firstName">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label" for="lastName">Last name</label>
+								<input type="text" class="form-control" id="lastName" formControlName="lastName">
+							</div>
+						</div>
+					</div>
+					<div class="row g-5">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label" for="email">Email</label>
+								<input type="email" class="form-control" id="email" formControlName="email">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label" for="login">Login</label>
+								<input class="form-control" type="text" id="login" placeholder="{{ user.login }}"
+									aria-label="Disabled input example" disabled>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="form-label" for="nickname">Display Name</label>
+								<input type="text" class="form-control" id="nickname" formControlName="nickname">
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="form-group mb-3">
+								<label for="srcFile" class="form-label">Upload Image</label>
+								<input class="form-control" type="file" id="srcFile" (change)="uploadFile($event)">
+							</div>
+						</div>
+					</div>
+					<div class="text-end">
+						<button type="submit" class="btn btn-sm btn-gold" (click)="onSubmitForm()"
+							[disabled]="settingsForm.invalid">Save</button>
+					</div>
+				</form>
+				<hr class="my-10" />

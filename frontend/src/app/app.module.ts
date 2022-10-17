@@ -6,24 +6,27 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { CookieService } from 'ngx-cookie-service';
-import { CommonModule } from '@angular/common';
-import { PongModule } from './pong/pong.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgOtpInputModule } from 'ng-otp-input';
+import { TfaComponent } from './features/tfa/tfa.component';
+import { RouterModule } from '@angular/router';
 import { ChatModule } from './chat/chat.module';
-import { LeaderboardModule } from './features/leaderboard/leaderboard.module';
+import { PongModule } from './pong/pong.module';
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-	  CoreModule,
-	  LeaderboardModule,
-    AppRoutingModule,
-	  HttpClientModule,
-    CommonModule,
-    PongModule,
-    ChatModule,
-  ],
-  providers: [CookieService],
-  bootstrap: [AppComponent]
+	declarations: [AppComponent, TfaComponent],
+	imports: [
+		BrowserModule,
+		CoreModule,
+		ChatModule,
+		PongModule,
+		AppRoutingModule,
+		HttpClientModule,
+		ReactiveFormsModule,
+		NgOtpInputModule,
+		RouterModule
+	],
+	providers: [CookieService],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }
