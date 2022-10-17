@@ -9,10 +9,7 @@ export class StreamController {
   constructor(private db: PrismaService) {}
 
   @Get(':id')
-  async getFile(
-    @Param('id') id: string,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<StreamableFile> {
+  async getFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
     const photo = await this.db.getLastPhoto(id);
     const file = createReadStream(join(process.cwd(), photo.path));
     res.set({
