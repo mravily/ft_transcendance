@@ -107,10 +107,7 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
   }
 }
 
-export async function get2FASecret(
-  this: PrismaService,
-  userId: string,
-): Promise<IAccount> {
+export async function get2FASecret(this: PrismaService, userId: string): Promise<IAccount> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -141,10 +138,7 @@ export async function isUser(this: PrismaService, login: string): Promise<boolea
   }
 }
 
-export async function getUserEmail(
-  this: PrismaService,
-  userId: string,
-): Promise<string> {
+export async function getUserEmail(this: PrismaService, userId: string): Promise<string> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -215,6 +209,29 @@ export async function acceptFiendship(this: PrismaService, requersted: string, r
         }
       },
       data: { isAccepted: true },
+    });
+  }
+  catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function deleteFriend(this: PrismaService, userId: string, login: string) {
+  try {
+    const userlog = await this.getUserLogin(userId);
+    await this.prisma.addFriend.deleteMany({
+      where: {
+        OR: [
+          {
+            requestedLogin: login,
+            requesterLogin: userlog,
+          },
+          {
+            requesterLogin: login,
+            requestedLogin: userlog,
+          }
+        ]
+      }
     });
   }
   catch (error) {
@@ -368,7 +385,7 @@ export async function getBlockedUsers(this: PrismaService, login: string): Promi
     });
     const list: IAccount[] = [];
     for (let i = 0; blockedList.blockedUsers[i]; i++) {
-      list[i] = blockedList.blockedUsers[i].blocked;
+      list.push(blockedList.blockedUsers[i].blocked);
     }
     return list;
   } catch (error) {
@@ -400,10 +417,7 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
   }
 }
 
-export async function getLastPhoto(
-  this: PrismaService,
-  login: string,
-): Promise<IPhoto> {
+export async function getLastPhoto(this: PrismaService, login: string): Promise<IPhoto> {
   try {
     const tmp = await this.prisma.user.findUnique({
       where: { login: login },
@@ -476,10 +490,7 @@ export async function getFriends(this: PrismaService, login: string): Promise<IA
   }
 }
 
-export async function getFriendsById(
-  this: PrismaService,
-  userId: string,
-): Promise<IAccount[]> {
+export async function getFriendsById(this: PrismaService, userId: string): Promise<IAccount[]> {
   try {
     const friends = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -666,18 +677,27 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         },
       },
     });
-    const userAccount = {} as IAccount;
+    let userAccount = {} as IAccount;
     if (user) {
-      userAccount.firstName = user.firstName;
-      userAccount.lastName = user.lastName;
-      userAccount.nickName = user.nickName;
-      userAccount.email = user.email;
-      userAccount.login = user.login;
-      userAccount.avatar = user.imgUrl;
-      userAccount.winnedMatch = user.winnedMatchs;
-      userAccount.lostMatch = user.lostMatchs;
-      userAccount.win = user._count.winnedMatchs;
-      userAccount.lost = user._count.lostMatchs;
+      userAccount = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickName: user.nickName,
+        email: user.email,
+        login: user.login,
+        avatar: user.imgUrl,
+        winnedMatch: user.winnedMatchs,
+        lostMatch: user.lostMatchs,
+        win: user._count.winnedMatchs,
+        lost: user._count.lostMatchs,
+        createdAt: user.createdAt,
+        twoFA: user.twoFA,
+        isAdmin: user.isAdmin,
+        friends: [],
+        blockUsers: [],
+        channelList: [],
+        channelAdmin: [],
+      }
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
       }
@@ -687,9 +707,6 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.befriend[i].requester);
       }
-      userAccount.createdAt = user.createdAt;
-      userAccount.twoFA = user.twoFA;
-      userAccount.isAdmin = user.isAdmin;
       for (const i in user.channelList) {
         userAccount.channelList.push(i);
       }

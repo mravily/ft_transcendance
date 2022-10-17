@@ -35,15 +35,17 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
         },
       },
     });
-    const sidebar = {} as IAccount;
+    let sidebar = {} as IAccount;
     if (usr) {
-      sidebar.login = usr.login;
-      sidebar.nickName = usr.nickName;
-      sidebar.avatar = usr.imgUrl;
-      sidebar.friends = [];
-      let count = 0;
+      sidebar = {
+        login: usr.login,
+        nickName: usr.nickName,
+        avatar: usr.imgUrl,
+        friends: [],
+        n_friends: 0,
+      }
       for (let i in usr.friends) {
-        count++;
+        sidebar.n_friends++;
         sidebar.friends.push({
           login: usr.friends[i].requester.login,
           nickName: usr.friends[i].requester.nickName,
@@ -52,7 +54,7 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
         });
       }
       for (let i in usr.befriend) {
-        count++,
+        sidebar.n_friends++,
         sidebar.friends.push({
           login: usr.befriend[i].requested.login,
           nickName: usr.befriend[i].requested.nickName,
@@ -60,7 +62,6 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
           avatar: usr.befriend[i].requested.imgUrl,
         });
       }
-      sidebar.n_friends = count;
     }
     return sidebar;
   }

@@ -1,10 +1,7 @@
 import { PrismaService } from '../prisma.service';
 import { IAccount } from '../interfaces';
 
-export async function getTotalFiends(
-  this: PrismaService,
-  login: string,
-): Promise<number> {
+export async function getTotalFiends(this: PrismaService, login: string): Promise<number> {
   try {
     const user = await this.prisma.user.findUnique({
       where: { login: login },
@@ -38,10 +35,7 @@ export async function getTotalFiends(
   }
 }
 
-export async function getProfileOverview(
-  this: PrismaService,
-  userid: string,
-): Promise<IAccount> {
+export async function getProfileOverview(this: PrismaService, userid: string): Promise<IAccount> {
   try {
     const usr = await this.prisma.user.findUnique({
       where: { id: userid },
@@ -96,14 +90,16 @@ export async function getProfileOverview(
       },
     });
     let profile = {} as IAccount;
-    profile.activities = [];
-    profile.matches = [];
-    // if (usr !== undefined) {
-      profile.login = usr.login;
-      profile.win = usr._count.winnedMatchs;
-      profile.lost = usr._count.lostMatchs;
-      profile.rank = await this.getUserRank(usr.login);
-      profile.n_friends = await this.getTotalFriends(usr.login);
+    if (usr) {
+      profile = {
+        activities: [],
+        matches: [],
+        login: usr.login,
+        win: usr._count.winnedMatchs,
+        lost: usr._count.lostMatchs,
+        rank: await this.getUserRank(usr.login),
+        n_friends: await this.getTotalFriends(usr.login),
+      }
       for (let i in usr.winnedMatchs) {
         profile.matches.push({
           usrAvatar: usr.imgUrl,
@@ -136,7 +132,7 @@ export async function getProfileOverview(
           });
         }
       }
-    // }
+    }
     return profile;
   } catch (error) {
     console.log(error.message);
