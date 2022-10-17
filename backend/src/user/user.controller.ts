@@ -23,13 +23,14 @@ export class UserController {
     }
 
   @Post('block')
-  blockUser(@Body() bod, @Session() session: Record<string, any>) {
-    this.db.setBlockUser(session.userid, bod.login);
+  async blockUser(@Body() bod, @Session() session: Record<string, any>) {
+    console.log('block', bod.login);
+    await this.db.setBlockUser(session.userid, bod.login);
   }
 
   @Post('unblock')
-  unblockUser(@Body() bod, @Session() session: Record<string, any>) {
-    this.db.deleteBlockUser(session.userid, bod.login);
+  async unblockUser(@Body() bod, @Session() session: Record<string, any>) {
+    await this.db.deleteBlockUser(session.userid, bod.login);
   }
 
   @Post('isuser')

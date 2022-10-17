@@ -53,11 +53,11 @@ export class ProfileService {
   }
 
   blockUser(login: string) {
-	this.http.post('api/user/block', { login });
+	this.http.post('api/user/block', { login }).subscribe();
   }
 
   unBlockUser(login: string) {
-	this.http.post('api/user/unblock', { login });
+	this.http.post('api/user/unblock', { login }).subscribe();
   }
 
   isUser(login: string) {
