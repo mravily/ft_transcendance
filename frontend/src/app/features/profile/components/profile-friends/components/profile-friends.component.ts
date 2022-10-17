@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IAccount } from 'src/app/model/user.model';
+import { IProfileFriends } from '../../../models/profile.user.model';
 import { ProfileService } from '../../../services/profile.service';
 
 @Component({
@@ -11,10 +11,14 @@ import { ProfileService } from '../../../services/profile.service';
 export class ProfileFriendsComponent implements OnInit {
 
 		
-	usersList$!: Observable<IAccount>;
+	usersList$!: Observable<IProfileFriends[]>;
 	constructor(private profileService: ProfileService) { }
 
 	ngOnInit(): void {
-		this.usersList$ = this.profileService.getOverview();
+		this.usersList$ = this.profileService.getProfileFriends();
+	}
+
+	reload() {
+		this.usersList$ = this.profileService.getProfileFriends();
 	}
 }

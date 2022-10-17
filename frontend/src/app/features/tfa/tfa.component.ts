@@ -47,14 +47,6 @@ export class TfaComponent implements OnInit {
 
 	isValid!: boolean;
 	onSubmit() {
-	// 	this.tfaServices.verifyAuth(this.otp).subscribe(v => {
-	// 		console.log('v', v);
-	// 	  this.isValid = v;
-	// 	  if (v) {
-	// 		this.router.navigateByUrl('view');
-	// 	  }
-	// 	});
-	// }
 	this.tfaServices.verifyAuth(this.otp).subscribe(v => {
 		console.log('v', v);
 	  this.isValid = v;

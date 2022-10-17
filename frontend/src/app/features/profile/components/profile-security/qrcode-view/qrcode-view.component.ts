@@ -15,8 +15,7 @@ export class QrcodeViewComponent implements OnInit {
 	@Output() setup = new EventEmitter<boolean>();
 
  	tfa$!: Observable<tfa>;
-  	constructor(private tfaServices: TfaService,
-				private sanitizer: DomSanitizer) { }
+  	constructor(private tfaServices: TfaService) {}
 
   	ngOnInit(): void {
 		if (!this.alreadySet) this.tfa$ = this.tfaServices.generate();

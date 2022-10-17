@@ -40,3 +40,16 @@ export class tfa {
 	dataUrl?: string
 	secret?: string
 }
+
+export class IProfileFriends {
+    nickName!: string
+	avatar!: string
+    login!: string
+    win!: number
+    lost!: number
+	rank!: number
+    isOnline!: boolean
+    isAccepted!: boolean
+    score!: number
+    isSent!: boolean
+}

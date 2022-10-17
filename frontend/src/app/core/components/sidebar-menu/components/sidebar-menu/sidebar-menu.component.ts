@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
@@ -15,13 +16,20 @@ export class SidebarMenuComponent implements OnInit {
 	data$!: Observable<IAccount>;
 
 	constructor(private cookieService: CookieService,
-		private sidebarServices:SidebarMenuService) {}
+		private sidebarServices:SidebarMenuService,
+		private router: Router) {}
 	
-	ngOnInit(): void {
-		this.data$ = this.sidebarServices.getData();
+		
+		ngOnInit(): void {
+			this.data$ = this.sidebarServices.getData();
+			this.reload();
+		}
+		
+		reload() {
+			this.data$ = this.sidebarServices.getData();
+		}
+		
+		isLogin() {
+			return this.cookieService.check('access');
+		}
 	}
-
-	isLogin() {
-		return this.cookieService.check('access');
-	}
-}

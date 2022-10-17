@@ -34,27 +34,27 @@
 			<!-- Navigation -->
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" routerLink="../">
+					<a (click)="reload()" class="nav-link" routerLink="../">
 						<i class="bi bi-house"></i> Home
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" routerLink="view">
+					<a (click)="reload()" class="nav-link" routerLink="view">
 						<i class="bi bi-bar-chart"></i> Leaderboard
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" routerLink="play">
+					<a (click)="reload()" class="nav-link" routerLink="play">
 						<i class="bi bi-bookmarks"></i> Join the legacy
 					</a>
 				</li>
 				<li *ngIf="isLogin()" class="nav-item">
-					<a class="nav-link" routerLink="messages">
+					<a (click)="reload()" class="nav-link" routerLink="messages">
 						<i class="bi bi-chat"></i> Messages
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" routerLink="view/users">
+					<a (click)="reload()" class="nav-link" routerLink="view/users">
 						<i class="bi bi-people"></i> Users
 					</a>
 				</li>
