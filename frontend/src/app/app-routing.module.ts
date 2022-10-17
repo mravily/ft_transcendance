@@ -6,9 +6,11 @@ import { AuthGuard } from './guards/auth.guard';
 import { TfaComponent } from './features/tfa/tfa.component';
 import { QrcodeViewComponent } from './features/profile/components/profile-security/qrcode-view/qrcode-view.component';
 import { NotFoundComponent } from './core/components/not-found/not-found.component';
+import { LandingPageComponent } from './features/landing-page/landing-page.component';
 
 const routes: Routes = [
-	{ path: 'qrcode', component: QrcodeViewComponent },
+	{ path: '', component: LandingPageComponent },
+	{ path: 'qrcode', component: QrcodeViewComponent, canActivate: [AuthGuard]},
 	{ path: 'tfa', component: TfaComponent },
 	{ path: 'user/:id', component: ProfilePublicComponent },
 	{ path: 'sign-in', component: SignInComponent },

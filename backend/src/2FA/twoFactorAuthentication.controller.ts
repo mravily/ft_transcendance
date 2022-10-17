@@ -4,25 +4,19 @@ import {
   Post,
   UseInterceptors,
   Res,
-  Req,
   Session,
-  UnauthorizedException,
-  HttpCode,
   Body,
   Get,
-  Redirect,
+  UseGuards,
 } from '@nestjs/common';
-import {
-  IUser2FA,
-  TwoFactorAuthenticationService,
-} from './twoFactorAuthentication.service';
-import { response, Response } from 'express';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { Response } from 'express';
 import TwoFactorAuthenticationDto from './dto/2fa.dto';
 import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
-import { request } from 'http';
 import { IAccount } from '../interfaces';
 import { AuthService } from '../auth/auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -34,11 +28,10 @@ export class TwoFactorAuthenticationController {
   ) {}
 
   @Post('generate')
-  //   @UseGuards(AuthGuard('42'))
+  @UseGuards(AuthGuard('42'))
   async register(
     @Res() response: Response,
     @Session() session: Record<string, any>,
-    @Req() req,
   ) {
     console.log('user.id.tfa', session.userid);
     const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
@@ -55,7 +48,7 @@ export class TwoFactorAuthenticationController {
   }
 
   @Post('authenticate')
-  //   @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(AuthGuard('42'))
   async authenticate(
     @Session() session: Record<string, any>,
     @Body() { token }: TwoFactorAuthenticationDto,
@@ -65,27 +58,30 @@ export class TwoFactorAuthenticationController {
     if (isValid) {
       const tokens = await this.authService.getTokens(session.userid);
       res.cookie('access', tokens.access_token, { maxAge: 900000000 });
-      res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
     }
     return this.tfaService.isTfaCodeValid(token, session.userid);
   }
 
   @Get('verify')
+  @UseGuards(AuthGuard('42'))
   async verify(@Session() session: Record<string, any>): Promise<boolean> {
     return await this.db.is2FA(session.userid);
   }
 
   @Get('get2fa')
+  @UseGuards(AuthGuard('42'))
   async get2fa(@Session() session: Record<string, any>): Promise<IAccount> {
     return await this.db.get2FA(session.userid);
   }
 
   @Get('secret')
+  @UseGuards(AuthGuard('42'))
   get2faSecret(@Session() session: Record<string, any>): Promise<IAccount> {
     return this.db.get2FASecret(session.userid);
   }
 
   @Post('delete')
+  @UseGuards(AuthGuard('42'))
   async delete2FA(@Session() session: Record<string, any>) {
     await this.db.delete2FA(session.userid);
     return { msg: '2FA Deleted' };

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Session,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { IAccount } from '../interfaces';
 import { PrismaService } from '../prisma.service';
 
@@ -7,6 +16,7 @@ export class ProfileController {
   constructor(private db: PrismaService) {}
 
   @Post('update')
+//   @UseGuards(AuthGuard('42'))
   async updateProfile(
     @Session() session: Record<string, any>,
     @Body() account: IAccount,
@@ -15,11 +25,13 @@ export class ProfileController {
   }
 
   @Get('private')
+//   @UseGuards(AuthGuard('42'))
   getProfile(@Session() session: Record<string, any>) {
     return this.db.getUserProfile(session.userid);
   }
 
   @Get('overview')
+  @UseGuards(AuthGuard('42'))
   getOverview(@Session() session: Record<string, any>) {
     return this.db.getProfileOverview(session.userid);
   }

@@ -46,4 +46,20 @@ export class ProfileService {
   getPrivateProfile(): Observable<IAccount> {
 	return this.http.get<IAccount>('api/profile/private');
   }
+
+  sendFriendRequest(login: string) {
+	this.http.post('api/user/friendrequest', { login });
+  }
+
+  blockUser(login: string) {
+	this.http.post('api/user/block', { login });
+  }
+
+  unBlockUser(login: string) {
+	this.http.post('api/user/unblock', { login });
+  }
+
+  isUser(login: string) {
+	return this.http.post('api/user/isuser', { login });
+  }
 }

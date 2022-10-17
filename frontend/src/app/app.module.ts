@@ -10,9 +10,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { TfaComponent } from './features/tfa/tfa.component';
 import { RouterModule } from '@angular/router';
+import { LandingPageComponent } from './features/landing-page/landing-page.component';
 
 @NgModule({
-	declarations: [AppComponent, TfaComponent],
+	declarations: [AppComponent, TfaComponent, LandingPageComponent],
 	imports: [
 		BrowserModule,
 		CoreModule,

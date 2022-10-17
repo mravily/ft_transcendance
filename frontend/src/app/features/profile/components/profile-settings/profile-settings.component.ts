@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { ProfileService } from '../../services/profile.service';
 
@@ -17,13 +17,13 @@ export class ProfileSettingsComponent implements OnInit {
   user$!: Observable<IAccount>
   urlRegex!: RegExp;
   selectedFile!: File
-
+  reloader$ = new BehaviorSubject(null);
+  
   constructor(private profileService: ProfileService,
-			  private formBuilder: FormBuilder) { }
+			  private formBuilder: FormBuilder,
+			  private router: Router) { }
 
-	
-	ngOnInit(): void {
-		this.user$ = this.profileService.getPrivateProfile()
+	initForm(user$: Observable<IAccount>) {
 		this.user$.subscribe(v => {
 			this.settingsForm = this.formBuilder.group({
 				firstName: [v.firstName],
@@ -33,6 +33,11 @@ export class ProfileSettingsComponent implements OnInit {
 				nickname: [v.nickName],
 			});
 		});
+	}
+
+	ngOnInit(): void {
+		this.user$ = this.profileService.getPrivateProfile();
+		this.initForm(this.user$);
 	} 
 	
 	uploadFile(event: any) {
@@ -43,5 +48,12 @@ export class ProfileSettingsComponent implements OnInit {
 		if (this.selectedFile)
 			this.profileService.upload(this.selectedFile);
 		this.profileService.sendForm(this.settingsForm);
+		this.reload();
+	}
+
+	reload() {
+		this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
+			this.router.navigate(['/profile/settings']);
+		}); 
 	}
 }
