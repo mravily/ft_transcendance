@@ -377,6 +377,12 @@ export async function getBlockedUsers(this: PrismaService, login: string): Promi
                 score: true,
                 imgUrl: true,
                 isOnline: true,
+                _count: {
+                  select: {
+                    winnedMatchs: true,
+                    lostMatchs: true,
+                  }
+                }
               },
             },
           },
@@ -385,7 +391,17 @@ export async function getBlockedUsers(this: PrismaService, login: string): Promi
     });
     const list: IAccount[] = [];
     for (let i = 0; blockedList.blockedUsers[i]; i++) {
-      list.push(blockedList.blockedUsers[i].blocked);
+      list.push({
+        login: blockedList.blockedUsers[i].blocked.login,
+        nickName: blockedList.blockedUsers[i].blocked.nickName,
+        email: blockedList.blockedUsers[i].blocked.email,
+        score: blockedList.blockedUsers[i].blocked.score,
+        avatar: blockedList.blockedUsers[i].blocked.imgUrl,
+        isOnline: blockedList.blockedUsers[i].blocked.isOnline,
+        win: blockedList.blockedUsers[i].blocked._count.winnedMatchs,
+        lost: blockedList.blockedUsers[i].blocked._count.lostMatchs,
+        rank: await this.getUserRank(login),
+      });
     }
     return list;
   } catch (error) {
@@ -468,7 +484,7 @@ export async function getLastPhoto(this: PrismaService, login: string): Promise<
   }
 }
 
-export async function isFriend(this: PrismaService, userId: string, login: string): Promise<boolean> {
+export async function isFriend(this: PrismaService, userId: string, login: string): Promise<[boolean, boolean]> {
   try {
     const friend = await this.prisma.addFriend.findMany({
       where: {
@@ -491,11 +507,13 @@ export async function isFriend(this: PrismaService, userId: string, login: strin
         isAccepted: true,
       },
     });
+    let [isFriend, isAccepted] = [false, false];
     for (let i in friend){
+      isFriend = true;
       if (friend[i].isAccepted == true)
-        return true;
+        isAccepted = true;
     }
-    return false;
+    return [isFriend, isAccepted];
   }
   catch (error) {
     console.log(error.message);
@@ -759,7 +777,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
         channelList: [],
         channelAdmin: [],
       }
-      for (let i = 0; user.befriend[i]; i++) {
+      for (let i = 0; user.friends[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
       }
       for (let i = 0; user.blockedUsers[i]; i++) {

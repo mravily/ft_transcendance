@@ -39,8 +39,9 @@ export class ProfileController {
   }
 
   @Post('isfriend')
-  async isMyFriend(@Session() session, @Body() bod): Promise<boolean> {
-    return await this.db.isFriend(session.userid, bod.login);
+  async isMyFriend(@Session() session, @Body() bod): Promise<[boolean, boolean]> {
+    const tuple =  await this.db.isFriend(session.userid, bod.login);
+    return tuple;
   }
 
   @Post('isblocked')
