@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { IAccount } from 'src/app/model/user.model';
 
 @Component({
@@ -10,9 +11,14 @@ export class ContactListComponent implements OnInit {
 
   @Input() contact!: IAccount;
 	
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  reload(route: string) {
+	this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
+		this.router.navigate([route]);
+	}); 
+  }
 }

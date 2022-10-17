@@ -4,23 +4,15 @@ import {
   Post,
   UseInterceptors,
   Res,
-  Req,
   Session,
-  UnauthorizedException,
-  HttpCode,
   Body,
   Get,
-  Redirect,
 } from '@nestjs/common';
-import {
-  IUser2FA,
-  TwoFactorAuthenticationService,
-} from './twoFactorAuthentication.service';
-import { response, Response } from 'express';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { Response } from 'express';
 import TwoFactorAuthenticationDto from './dto/2fa.dto';
 import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
-import { request } from 'http';
 import { IAccount } from '../interfaces';
 import { AuthService } from '../auth/auth.service';
 
@@ -34,11 +26,9 @@ export class TwoFactorAuthenticationController {
   ) {}
 
   @Post('generate')
-  //   @UseGuards(AuthGuard('42'))
   async register(
     @Res() response: Response,
     @Session() session: Record<string, any>,
-    @Req() req,
   ) {
     console.log('user.id.tfa', session.userid);
     const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
@@ -55,7 +45,6 @@ export class TwoFactorAuthenticationController {
   }
 
   @Post('authenticate')
-  //   @UseGuards(JwtAuthenticationGuard)
   async authenticate(
     @Session() session: Record<string, any>,
     @Body() { token }: TwoFactorAuthenticationDto,
@@ -64,8 +53,7 @@ export class TwoFactorAuthenticationController {
     const isValid = await this.tfaService.isTfaCodeValid(token, session.userid);
     if (isValid) {
       const tokens = await this.authService.getTokens(session.userid);
-      res.cookie('access', tokens.access_token, { maxAge: 900000000 });
-      res.cookie('refresh', tokens.refresh_token, { maxAge: 604800 });
+      res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
     }
     return this.tfaService.isTfaCodeValid(token, session.userid);
   }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IAccount } from 'src/app/model/user.model';
+import { Router } from '@angular/router';
+import { IProfileFriends } from 'src/app/features/profile/models/profile.user.model';
 
 @Component({
   selector: 'app-bloc-friend',
@@ -8,11 +9,15 @@ import { IAccount } from 'src/app/model/user.model';
 })
 export class BlocFriendComponent implements OnInit {
 
-	@Input() friend!: IAccount;
-	@Input() rank!: number;
+	@Input() friend!: IProfileFriends;
 	
-	constructor() { }
+	constructor(private router: Router) { }
   
-	ngOnInit(): void {
+	ngOnInit(): void { }
+
+	reload() {
+		this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
+			this.router.navigate(['/profile/friends']);
+		}); 
 	}
 }

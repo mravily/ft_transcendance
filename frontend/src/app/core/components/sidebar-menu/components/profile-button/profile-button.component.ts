@@ -15,13 +15,20 @@ export class ProfileButtonComponent implements OnInit {
   
   constructor(private cookieService: CookieService,
 			  private router: Router,
-			  private sidebarService: SidebarMenuService) { }
+			  private sideBarService: SidebarMenuService) { }
 
   ngOnInit(): void {
   }
 
+  reload() {
+	this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
+		this.router.navigate([this.router.url]);
+	}); 
+}
+
   isLogout() {
-	this.sidebarService.signOut();
+	this.sideBarService.signOut();
+	this.reload();
 	this.router.navigateByUrl('/');
   }
 }
