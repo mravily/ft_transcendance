@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ProfileService } from 'src/app/features/profile/services/profile.service';
 import { IAccount } from 'src/app/model/user.model';
 
 @Component({
@@ -11,14 +12,20 @@ export class BlocBlockUsersComponent implements OnInit {
 
 	@Input() user!: IAccount;
 
-  	constructor(private router: Router) { }
+  	constructor(private router: Router,
+				private profileService: ProfileService) { }
 
   	ngOnInit(): void {
   	}
 
 	reload() {
 		this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
-			this.router.navigate([this.router.url]);
+			this.router.navigate(['profile/block-users']);
 		}); 
+	}
+
+	onUnblockUser(login: string): void {
+		this.profileService.unBlockUser(login);
+		this.reload();
 	}
 }

@@ -53,11 +53,11 @@ export class ProfileService {
   }
 
   blockUser(login: string) {
-	this.http.post('api/user/block', { login });
+	this.http.post('api/user/block', { login }).subscribe();
   }
 
   unBlockUser(login: string) {
-	this.http.post('api/user/unblock', { login });
+	this.http.post('api/user/unblock', { login }).subscribe();
   }
 
   isUser(login: string) {
@@ -73,6 +73,15 @@ export class ProfileService {
   }
 
   getBlockedUser(): Observable<IAccount[]> {
-	return this.http.get<IAccount[]>('api/profile/blockeduser');
+	return this.http.get<IAccount[]>('api/profile/blockedusers');
   }
+
+  acceptFriendRequest(login: string): void {
+	this.http.post('api/user/acceptfriend', { login }).subscribe();
+  }
+
+  removeFriend(login: string): void {
+	this.http.post('api/user/deletefriend',  { login }).subscribe();
+  }
+
 }

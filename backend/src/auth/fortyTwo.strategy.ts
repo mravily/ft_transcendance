@@ -25,7 +25,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   ): Promise<any> {
     try {
       request.session.firstTime = !(await this.db.isUser(profile.username));
-      console.log('42 stategie', request.session.firstTime);
       const id = await this.db.setUser(
         profile.username,
         profile.displayName,

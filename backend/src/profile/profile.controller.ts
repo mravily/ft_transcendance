@@ -26,7 +26,9 @@ export class ProfileController {
   }
 
   @Get('friends')
-  getFriends(@Session() session: Record<string, any>): Promise<IProfileFriends[]> {
+  getFriends(
+    @Session() session: Record<string, any>,
+  ): Promise<IProfileFriends[]> {
     return this.db.getProfileFriends(session.userid);
   }
 
@@ -48,7 +50,9 @@ export class ProfileController {
 
   @Get('blockedusers')
   async getBlockedUsers(@Session() session): Promise<IAccount[]> {
-    return await this.db.getBlockedUsers(await this.db.getUserLogin(session.userid));
+    return await this.db.getBlockedUsers(
+      await this.db.getUserLogin(session.userid),
+    );
   }
 
   @Get(':id')

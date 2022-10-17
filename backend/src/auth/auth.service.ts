@@ -11,7 +11,7 @@ export class AuthService {
     const [at] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
+          user: userId,
         },
         {
           expiresIn: '900s',
