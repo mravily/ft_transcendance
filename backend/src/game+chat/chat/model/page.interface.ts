@@ -8,5 +8,4 @@ export class PageI {
   @Type(() => Number)
   @IsNumber()
   limit: number;
-
 }

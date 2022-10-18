@@ -622,7 +622,7 @@ export async function getFriendsById(this: PrismaService, userId: string): Promi
   }
 }
 
-export async function searchUser(this: PrismaService, key: string): Promise<string[]> {
+export async function searchUser(this: PrismaService, key: string): Promise<IAccount[]> {
   try {
     const users = await this.prisma.user.findMany({
       where: {
@@ -633,10 +633,13 @@ export async function searchUser(this: PrismaService, key: string): Promise<stri
       },
       select: {
         login: true,
+        imgUrl: true,
+        winnedMatchs: true,
+        lostMatchs: true
       },
-      take: 4,
+      take: 5,
     });
-    return users.map((user) => user.login);
+    return users.map((user) => {return {login: user.login, avatar: user.imgUrl, win: user.winnedMatchs.length, lost: user.lostMatchs.length}});
   } catch (error) {
     console.log(error.message);
   }

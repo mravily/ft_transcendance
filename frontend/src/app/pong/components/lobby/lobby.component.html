@@ -19,12 +19,13 @@
   </div>
   <h2 style="margin: 20px;">Invite Friend</h2>
   <div class="friends" [formGroup]="searchForm">
-    <input id="search" type="text" placeholder="Search..." formControlName="search">
-    <div class="friend" *ngFor="let user of friends">
-      <img [src]="user.imgUrl">
-      <div class="friendname">{{user.name}}</div>
-      <div class="friendratio">{{user.ratio}}</div>
-      <button (click)="onInvite(user)">Invite</button>
+    <input id="search" type="text" placeholder="Search someone..." formControlName="search">
+    <div class="friend" *ngFor="let user of searchResult$ | async">
+      <img [src]="user.avatar">
+      <div class="friendname">{{user.login}}</div>
+      <div class="friendratio">{{user.win}} / {{user.lost}}</div>      
+      <button (click)="onInvite(user, false)">Invite</button>
+      <button (click)="onInvite(user, true)">Invite with PowerUps !</button>
     </div>
       
   </div>

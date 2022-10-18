@@ -19,7 +19,7 @@
         <div *ngIf="!selectedChannel.isDirect">
           <div [formGroup]="searchForm">
             <input placeholder="Add someone to the room" formControlName="search">
-            <button class="addbutton" *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user)">Add {{user}}</button>
+            <button class="addbutton" *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
           </div>
           <h6>Members</h6>
           <div *ngFor="let member of selectedChannel.users">
@@ -50,7 +50,8 @@
         <div *ngIf="selectedChannel.isDirect">
           <div *ngFor="let member of selectedChannel.users">
             <button  (click)="onProfileClick(member.login)" class="addbutton">{{member.login}}</button>
-            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login)">Invite in a pong match</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login, false)">Pong !</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login, true)"> PowerUps !</button>
             <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
             <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
           </div>

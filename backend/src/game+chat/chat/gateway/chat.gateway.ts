@@ -116,7 +116,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('searchUsers')
   async onSearchUser(socket: Socket, key: string) {
-    const res: string[] = await this.db.searchUser(key);
+    const res: IAccount[] = await this.db.searchUser(key);
     socket.emit('users', res);
   }
   
@@ -538,16 +538,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   
   @SubscribeMessage('invite')
-  async handleInvite(client: Socket, login: string)  {
-    console.log("invite", login);
+  async handleInvite(client: Socket, inviteInfo: {login: string, powerup: boolean})  {
+    console.log("invite", inviteInfo.login);
     
-    if (!(await this.db.isUser(login)))
+    if (!(await this.db.isUser(inviteInfo.login)))
       return client.emit('Error', 'User not found');
-    this.gameServ.invitePlayer(client, login);
-    this.sendTo(login, 'invite', client.data.user.login);
+    this.gameServ.invitePlayer(client, inviteInfo.login, inviteInfo.powerup);
+    this.sendTo(inviteInfo.login, 'invite', client.data.user.login);
   }
   @SubscribeMessage('acceptInvite')
-  async acceptInvite(client: Socket, login: string) {
+  async acceptInvite(client: Socket, login: string)  {
     let socketIds: Set<string> = this.connectedUsers.get(login);
     console.log("acceptInvite", login, socketIds);
     if (!socketIds) {

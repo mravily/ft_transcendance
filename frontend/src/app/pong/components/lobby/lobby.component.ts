@@ -2,6 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
+import { IAccount } from 'src/app/model/user.model';
+import { ChatService } from '../../../chat/services/chat.service';
 import { PongService } from '../../services/pong.service';
 
 @Component({
@@ -20,19 +22,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   buttonText: string = "Find Opponent";
   PUbuttonText: string = "Find Opponent";
-  friends: any[];
+  // friends: any[];
   searchForm!: FormGroup;
-  searchResult$!: Observable<string>;
+  searchResult$!: Observable<IAccount[]>;
   searchSubcription!: Subscription;
 
   constructor(private router: Router,
               private pongServ: PongService,
+              private chatServ: ChatService,
               private formBuilder: FormBuilder) { 
-    this.friends = [
-      {name: "noob", ratio: 0.25, imgUrl : "https://www.w3schools.com/howto/img_avatar.png"},
-      {name: "Jane", ratio: 0.75, imgUrl : "https://www.w3schools.com/howto/img_avatar.png"},
-      {name: "Jack", ratio: 0.75, imgUrl : "https://www.w3schools.com/howto/img_avatar.png"},
-    ];
   }
 
   ngOnInit(): void {
@@ -42,7 +40,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.searchSubcription = this.searchForm.valueChanges.pipe(
       map((form) => form.search)
     ).subscribe((search) => {
-      // this.searchResult = api.getSearch();
+      this.chatServ.searchUsers(search);
+    });
+    this.searchResult$ = this.chatServ.getSearchUsersObs();
+    this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
+      console.log('game found', gameId);
+      this.router.navigate(['play', gameId]);
+    });
+    this.pongServ.gameFoundEvent.subscribe((id: number) => {
+      this.router.navigateByUrl('/play/' + id);
     });
   }
   ngOnDestroy() {
@@ -53,9 +59,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.buttonText = "Searching...";
     
     this.pongServ.getNewMatchmaking();
-    this.pongServ.gameFoundEvent.subscribe((id: number) => {
-      this.router.navigateByUrl('/play/' + id);
-    });
   }
   onPUMatchmaking() {
     this.findPUMatchButton.nativeElement.disabled = true;
@@ -66,7 +69,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/play/' + id);
     });
   }
-  onInvite(user: any) {
-    this.pongServ.invitePlayer(user.id);
+  onInvite(user: IAccount, powerup: boolean) {
+    this.chatServ.inviteUser(user.login, powerup);
   }
 }

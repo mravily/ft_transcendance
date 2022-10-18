@@ -11,7 +11,7 @@ import { PrismaService } from '../../prisma.service';
 export class GameService  {
   games: Map<number, GameMatch>;
   gameIdByLogin: Map<string, number>;
-  invites: Map<string, string>;
+  invites: Map<string, any>;
   queue: Socket[];
   PUqueue: Socket[];
 
@@ -19,7 +19,7 @@ export class GameService  {
   @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway, public db: PrismaService) { 
     console.log("Game Service created");
     this.games = new Map<number, GameMatch>();
-    this.invites = new Map<string, string>();
+    this.invites = new Map<string, any>();
     this.queue = [];
     this.PUqueue = [];
     this.gameIdByLogin = new Map<string, number>();
@@ -61,17 +61,17 @@ export class GameService  {
     }
     client.emit('queuing');
   }
-  invitePlayer(client: Socket, login: string) {
-    this.invites.set(client.data.user.login, login);
+  invitePlayer(client: Socket, login: string, powerup: boolean) {
+    this.invites.set(client.data.user.login, [login, powerup]);
   }
   acceptInvite(client: Socket, login: string) {
     if (!this.invites.has(login))
       return;
     var invited = this.invites.get(login);
-    if (invited != client.data.user.login)
+    if (invited[0] != client.data.user.login)
       return;
     console.log("invite accepted", client.data.user.login, "vs", login);
-    let gameId = this.createGame([login, client.data.user.login], false);
+    let gameId = this.createGame([login, client.data.user.login], invited[1]);
     this.chatGW.sendMatchId(client.data.user.login, gameId);
     this.chatGW.sendMatchId(login, gameId);
   }

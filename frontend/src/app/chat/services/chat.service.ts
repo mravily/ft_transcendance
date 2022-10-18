@@ -41,8 +41,8 @@ export class ChatService {
   searchUsers(search: string) {
     this.socket.emit('searchUsers', search);
   }
-  getSearchUsersObs(): Observable<string[]> {
-    return this.socket.fromEvent<string[]>('users');
+  getSearchUsersObs(): Observable<IAccount[]> {
+    return this.socket.fromEvent<IAccount[]>('users');
   }
   createChannel(room: IChannel) {
     this.socket.emit('createChannel', room);
@@ -126,8 +126,8 @@ export class ChatService {
     return this.socket.fromEvent<IAccount>('myUser');
   }
   
-  inviteUser(login: string) {
-    this.socket.emit('invite', login);
+  inviteUser(login: string, powerup: boolean) {
+    this.socket.emit('invite', {login: login, powerup: powerup});
   }
   acceptInvite(login: string) {
     this.socket.emit('acceptInvite', login);

@@ -6,10 +6,16 @@
     <body>
         <div class='game' style="font-family: Orbitron;">
             <div class="playercolumn">
-                <div class="player" [ngClass]="{player: !isSpec}" *ngFor="let p of players">
-                    <img [src]="p.avatar">
-                    <div class="playername">{{p.login}}</div>
-                    <div class="playerratio">{{p.win}} / {{p.lost}}</div>
+                <div class="player" [ngClass]="{player: !isSpec}">
+                    <img [src]="players[0].avatar">
+                    <div class="playername">{{players[0].login}}</div>
+                    <div class="playerratio">{{players[0].win}} / {{players[0].lost}}</div>
+                </div>
+                <h1>VS</h1>
+                <div class="player">
+                    <img [src]="players[1].avatar">
+                    <div class="playername">{{players[1].login}}</div>
+                    <div class="playerratio">{{players[1].win}} / {{players[1].lost}}</div>
                 </div>
             </div>
 

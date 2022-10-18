@@ -25,7 +25,7 @@ export class ChatComponent implements OnInit {
   newPassword!: string;
   myUser!: IAccount;
   searchForm!: FormGroup;
-  userSearchResult$!: Observable<string[]>;
+  userSearchResult$!: Observable<IAccount[]>;
   searchSubcription!: Subscription;
 
   constructor(private chatServ: ChatService,
@@ -216,8 +216,8 @@ export class ChatComponent implements OnInit {
   onProfileClick(login: string) {
     this.router.navigateByUrl("/profile/" + login);
   }
-  onInvite(login: string) {
-    this.chatServ.inviteUser(login);
+  onInvite(login: string, powerup: boolean) {
+    this.chatServ.inviteUser(login, powerup);
   }
   onAcceptInvite(login: string) {
     this.chatServ.acceptInvite(login);
