@@ -22,6 +22,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   buttonText: string = "Find Opponent";
   PUbuttonText: string = "Find Opponent";
+  invites$: Observable<string[]>; 
   // friends: any[];
   searchForm!: FormGroup;
   searchResult$!: Observable<IAccount[]>;
@@ -32,6 +33,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
               private pongServ: PongService,
               private chatServ: ChatService,
               private formBuilder: FormBuilder) { 
+    this.invites$ = this.chatServ.getInvitesObs();
   }
 
   ngOnInit(): void {
@@ -51,12 +53,12 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.subs.push(this.pongServ.gameFoundEvent.subscribe((id: number) => {
       this.router.navigateByUrl('/play/' + id);
     }));
-    this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
-      // a refaire avec medhi
-      console.log('invite', login);
-  
-      this.chatServ.acceptInvite(login);
-    }));
+    // this.subs.push(this.chatServ.getInvitesObs().subscribe((login: string) => {
+    //   console.log('invite', login);
+    //   // if (confirm(login + ' wants to play with you'))
+    //   this.chatServ.acceptInvite(login);
+    // }));
+    this.chatServ.getInvites();
   }
   ngOnDestroy() {
     this.searchSubcription.unsubscribe();
@@ -79,5 +81,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
   onInvite(user: IAccount, powerup: boolean) {
     this.chatServ.inviteUser(user.login, powerup);
+  }
+  onAcceptInvite(login: string) {
+    this.chatServ.acceptInvite(login);
   }
 }

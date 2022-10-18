@@ -200,10 +200,14 @@ export class PongMatch {
       this.gameContext.fillRect(0,0,this.gameCanvas.nativeElement.width,this.gameCanvas.nativeElement.height);
       this.gameContext.fillStyle = "#fff";
       this.gameContext.font = "120px Orbitron";
-      if (this.playerScore > this.opponentScore)
-        this.gameContext.fillText(`You win`, 700, 300);
-      else
-        this.gameContext.fillText(`You lose`, 700, 300);    
+      if (this.player.isPlayer)
+      {
+        if (e.yourScore > e.opponentScore)
+          this.gameContext.fillText(`You win`, 700, 300);
+        else
+          this.gameContext.fillText(`You lose`, 700, 300);
+      }
+
       this.gameContext.fillText(e.yourScore+" - "+e.opponentScore, 700, 500);    
       this.specSubcription.unsubscribe();
       this.otherSubcriptions.forEach((sub) => sub.unsubscribe());

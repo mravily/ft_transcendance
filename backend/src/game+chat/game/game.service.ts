@@ -48,9 +48,14 @@ export class GameService  {
   }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
     let queue = (powerUps) ? this.PUqueue : this.queue;
-    console.log("queue", queue);
+    let otherqueue = (!powerUps) ? this.PUqueue : this.queue;
+    // console.log("queue", queue);
     if (queue.length > 0) {
       var oppo = queue.pop();
+      if (otherqueue.includes(oppo))
+        otherqueue.splice(queue.indexOf(oppo), 1);
+      if (otherqueue.includes(client))
+        otherqueue.splice(queue.indexOf(client), 1);
       var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
@@ -61,6 +66,14 @@ export class GameService  {
     }
     client.emit('queuing');
   }
+  getInvites(login: string) {
+    let res: string[] = [];
+    for (var invite of this.invites.entries()) {
+      if (invite[1][0] == login)
+        res.push(invite[0]);
+    }
+    return res;
+  }
   invitePlayer(client: Socket, login: string, powerup: boolean) {
     this.invites.set(client.data.user.login, [login, powerup]);
   }
@@ -70,6 +83,7 @@ export class GameService  {
     var invited = this.invites.get(login);
     if (invited[0] != client.data.user.login)
       return;
+    this.invites.delete(login);
     console.log("invite accepted", client.data.user.login, "vs", login);
     let gameId = this.createGame([login, client.data.user.login], invited[1]);
     this.chatGW.sendMatchId(client.data.user.login, gameId);
@@ -88,7 +102,7 @@ export class GameService  {
         this.games.delete(gameId);
       }
     }
-    console.log("running games remaining", this.games.size);
+    // console.log("running games remaining", this.games.size);
   }
 
   setPlayerPos(login: string, paddle: GamePaddle) {
@@ -253,7 +267,7 @@ export class GameMatch {
   update_powerups(): void {
     for (let i = 0; i < this.powerUps.length; i++) {
       if (this.powerUps[i].collides(this.ball)) {
-        console.log((this.ball.xVel > 0 ? 'player1' : 'player2'), 'got powerup', ["double_paddle", "large_paddle", "small_paddle", "power_paddle", "slow_paddle"][this.powerUps[i].type], 'at', this.powerUps[i].x, this.powerUps[i].y);
+        // console.log((this.ball.xVel > 0 ? 'player1' : 'player2'), 'got powerup', ["double_paddle", "large_paddle", "small_paddle", "power_paddle", "slow_paddle"][this.powerUps[i].type], 'at', this.powerUps[i].x, this.powerUps[i].y);
         if (this.ball.xVel > 0)
           this.player1.powerUp(this.powerUps[i].type);
         else
@@ -266,7 +280,7 @@ export class GameMatch {
     if (this.cur - this.lastPowerUp > 10000 && this.powerUps.length < 3) {
       this.powerUps.push(new PowerUp());
       this.wsg.newPowerUp(this.socketIds, this.socketIdsSpec, this.powerUps[this.powerUps.length - 1]);
-      console.log("new powerup", this.powerUps[this.powerUps.length - 1]);
+      // console.log("new powerup", this.powerUps[this.powerUps.length - 1]);
       this.lastPowerUp = this.cur;
     }
   }
