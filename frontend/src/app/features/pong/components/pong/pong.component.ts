@@ -174,6 +174,8 @@ export class PongMatch {
       this.start();
     }));
     this.otherSubcriptions.push(this.wss.powerUpEvent.subscribe((e: PowerUpEvent) => {
+      if (e == undefined)
+        return;
       if (e.subject === "add")
         this.powerUps.push(new PowerUp(e));
       else {

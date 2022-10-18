@@ -110,17 +110,23 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('getMyUser')
   async getMyUser(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     client.emit('myUser', client.data.user);
   }
 
   @SubscribeMessage('findMatch')
   async findMatch(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.getMatchmakingGame(client, false);
     // console.log('find', client.id );
   }
 
   @SubscribeMessage('findPUMatch')
   async findPUMatch(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.getMatchmakingGame(client, true);
   }
   async sendMatchId(sockId: string, gameId: number) {
@@ -129,6 +135,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.startGame(gameId, client);
   }
   sendStart(sockIds: string[], compteur: number) {
@@ -150,6 +158,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   @SubscribeMessage('paddle')
   async handlePaddle(client: Socket, payload: GamePaddle) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.setPlayerPos(client.data.user.login, payload);
   }
   
@@ -206,6 +216,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload: string)  {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.sendMessage(client.data.user.login, payload);
   }
   sendMessage(sockIds: string[], specs: string[], sender: string, payload: string)  {
