@@ -11,6 +11,7 @@ export interface IProfileFriends {
     score: number,
     avatar: string,
     isSent: boolean,
+    rank: number,
 }
 
 export async function getProfileFriends(this: PrismaService, userId: string): Promise<IProfileFriends[]> {
@@ -76,6 +77,7 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
               score: list.befriend[i].requested.score,
               avatar: list.befriend[i].requested.imgUrl,
               isSent: true,
+              rank: await this.getUserRank(list.befriend[i].requested.login),
           });
         }
       }
@@ -91,6 +93,7 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
               score: list.friends[i].requester.score,
               avatar: list.friends[i].requester.imgUrl,
               isSent: false,
+              rank: await this.getUserRank(list.friends[i].requester.login),
           });
         }
       }

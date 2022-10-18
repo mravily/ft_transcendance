@@ -128,7 +128,7 @@ export async function getProfileOverview(this: PrismaService, userid: string): P
             avatar: usr.friends[i].requester.imgUrl,
             displayName: usr.friends[i].requester.nickName,
             createdAt: usr.friends[i].createdAt,
-            message: null,
+            message: 'sent you a friend request',
           });
         }
       }

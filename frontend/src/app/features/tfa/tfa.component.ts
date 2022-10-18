@@ -16,6 +16,7 @@ import { TfaService } from './services/tfa.service';
 })
 export class TfaComponent implements OnInit {
 
+		
 	title = 'otp-app';
 	otp!: string;
 	inputDigitLeft: string = "Verify code";
@@ -47,13 +48,10 @@ export class TfaComponent implements OnInit {
 
 	isValid!: boolean;
 	onSubmit() {
-	this.tfaServices.verifyAuth(this.otp).subscribe(v => {
-		console.log('v', v);
+	this.tfaServices.verifyAuth(this.otp).pipe().subscribe(v => {
 	  this.isValid = v;
-	  if (v) {
-		this.router.navigateByUrl('view');
-	  }
-	});
-}
-
+	  	if (v) this.router.navigateByUrl('view');
+		});
+	}
+	
 }

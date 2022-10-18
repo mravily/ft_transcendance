@@ -8,16 +8,19 @@ import { IAccount, IMatch } from '../../interfaces';
 import { PrismaService } from '../../prisma.service';
 
 @Injectable()
-export class GameService  {
+export class GameService {
   games: Map<number, GameMatch>;
   gameIdByLogin: Map<string, number>;
   invites: Map<string, any>;
   queue: Socket[];
   PUqueue: Socket[];
 
-  constructor( @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
-  @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway, public db: PrismaService) { 
-    console.log("Game Service created");
+  constructor(
+    @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
+    @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway,
+    public db: PrismaService,
+  ) {
+    console.log('Game Service created');
     this.games = new Map<number, GameMatch>();
     this.invites = new Map<string, any>();
     this.queue = [];
@@ -28,16 +31,20 @@ export class GameService  {
   async startGame(gameId: number, client: Socket) {
     if (!this.games.has(gameId)) {
       return this.wsg.redirectToLobby(client);
-    }    
+    }
     this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
-    let users = await this.games.get(gameId).getPlayersAccounts();
-    users.sort((a, b) => ((a.login == client.data.user.login)?0:1) - ((b.login == client.data.user.login)?0:1));
+    const users = await this.games.get(gameId).getPlayersAccounts();
+    users.sort(
+      (a, b) =>
+        (a.login == client.data.user.login ? 0 : 1) -
+        (b.login == client.data.user.login ? 0 : 1),
+    );
     this.wsg.sendMatchUsers(client.id, users);
   }
 
   createGame(players: string[], powerUps: boolean): number {
-    var gameId = Math.floor(Math.random() * 1000000);
+    let gameId = Math.floor(Math.random() * 1000000);
     while (this.games.has(gameId)) {
       gameId = Math.floor(Math.random() * 1000000);
     }
@@ -59,9 +66,13 @@ export class GameService  {
       var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
-      console.log('creating', client.data.user.login, "vs", oppo.data.user.login);
-    }
-    else {
+      console.log(
+        'creating',
+        client.data.user.login,
+        'vs',
+        oppo.data.user.login,
+      );
+    } else {
       queue.push(client);
     }
     client.emit('queuing');
@@ -91,7 +102,7 @@ export class GameService  {
   }
   removeGame(login: string) {
     if (this.gameIdByLogin.has(login)) {
-      var gameId = this.gameIdByLogin.get(login);
+      const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
@@ -107,7 +118,7 @@ export class GameService  {
 
   setPlayerPos(login: string, paddle: GamePaddle) {
     if (this.gameIdByLogin.has(login)) {
-      var gameId = this.gameIdByLogin.get(login);
+      const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         this.games.get(gameId).setPlayerPos(login, paddle);
       }
@@ -122,10 +133,10 @@ export class GameService  {
     }
   }
   getLiveGames(): IMatch[] {
-    var res: IMatch[] = [];
+    const res: IMatch[] = [];
 
-    for (var gameId of this.games.keys()) {
-      let game = this.games.get(gameId);
+    for (const gameId of this.games.keys()) {
+      const game = this.games.get(gameId);
       res.push({
         gameId: gameId,
         winner: game.playerLogins[0],
@@ -133,13 +144,14 @@ export class GameService  {
         looser: game.playerLogins[1],
         looserScore: game.player2Score,
       });
-    } 
+    }
     return res;
   }
+
   sendMessage(login: string, message: string) {
     if (this.gameIdByLogin.has(login)) {
-      console.log("sending message", login, message);
-      var gameId = this.gameIdByLogin.get(login);
+      console.log('sending message', login, message);
+      const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         this.games.get(gameId).sendMessage(login, message);
       }
@@ -148,7 +160,6 @@ export class GameService  {
 }
 
 export class GameMatch {
-  
   startGame(socket: Socket): void {
     let i = this.playerLogins.indexOf(socket.data.user.login);
     
@@ -172,7 +183,10 @@ export class GameMatch {
       this.socketIdsSpec.push(socket.id);
       console.log(socket.data.user.login, 'spectating');
       this.wsg.sendSpecMode(socket);
-      this.wsg.sendGameStatus(socket.id, this.getGameStatus(socket.data.user.login));
+      this.wsg.sendGameStatus(
+        socket.id,
+        this.getGameStatus(socket.data.user.login),
+      );
     }
   }
 
@@ -187,7 +201,7 @@ export class GameMatch {
   sendMessage(login: string, message: string) {
     this.wsg.sendMessage(this.socketIds, this.socketIdsSpec, login, message);
   }
-  
+
   private idInterval!: NodeJS.Timer;
   private playerIds: string[];
   private socketIds:  string[];
@@ -198,13 +212,13 @@ export class GameMatch {
   private cur!: number;
   private powerUps: PowerUp[];
   private lastPowerUp: number;
-  
-  private canvasWidth:number;
-  private canvasHeight:number;
-  private paddleWidth:number;
-  private paddleHeight:number;
-  private ballSize:number;
-  private wallOffset:number;
+
+  private canvasWidth: number;
+  private canvasHeight: number;
+  private paddleWidth: number;
+  private paddleHeight: number;
+  private ballSize: number;
+  private wallOffset: number;
   public player1Score: number;
   public player2Score: number;
   private period: number = 1000 / 60;
@@ -219,17 +233,33 @@ export class GameMatch {
     this.wallOffset = 20;
     this.player1Score = 0;
     this.player2Score = 0;
-    
+
     this.lastPowerUp = 0;
-    this.player1 = new Paddle(this.paddleWidth,this.paddleHeight,this.wallOffset+this.ballSize, this.canvasHeight / 2 - this.paddleHeight / 2); 
-    this.player2 = new Paddle(this.paddleWidth,this.paddleHeight,this.canvasWidth - (this.wallOffset + this.paddleWidth) - this.ballSize, this.canvasHeight / 2 - this.paddleHeight / 2);
-    this.ball = new Ball(this.ballSize,this.ballSize,this.canvasWidth / 2 - this.ballSize / 2, this.canvasWidth / 2 - this.ballSize / 2, this);
+    this.player1 = new Paddle(
+      this.paddleWidth,
+      this.paddleHeight,
+      this.wallOffset + this.ballSize,
+      this.canvasHeight / 2 - this.paddleHeight / 2,
+    );
+    this.player2 = new Paddle(
+      this.paddleWidth,
+      this.paddleHeight,
+      this.canvasWidth - (this.wallOffset + this.paddleWidth) - this.ballSize,
+      this.canvasHeight / 2 - this.paddleHeight / 2,
+    );
+    this.ball = new Ball(
+      this.ballSize,
+      this.ballSize,
+      this.canvasWidth / 2 - this.ballSize / 2,
+      this.canvasWidth / 2 - this.ballSize / 2,
+      this,
+    );
     this.powerUps = [];
     this.socketIds = ['', ''];
     this.playerIds = ['', ''];
     this.socketIdsSpec = [];
   }
-  
+
   async start(): Promise<void> {
     this.sendGameStatus();
     this.wsg.sendStart(this.socketIds, 5);
@@ -243,14 +273,13 @@ export class GameMatch {
     this.wsg.sendStart(this.socketIds, 1);
     await delay(1000);
     this.wsg.sendStart(this.socketIds, 0);
-  
+
     this.cur = Date.now();
     this.idInterval = setInterval(() => this.gameLoop(), 1000 / 59);
   }
-  
-  gameLoop(){
-    while (Date.now() - this.cur >= this.period)
-    {
+
+  gameLoop() {
+    while (Date.now() - this.cur >= this.period) {
       this.update();
       this.cur += this.period;
     }
@@ -264,6 +293,7 @@ export class GameMatch {
     this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
     this.wsg.removeGame(this.playerLogins[0]);
   }
+
   update_powerups(): void {
     for (let i = 0; i < this.powerUps.length; i++) {
       if (this.powerUps[i].collides(this.ball)) {
@@ -286,22 +316,36 @@ export class GameMatch {
   }
 
   sendEndofPowerUp(idPlayer: boolean, type: number): void {
-    this.wsg.sendEndofPowerUp(this.socketIds, this.socketIdsSpec, idPlayer, type);
+    this.wsg.sendEndofPowerUp(
+      this.socketIds,
+      this.socketIdsSpec,
+      idPlayer,
+      type,
+    );
   }
 
-  update()  {
+  update() {
     this.player1.update(this.canvasHeight, this.wallOffset, this);
     this.player2.update(this.canvasHeight, this.wallOffset, this);
-    this.ball.update(this.player1, this.player2, this.canvasWidth, this.canvasHeight, this.wallOffset);
+    this.ball.update(
+      this.player1,
+      this.player2,
+      this.canvasWidth,
+      this.canvasHeight,
+      this.wallOffset,
+    );
     if (this.player1Score >= 10 || this.player2Score >= 10) {
       this.end();
     }
 
-    if (this.custom)
-      this.update_powerups();
-    
-    if (this.ball.xVel != this.ball.lastXVel || this.ball.yVel != this.ball.lastYVel || (this.ball.x > this.canvasWidth/2) != this.ball.lastXsign) {
-      this.sendGameStatus();  
+    if (this.custom) this.update_powerups();
+
+    if (
+      this.ball.xVel != this.ball.lastXVel ||
+      this.ball.yVel != this.ball.lastYVel ||
+      this.ball.x > this.canvasWidth / 2 != this.ball.lastXsign
+    ) {
+      this.sendGameStatus();
       this.ball.lastXVel = this.ball.xVel;
       this.ball.lastYVel = this.ball.yVel;
       this.ball.lastXsign = this.ball.x > this.canvasWidth / 2;
@@ -343,7 +387,11 @@ export class GameMatch {
     {
       this.player1.y = paddle.y;
       this.player1.yVel = paddle.yVel;
-      this.wsg.sendPaddlePos(0, this.socketIds, this.socketIdsSpec, {y: this.player1.y, yVel: this.player1.yVel, timeStamp: paddle.timeStamp});
+      this.wsg.sendPaddlePos(0, this.socketIds, this.socketIdsSpec, {
+        y: this.player1.y,
+        yVel: this.player1.yVel,
+        timeStamp: paddle.timeStamp,
+      });
       while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
         this.player1.update(this.canvasHeight, this.wallOffset, this);
         paddle.timeStamp += this.period;
@@ -353,7 +401,11 @@ export class GameMatch {
     {
       this.player2.y = paddle.y;
       this.player2.yVel = paddle.yVel;
-      this.wsg.sendPaddlePos(1, this.socketIds, this.socketIdsSpec, {y: this.player2.y, yVel: this.player2.yVel, timeStamp: paddle.timeStamp});
+      this.wsg.sendPaddlePos(1, this.socketIds, this.socketIdsSpec, {
+        y: this.player2.y,
+        yVel: this.player2.yVel,
+        timeStamp: paddle.timeStamp,
+      });
       while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
         this.player2.update(this.canvasHeight, this.wallOffset, this);
         paddle.timeStamp += this.period;
@@ -363,5 +415,5 @@ export class GameMatch {
 }
 
 function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
