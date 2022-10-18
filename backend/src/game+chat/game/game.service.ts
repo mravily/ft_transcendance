@@ -79,10 +79,10 @@ export class GameService  {
     if (this.gameIdByLogin.has(login)) {
       var gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
-        for (var player of this.games.get(gameId).playerIds) {
+        for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
         }
-        for (var player of this.games.get(gameId).playerIds) {
+        for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
         }
         this.games.delete(gameId);
@@ -114,9 +114,9 @@ export class GameService  {
       let game = this.games.get(gameId);
       res.push({
         gameId: gameId,
-        winner: game.playerIds[0],
+        winner: game.playerLogins[0],
         winnerScore: game.player2Score,
-        looser: game.playerIds[1],
+        looser: game.playerLogins[1],
         looserScore: game.player2Score,
       });
     } 
@@ -136,16 +136,19 @@ export class GameService  {
 export class GameMatch {
   
   startGame(socket: Socket): void {
-    let i = this.playerIds.indexOf(socket.data.user.login);
+    let i = this.playerLogins.indexOf(socket.data.user.login);
     
-    console.log("starting game", this.playerIds);
+    console.log("starting game", this.playerLogins);
     
     if (i != -1)  {
       if (!this.socketIds.includes(socket.id)) {
         this.socketIds[i] = socket.id;
+      }
+      if (!this.playerIds.includes(socket.data.userId)) {
+        this.playerIds[i] = socket.data.userId;
         console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
       }
-      console.log("starting game", i, this.socketIds, this.playerIds, socket.id);
+      console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
       if (!this.socketIds.includes('') && !this.idInterval)
         this.start();
       else if (!this.idInterval)
@@ -161,7 +164,7 @@ export class GameMatch {
 
   async getPlayersAccounts(): Promise<IAccount[]> {
     var res: IAccount[] = [];
-    for (var player of this.playerIds) {
+    for (var player of this.playerLogins) {
       res.push(await this.db.getPublicProfile(player));
     }
     return res;
@@ -172,6 +175,7 @@ export class GameMatch {
   }
   
   private idInterval!: NodeJS.Timer;
+  private playerIds: string[];
   private socketIds:  string[];
   public  socketIdsSpec: string[];
   private player1!: Paddle;
@@ -189,10 +193,9 @@ export class GameMatch {
   private wallOffset:number;
   public player1Score: number;
   public player2Score: number;
-
   private period: number = 1000 / 60;
   
-  constructor(private readonly wsg: GameGateway, public playerIds: string[], public custom: boolean = false,  private db: PrismaService) {
+  constructor(private readonly wsg: GameGateway, public playerLogins: string[], public custom: boolean = false,  private db: PrismaService) {
     
     this.canvasWidth = 1400;
     this.canvasHeight = 800;
@@ -209,6 +212,7 @@ export class GameMatch {
     this.ball = new Ball(this.ballSize,this.ballSize,this.canvasWidth / 2 - this.ballSize / 2, this.canvasWidth / 2 - this.ballSize / 2, this);
     this.powerUps = [];
     this.socketIds = ['', ''];
+    this.playerIds = ['', ''];
     this.socketIdsSpec = [];
   }
   
@@ -239,10 +243,12 @@ export class GameMatch {
   }
   end(): void {
     clearInterval(this.idInterval);
-    // this.db.setMatch();
+    let winner = (this.player1Score > this.player2Score) ? 0 : 1;
+    let scores = [this.player1Score, this.player2Score].sort();
+    this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[1], scores[0]);
 
     this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
-    this.wsg.removeGame(this.playerIds[0]);
+    this.wsg.removeGame(this.playerLogins[0]);
   }
   update_powerups(): void {
     for (let i = 0; i < this.powerUps.length; i++) {
@@ -289,15 +295,15 @@ export class GameMatch {
   }
 
   sendGameStatus(): void {
-    this.wsg.sendGameStatus(this.socketIds[0], this.getGameStatus(this.playerIds[0]));
-    this.wsg.sendGameStatus(this.socketIds[1], this.getGameStatus(this.playerIds[1]));
+    this.wsg.sendGameStatus(this.socketIds[0], this.getGameStatus(this.playerLogins[0]));
+    this.wsg.sendGameStatus(this.socketIds[1], this.getGameStatus(this.playerLogins[1]));
     for (var i = 0; i < this.socketIdsSpec.length; i++) {
       this.wsg.sendGameStatus(this.socketIdsSpec[i], this.getGameStatus('spec'));
     }
   }
 
   getGameStatus(login: string): GameStatus {
-    if (login == this.playerIds[1])
+    if (login == this.playerLogins[1])
       return {
         timeStamp: this.cur,
         myScore: this.player2Score,
@@ -319,7 +325,7 @@ export class GameMatch {
       };
   }
   setPlayerPos(login: string, paddle: GamePaddle): void {
-    if (login == this.playerIds[0])
+    if (login == this.playerLogins[0])
     {
       this.player1.y = paddle.y;
       this.player1.yVel = paddle.yVel;
@@ -329,7 +335,7 @@ export class GameMatch {
         paddle.timeStamp += this.period;
       }
     }
-    else if (login == this.playerIds[1])
+    else if (login == this.playerLogins[1])
     {
       this.player2.y = paddle.y;
       this.player2.yVel = paddle.yVel;
