@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PongService } from 'src/app/features/pong/services/pong.service';
 import { CurrentMatch } from '../models/current-match.model';
 
 @Component({
@@ -11,7 +12,8 @@ export class CurrentMatchComponent implements OnInit {
 
 	matches!: CurrentMatch[];
 	
-  	constructor() { }
+  	constructor() {
+	}
 
   	ngOnInit(): void {
 		this.matches = [
