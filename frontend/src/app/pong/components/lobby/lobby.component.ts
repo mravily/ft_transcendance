@@ -26,6 +26,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   searchForm!: FormGroup;
   searchResult$!: Observable<IAccount[]>;
   searchSubcription!: Subscription;
+  subs: Subscription[] = [];
 
   constructor(private router: Router,
               private pongServ: PongService,
@@ -43,16 +44,23 @@ export class LobbyComponent implements OnInit, OnDestroy {
       this.chatServ.searchUsers(search);
     });
     this.searchResult$ = this.chatServ.getSearchUsersObs();
-    this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
+    this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
       console.log('game found', gameId);
       this.router.navigate(['play', gameId]);
-    });
-    this.pongServ.gameFoundEvent.subscribe((id: number) => {
+    }));
+    this.subs.push(this.pongServ.gameFoundEvent.subscribe((id: number) => {
       this.router.navigateByUrl('/play/' + id);
-    });
+    }));
+    this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
+      // a refaire avec medhi
+      console.log('invite', login);
+  
+      this.chatServ.acceptInvite(login);
+    }));
   }
   ngOnDestroy() {
     this.searchSubcription.unsubscribe();
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
   onMatchmaking() {
     this.findMatchButton.nativeElement.disabled = true;
