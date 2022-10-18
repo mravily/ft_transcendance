@@ -15,7 +15,6 @@ export class UploadsController {
   constructor(private db: PrismaService) {}
 
   @Post()
-  @UseGuards(AuthGuard('42'))
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile() file: Express.Multer.File,

@@ -25,7 +25,6 @@ export class SidebarMenuComponent implements OnInit {
 		
 		ngOnInit(): void {
 			this.time = setInterval(() => { this.data$ = this.sidebarServices.getData();}, 5000);
-			this.reload();
 		}
 		
 		reload() {
@@ -34,5 +33,9 @@ export class SidebarMenuComponent implements OnInit {
 		
 		isLogin() {
 			return this.cookieService.check('access');
+		}
+
+		ngOnDestroy() {
+			clearInterval(this.time);
 		}
 	}

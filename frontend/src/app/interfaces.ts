@@ -97,18 +97,19 @@ export interface IPersoMatch {
     opAvatar: string,
 }
 
-export interface IMatch {
-    matchId?: number;
-    createdAt?: Date;
-    winner: string;
-    winnerScore: number;
-    looser: string;
-    looserScore: number;
-}
-
 export interface eventI {
     from: string;
     to: string;
     eventDate?: Date;
     eventDuration?: number;
+}
+
+export class IMatch {
+    gameId!: number;
+    winner!: string;
+    winnerScore!: number;
+    looser!: string;
+    looserScore!: number;
+    winnerAvatar!: string;
+    looserAvatar!: string;
 }

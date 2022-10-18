@@ -411,6 +411,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   async sendToChan(channelName: string, command: string, data: any) {
     const users = await this.db.getChannelUsers(channelName);
+    if (users == undefined || users == null) { // NEW
+      return;
+    }
     for (const user of users) {
       this.sendTo(user.login, command, data);
     }

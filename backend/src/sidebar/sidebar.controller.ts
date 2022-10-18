@@ -7,7 +7,6 @@ export class SidebarController {
   constructor(private db: PrismaService) {}
 
   @Get()
-//   @UseGuards(AuthGuard('42'))
   getSidebar(@Session() session: Record<string, any>) {
     return this.db.getSidebar(session.userid);
   }
