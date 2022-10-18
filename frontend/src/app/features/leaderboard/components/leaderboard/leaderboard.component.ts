@@ -11,10 +11,17 @@ import { LeaderboardService } from '../../services/leaderboard.service';
 export class LeaderboardComponent implements OnInit {
 
 	usersList$!: Observable<IAccount[]>;
+  time!: NodeJS.Timer;
 
-    constructor(private leaderboardService: LeaderboardService) {}
+    constructor(private leaderboardService: LeaderboardService) {
+      this.usersList$ = this.leaderboardService.getTopTen();
+    }
 
 	ngOnInit(): void {
-		this.usersList$ = this.leaderboardService.getTopTen();
+    this.time = setInterval(() => { this.usersList$ = this.leaderboardService.getTopTen();}, 5000);
 	}
+
+  ngOnDestroy() {
+    clearInterval(this.time);
+  }
 }

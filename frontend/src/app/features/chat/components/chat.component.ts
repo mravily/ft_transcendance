@@ -86,12 +86,11 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.chatServ.searchUsers(search);
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
-    this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
-      // a refaire avec medhi
-      console.log('invite', login);
-  
-      this.chatServ.acceptInvite(login);
-    }));
+    // this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
+    //   console.log('invite', login);
+    //   // if (confirm(login + ' wants to play with you'))
+    //   this.chatServ.acceptInvite(login);
+    // }));
     this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
       console.log('game found', gameId);
       this.router.navigate(['play', gameId]);

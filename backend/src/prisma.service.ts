@@ -59,8 +59,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public updateUserAccount  = user.updateUserAccount;
   public getUserLogin       = user.getUserLogin;
   public setMatch           = match.setMatch;
-  public setMatchWinner     = match.setMatchWinner;
-  public setMatchLooser     = match.setMatchLooser;
+  // public setMatchWinner     = match.setMatchWinner;
+  // public setMatchLooser     = match.setMatchLooser;
   public getNoWinnedMatchs  = match.getNoWinnedMatchs;
   public getNolostMatchs    = match.getNolostMatchs;
   public getMatchHistory    = match.getMatchHistory;

@@ -17,7 +17,7 @@
 			<li class="nav-item">
 			  <a routerLink="users" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" class="nav-link font-regular">All Users</a>
 			</li>
-			<li class="nav-item">
+			<li class="nav-item" *ngIf="isLogin()">
 			  <a routerLink="current-match" routerLinkActive="active" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" class="nav-link font-regular">Current Match</a>
 			</li>
 		  </ul>

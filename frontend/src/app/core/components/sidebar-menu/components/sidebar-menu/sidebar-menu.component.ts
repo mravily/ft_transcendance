@@ -14,14 +14,17 @@ import { SidebarMenuService } from '../../services/sidebar-menu.service';
 export class SidebarMenuComponent implements OnInit {
 
 	data$!: Observable<IAccount>;
+	time!: NodeJS.Timer;
 
 	constructor(private cookieService: CookieService,
 		private sidebarServices:SidebarMenuService,
-		private router: Router) {}
+		private router: Router) {
+			this.data$ = this.sidebarServices.getData();
+		}
 	
 		
 		ngOnInit(): void {
-			this.data$ = this.sidebarServices.getData();
+			this.time = setInterval(() => { this.data$ = this.sidebarServices.getData();}, 5000);
 			this.reload();
 		}
 		

@@ -541,10 +541,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async handleInvite(client: Socket, inviteInfo: {login: string, powerup: boolean})  {
     console.log("invite", inviteInfo.login);
     
-    if (!(await this.db.isUser(inviteInfo.login)))
+    if (!(await this.db.isUser(inviteInfo.login)) || inviteInfo.login == client.data.user.login)
       return client.emit('Error', 'User not found');
     this.gameServ.invitePlayer(client, inviteInfo.login, inviteInfo.powerup);
-    this.sendTo(inviteInfo.login, 'invite', client.data.user.login);
+    let invites: string[] = await this.gameServ.getInvites(inviteInfo.login);
+    this.sendTo(inviteInfo.login, 'invites', invites);
   }
   @SubscribeMessage('acceptInvite')
   async acceptInvite(client: Socket, login: string)  {
@@ -557,5 +558,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   async sendMatchId(login: string, gameId: number) {
     this.sendTo(login, 'matchId', gameId);
+  }
+  @SubscribeMessage('getInvites')
+  async getInvites(client: Socket)  {
+    let invites: string[] = await this.gameServ.getInvites(client.data.user.login);
+    client.emit('invites', invites);
   }
 }

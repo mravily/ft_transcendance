@@ -200,6 +200,8 @@ export class IMatch {
     @Type(() => Number)
     @IsNumber()
     looserScore: number;
+    winnerAvatar?: string;
+    looserAvatar?: string;
 }
 
 export class eventI {

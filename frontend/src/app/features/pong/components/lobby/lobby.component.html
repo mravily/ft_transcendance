@@ -27,6 +27,12 @@
       <button (click)="onInvite(user, false)">Invite</button>
       <button (click)="onInvite(user, true)">Invite with PowerUps !</button>
     </div>
-      
+  </div>
+  <h2 style="margin: 20px;">Match requests</h2>
+  <div class="friends" [formGroup]="searchForm">
+    <div class="friend" *ngFor="let user of invites$ | async">
+      <div class="friendname">{{user}}</div>
+      <button (click)="onAcceptInvite(user)">Accept</button>
+    </div>
   </div>
 </div>

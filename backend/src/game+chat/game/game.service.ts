@@ -54,14 +54,16 @@ export class GameService {
     return gameId;
   }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
-    const queue = powerUps ? this.PUqueue : this.queue;
-    console.log('queue', queue);
+    let queue = (powerUps) ? this.PUqueue : this.queue;
+    let otherqueue = (!powerUps) ? this.PUqueue : this.queue;
+    // console.log("queue", queue);
     if (queue.length > 0) {
-      const oppo = queue.pop();
-      const gameId = this.createGame(
-        [client.data.user.login, oppo.data.user.login],
-        powerUps,
-      );
+      var oppo = queue.pop();
+      if (otherqueue.includes(oppo))
+        otherqueue.splice(queue.indexOf(oppo), 1);
+      if (otherqueue.includes(client))
+        otherqueue.splice(queue.indexOf(client), 1);
+      var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
       console.log(
@@ -75,15 +77,26 @@ export class GameService {
     }
     client.emit('queuing');
   }
+  getInvites(login: string) {
+    let res: string[] = [];
+    for (var invite of this.invites.entries()) {
+      if (invite[1][0] == login)
+        res.push(invite[0]);
+    }
+    return res;
+  }
   invitePlayer(client: Socket, login: string, powerup: boolean) {
     this.invites.set(client.data.user.login, [login, powerup]);
   }
   acceptInvite(client: Socket, login: string) {
-    if (!this.invites.has(login)) return;
-    const invited = this.invites.get(login);
-    if (invited[0] != client.data.user.login) return;
-    console.log('invite accepted', client.data.user.login, 'vs', login);
-    const gameId = this.createGame([login, client.data.user.login], invited[1]);
+    if (!this.invites.has(login))
+      return;
+    var invited = this.invites.get(login);
+    if (invited[0] != client.data.user.login)
+      return;
+    this.invites.delete(login);
+    console.log("invite accepted", client.data.user.login, "vs", login);
+    let gameId = this.createGame([login, client.data.user.login], invited[1]);
     this.chatGW.sendMatchId(client.data.user.login, gameId);
     this.chatGW.sendMatchId(login, gameId);
   }
@@ -91,16 +104,16 @@ export class GameService {
     if (this.gameIdByLogin.has(login)) {
       const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
-        for (var player of this.games.get(gameId).playerIds) {
+        for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
         }
-        for (var player of this.games.get(gameId).playerIds) {
+        for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
         }
         this.games.delete(gameId);
       }
     }
-    console.log('running games remaining', this.games.size);
+    // console.log("running games remaining", this.games.size);
   }
 
   setPlayerPos(login: string, paddle: GamePaddle) {
@@ -119,17 +132,20 @@ export class GameService {
       this.PUqueue.splice(this.queue.indexOf(socket), 1);
     }
   }
-  getLiveGames(): IMatch[] {
-    const res: IMatch[] = [];
+  async getLiveGames(): Promise<IMatch[]> {
+    var res: IMatch[] = [];
 
-    for (const gameId of this.games.keys()) {
-      const game = this.games.get(gameId);
+    for (var gameId of this.games.keys()) {
+      let game = this.games.get(gameId);
+      let users: IAccount[] = await game.getPlayersAccounts();
       res.push({
         gameId: gameId,
-        winner: game.playerIds[0],
+        winner: game.playerLogins[0],
         winnerScore: game.player2Score,
-        looser: game.playerIds[1],
+        winnerAvatar: users[0].avatar,
+        looser: game.playerLogins[1],
         looserScore: game.player2Score,
+        looserAvatar: users[1].avatar,
       });
     }
     return res;
@@ -148,29 +164,25 @@ export class GameService {
 
 export class GameMatch {
   startGame(socket: Socket): void {
-    const i = this.playerIds.indexOf(socket.data.user.login);
-
-    console.log('starting game', this.playerIds);
-
-    if (i != -1) {
+    let i = this.playerLogins.indexOf(socket.data.user.login);
+    
+    console.log("starting game", this.playerLogins);
+    
+    if (i != -1)  {
       if (!this.socketIds.includes(socket.id)) {
         this.socketIds[i] = socket.id;
-        console.log(
-          socket.data.user.login,
-          i == 0 ? 'player1' : 'player2',
-          'ready to start',
-        );
       }
-      console.log(
-        'starting game',
-        i,
-        this.socketIds,
-        this.playerIds,
-        socket.id,
-      );
-      if (!this.socketIds.includes('') && !this.idInterval) this.start(); // Envoi des logins
-      else if (!this.idInterval) this.wsg.sendStart([socket.id], -1);
-    } else {
+      if (!this.playerIds.includes(socket.data.userId)) {
+        this.playerIds[i] = socket.data.userId;
+        console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
+      }
+      console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
+      if (!this.socketIds.includes('') && !this.idInterval)
+        this.start();
+      else if (!this.idInterval)
+        this.wsg.sendStart([socket.id], -1);
+    }
+    else  {
       this.socketIdsSpec.push(socket.id);
       console.log(socket.data.user.login, 'spectating');
       this.wsg.sendSpecMode(socket);
@@ -182,8 +194,8 @@ export class GameMatch {
   }
 
   async getPlayersAccounts(): Promise<IAccount[]> {
-    const res: IAccount[] = [];
-    for (const player of this.playerIds) {
+    var res: IAccount[] = [];
+    for (var player of this.playerLogins) {
       res.push(await this.db.getPublicProfile(player));
     }
     return res;
@@ -194,8 +206,9 @@ export class GameMatch {
   }
 
   private idInterval!: NodeJS.Timer;
-  private socketIds: string[];
-  public socketIdsSpec: string[];
+  private playerIds: string[];
+  private socketIds:  string[];
+  public  socketIdsSpec: string[];
   private player1!: Paddle;
   private player2!: Paddle;
   private ball!: Ball;
@@ -211,15 +224,10 @@ export class GameMatch {
   private wallOffset: number;
   public player1Score: number;
   public player2Score: number;
-
   private period: number = 1000 / 60;
-
-  constructor(
-    private readonly wsg: GameGateway,
-    public playerIds: string[],
-    public custom: boolean = false,
-    private db: PrismaService,
-  ) {
+  
+  constructor(private readonly wsg: GameGateway, public playerLogins: string[], public custom: boolean = false,  private db: PrismaService) {
+    
     this.canvasWidth = 1400;
     this.canvasHeight = 800;
     this.paddleWidth = 20;
@@ -251,6 +259,7 @@ export class GameMatch {
     );
     this.powerUps = [];
     this.socketIds = ['', ''];
+    this.playerIds = ['', ''];
     this.socketIdsSpec = [];
   }
 
@@ -280,57 +289,31 @@ export class GameMatch {
   }
   end(): void {
     clearInterval(this.idInterval);
-    // this.db.setMatch();
-    console.log('this.socketIds', this.socketIds);
-    console.log('this.socketIdsSpec', this.socketIdsSpec);
-    console.log('this.player1Score', this.playerIds[0]);
-    console.log('this.player2Score', this.playerIds[1]);
-    this.wsg.sendEnd(
-      this.socketIds,
-      this.socketIdsSpec,
-      this.player1Score,
-      this.player2Score,
-    );
-    this.wsg.removeGame(this.playerIds[0]);
+    let winner = (this.player1Score > this.player2Score) ? 0 : 1;
+    let scores = [this.player1Score, this.player2Score].sort();
+    this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[1], scores[0]);
+
+    this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
+    this.wsg.removeGame(this.playerLogins[0]);
   }
 
   update_powerups(): void {
     for (let i = 0; i < this.powerUps.length; i++) {
       if (this.powerUps[i].collides(this.ball)) {
-        console.log(
-          this.ball.xVel > 0 ? 'player1' : 'player2',
-          'got powerup',
-          [
-            'double_paddle',
-            'large_paddle',
-            'small_paddle',
-            'power_paddle',
-            'slow_paddle',
-          ][this.powerUps[i].type],
-          'at',
-          this.powerUps[i].x,
-          this.powerUps[i].y,
-        );
-        if (this.ball.xVel > 0) this.player1.powerUp(this.powerUps[i].type);
-        else this.player2.powerUp(this.powerUps[i].type);
-        this.wsg.removePowerUp(
-          this.socketIds,
-          this.socketIdsSpec,
-          this.powerUps[i],
-          this.ball.xVel < 0,
-        );
+        // console.log((this.ball.xVel > 0 ? 'player1' : 'player2'), 'got powerup', ["double_paddle", "large_paddle", "small_paddle", "power_paddle", "slow_paddle"][this.powerUps[i].type], 'at', this.powerUps[i].x, this.powerUps[i].y);
+        if (this.ball.xVel > 0)
+          this.player1.powerUp(this.powerUps[i].type);
+        else
+          this.player2.powerUp(this.powerUps[i].type);
+        this.wsg.removePowerUp(this.socketIds, this.socketIdsSpec, this.powerUps[i], this.ball.xVel < 0);
         this.powerUps.splice(i, 1);
         i--;
       }
     }
     if (this.cur - this.lastPowerUp > 10000 && this.powerUps.length < 3) {
       this.powerUps.push(new PowerUp());
-      this.wsg.newPowerUp(
-        this.socketIds,
-        this.socketIdsSpec,
-        this.powerUps[this.powerUps.length - 1],
-      );
-      console.log('new powerup', this.powerUps[this.powerUps.length - 1]);
+      this.wsg.newPowerUp(this.socketIds, this.socketIdsSpec, this.powerUps[this.powerUps.length - 1]);
+      // console.log("new powerup", this.powerUps[this.powerUps.length - 1]);
       this.lastPowerUp = this.cur;
     }
   }
@@ -373,24 +356,15 @@ export class GameMatch {
   }
 
   sendGameStatus(): void {
-    this.wsg.sendGameStatus(
-      this.socketIds[0],
-      this.getGameStatus(this.playerIds[0]),
-    );
-    this.wsg.sendGameStatus(
-      this.socketIds[1],
-      this.getGameStatus(this.playerIds[1]),
-    );
-    for (let i = 0; i < this.socketIdsSpec.length; i++) {
-      this.wsg.sendGameStatus(
-        this.socketIdsSpec[i],
-        this.getGameStatus('spec'),
-      );
+    this.wsg.sendGameStatus(this.socketIds[0], this.getGameStatus(this.playerLogins[0]));
+    this.wsg.sendGameStatus(this.socketIds[1], this.getGameStatus(this.playerLogins[1]));
+    for (var i = 0; i < this.socketIdsSpec.length; i++) {
+      this.wsg.sendGameStatus(this.socketIdsSpec[i], this.getGameStatus('spec'));
     }
   }
 
   getGameStatus(login: string): GameStatus {
-    if (login == this.playerIds[1])
+    if (login == this.playerLogins[1])
       return {
         timeStamp: this.cur,
         myScore: this.player2Score,
@@ -412,7 +386,8 @@ export class GameMatch {
       };
   }
   setPlayerPos(login: string, paddle: GamePaddle): void {
-    if (login == this.playerIds[0]) {
+    if (login == this.playerLogins[0])
+    {
       this.player1.y = paddle.y;
       this.player1.yVel = paddle.yVel;
       this.wsg.sendPaddlePos(0, this.socketIds, this.socketIdsSpec, {
@@ -424,7 +399,9 @@ export class GameMatch {
         this.player1.update(this.canvasHeight, this.wallOffset, this);
         paddle.timeStamp += this.period;
       }
-    } else if (login == this.playerIds[1]) {
+    }
+    else if (login == this.playerLogins[1])
+    {
       this.player2.y = paddle.y;
       this.player2.yVel = paddle.yVel;
       this.wsg.sendPaddlePos(1, this.socketIds, this.socketIdsSpec, {

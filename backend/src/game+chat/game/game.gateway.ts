@@ -120,7 +120,7 @@ export class GameGateway
   // }
   @SubscribeMessage('getLiveGames')
   async getLiveGames(client: Socket) {
-    const games = this.gameService.getLiveGames();
+    let games = await this.gameService.getLiveGames();
     client.emit('liveGames', games);
   }
 

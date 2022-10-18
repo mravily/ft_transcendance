@@ -135,11 +135,17 @@ export class ChatService {
   acceptInvite(login: string) {
     this.socket.emit('acceptInvite', login);
   }
-  getInviteObs(): Observable<string> {
-    return this.socket.fromEvent<string>('invite');
-  }
+  // getInviteObs(): Observable<string> {
+  //   return this.socket.fromEvent<string>('invite');
+  // }
   getMatchFoundObs(): Observable<number>{
     return this.socket.fromEvent<number>('matchId');
+  }
+  getInvitesObs(): Observable<string[]> {
+    return this.socket.fromEvent<string[]>('invites');
+  }
+  getInvites() {
+    this.socket.emit('getInvites');
   }
 
 
