@@ -74,9 +74,8 @@ export class TwoFactorAuthenticationController {
   }
 
   @Post('delete')
-  async delete2FA(@Session() session: Record<string, any>) {
-    await this.db.delete2FA(session.userid);
-    return { msg: '2FA Deleted' };
+  delete2FA(@Session() session: Record<string, any>) {
+    this.db.delete2FA(session.userid);
   }
 
   @Get('switch')

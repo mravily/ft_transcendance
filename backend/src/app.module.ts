@@ -10,6 +10,7 @@ import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { SidebarModule } from './sidebar/sidebar.module';
 import { StreamModule } from './stream/stream.module';
+import { UnsubscribeOnCloseInterceptor } from './unsubscribe-on-close.interceptor';
 import { UploadsModule } from './uploads/uploads.module';
 import { UserModule } from './user/user.module';
 
@@ -29,6 +30,6 @@ import { UserModule } from './user/user.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UnsubscribeOnCloseInterceptor],
 })
 export class AppModule {}
