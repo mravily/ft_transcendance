@@ -10,6 +10,7 @@ import * as overview from './prisma/overview.service';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+
   async onModuleInit() {
     await this.$connect();
   }
@@ -26,10 +27,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getTopTen          = leaderboard.getTopTen;
   public getUsersRanking    = leaderboard.getUsersRanking;
   public setUser            = user.setUser;
-  public getUserAccount     = user.getUserAccount;
-  public deleteBlockUser    = user.deleteBlockUser;
-  public getBlockedUsers    = user.getBlockedUsers;
+  public isUser             = user.isUser;
+  public searchUser         = user.searchUser;
   public setBlockUser       = user.setBlockUser;
+  public deleteBlockUser    = user.deleteBlockUser;
+  public getUserAccount     = user.getUserAccount;
+  public getBlockedUsers    = user.getBlockedUsers;
   public isBlocked          = user.isBlocked;
   public sendFriendReq      = user.sendFriendReq;
   public acceptFriendship   = user.acceptFiendship;
@@ -50,8 +53,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public getLastPhoto       = user.getLastPhoto;
   public setUserToken       = user.setUserToken;
   public getUserToken       = user.getUserToken;
+  public getBlockers        = user.getBlockers;
   public getUserEmail       = user.getUserEmail;
-  public isUser             = user.isUser;
   public deleteUser         = user.deleteUser;
   public updateUserAccount  = user.updateUserAccount;
   public getUserLogin       = user.getUserLogin;
@@ -66,8 +69,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public setChannelPass     = channel.setChannelPass;
   public removeChannelPass  = channel.removeChannelPass;
   public getChannelInfo     = channel.getChannelInfo;
+  public getChannelMessages = channel.getChannelMessages;
   public getChannelUsers    = channel.getChannelUsers;
   public createchannel      = channel.setChannel;
+  public deleteChannel      = channel.deleteChannel;
   public setChannelMessage  = channel.setChannelMessage;
   public setJoinChannel     = channel.setJoinChannel;
   public setMuteUser        = channel.setMuteUser;
@@ -78,11 +83,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   public leaveChannel       = channel.leaveChannel;
   public setBanUser         = channel.setBanUser;
   public deleteBan          = channel.deleteBan;
+  public getBanInfo         = channel.getBanInfo;
   public isAdmin            = channel.isAdmin;
   public isCreator          = channel.isCreator;
   public getPublicChannels  = channel.getPublicChannels;
+  public searchPublicChannels = channel.searchPublicChannels;
   public getChannelsForUser = channel.getchannelsForUser;
-  public deleteChannel      = channel.deleteChannel;
   public getUserRank        = profile.getUserRank;
   public getUserProfile     = profile.getUserProfile;
   public getPublicProfile   = profile.getPublicProfile;

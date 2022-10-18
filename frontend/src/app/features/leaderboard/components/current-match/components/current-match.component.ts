@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Match } from 'src/app/features/profile/models/profile.user.model';
 import { CurrentMatch } from '../models/current-match.model';
 
 @Component({
@@ -17,6 +16,7 @@ export class CurrentMatchComponent implements OnInit {
   	ngOnInit(): void {
 		this.matches = [
 			{
+				gameID: 1,
 				p1Avatar: 'https://cdn.intra.42.fr/users/mravily.jpg',
 				p1Login: 'mravily',
 				p1Score: 15,

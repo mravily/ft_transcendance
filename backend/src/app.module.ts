@@ -6,6 +6,7 @@ import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ChatGameModule } from './game+chat/chatgame.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { ProfileModule } from './profile/profile.module';
 import { SidebarModule } from './sidebar/sidebar.module';
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     SidebarModule,
     UploadsModule,
     StreamModule,
+    ChatGameModule,
     UserModule,
     TwoFactorAuthenticationModule,
     ServeStaticModule.forRoot({

@@ -163,7 +163,29 @@ export async function setBlockUser(this: PrismaService, userId: string, login: s
   }
 }
 
-export async function deleteBlockUser(this: PrismaService, userId: string, login: string) {
+export async function getBlockers(this: PrismaService, login: string): Promise<IAccount[]> {
+  try {
+    const blockedList = await this.prisma.blockUser.findMany({
+      where: { blockedLogin: login },
+      select: {
+        blocker: {
+          select: {
+            login: true,
+          }
+        }
+      },
+    });
+    return blockedList.map((blocker) => blocker.blocker);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export async function deleteBlockUser(
+  this: PrismaService,
+  userId: string,
+  login: string,
+) {
   try {
     await this.prisma.blockUser.delete({
       where: {
@@ -618,6 +640,29 @@ export async function getFriendsById(this: PrismaService, userId: string): Promi
   }
 }
 
+export async function searchUser(this: PrismaService, key: string): Promise<IAccount[]> {
+  try {
+    const users = await this.prisma.user.findMany({
+      where: {
+        login: {
+          contains: key,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        login: true,
+        imgUrl: true,
+        winnedMatchs: true,
+        lostMatchs: true
+      },
+      take: 5,
+    });
+    return users.map((user) => {return {login: user.login, avatar: user.imgUrl, win: user.winnedMatchs.length, lost: user.lostMatchs.length}});
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 export async function deleteUser(this: PrismaService, userId: string) {
   try {
     await this.prisma.photos.deleteMany({
@@ -680,6 +725,8 @@ export async function deleteUser(this: PrismaService, userId: string) {
 
 export async function getUserAccount(this: PrismaService, userId: string): Promise<IAccount> {
   try {
+    console.log('getting account of', userId);
+    
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -754,6 +801,15 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
             blockedLogin: true,
           },
         },
+        blockedFrom: {
+          select: {
+            blocker: {
+              select: {
+                login:true,
+              }
+            },
+          },
+        },
       },
     });
     let userAccount = {} as IAccount;
@@ -780,21 +836,25 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
       for (let i = 0; user.friends[i]; i++) {
         userAccount.friends.push(user.friends[i].requested);
       }
-      for (let i = 0; user.blockedUsers[i]; i++) {
-        userAccount.blockUsers.push(user.blockedUsers[i].blockedLogin);
-      }
       for (let i = 0; user.befriend[i]; i++) {
         userAccount.friends.push(user.befriend[i].requester);
       }
-      for (const i in user.channelList) {
-        userAccount.channelList.push(i);
-      }
-      for (const i in user.adminChannel) {
-        userAccount.channelAdmin.push(i);
-      }
+      userAccount.blockUsers = user.blockedUsers.map((user) => user.blockedLogin);
+      userAccount.blockedFrom = user.blockedFrom.map((user) => user.blocker.login);
+      userAccount.createdAt = user.createdAt;
+      userAccount.twoFA = user.twoFA;
+      userAccount.isAdmin = user.isAdmin;
+      // for (let i in user.channelList) {
+      //   userAccount.channelList.push(i);
+      // }
+      // for (let i in user.adminChannel) {
+      //   userAccount.channelAdmin.push(i);
+      // }
     }
     return userAccount;
-  } catch (error) {
+  }
+  catch (error) {
     console.log(error.message);
+    return null;
   }
 }

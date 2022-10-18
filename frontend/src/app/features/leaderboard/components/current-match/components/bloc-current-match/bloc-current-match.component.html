@@ -1,5 +1,5 @@
 <div class="wrapper d-flex container-fluid">
-	<img class="live" src="../../../../../../../assets/live.gif" alt="one-live">
+	<a [routerLink]="['/play/', match.gameID]"><img class="live" src="../../../../../../../assets/live.gif" alt="one-live"></a>
 	<div class="one">
 		<img alt="..." src="{{ match.p1Avatar }}" class="avatar avatar-sm rounded-circle me-2">
 		<a class="text-heading font-semibold" [routerLink]="['/user/', match.p1Login]">

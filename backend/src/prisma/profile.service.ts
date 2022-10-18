@@ -228,6 +228,7 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
         rank: await this.getUserRank(login),
         lost: user._count.lostMatchs,
         win: user._count.winnedMatchs,
+        avatar: user.imgUrl,
       }
       for (let i = 0; user.befriend[i]; i++) {
         if (user.befriend[i].isAccepted == true) {

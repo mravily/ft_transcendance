@@ -1,0 +1,159 @@
+<div class="body">
+  <!-- <div class="dropdown">
+    <button class="btndrop" type="button">
+      ...
+    </button>
+    <div class="dropmenu">
+      <a class="dropdown-item" href="#">Action</a>
+      <a class="dropdown-header" href="#">Secondary</a>
+      <a class="dropdown-item" href="#">Something else here</a>
+    </div>
+  </div> -->
+
+  <app-newroom *ngIf="create"></app-newroom>
+  <div class="messagezone" *ngIf="!create && selectedChannel && selectedChannel.messages">
+    <div class="header dropdown">
+      <h3 class="btndrop">{{ getRealName(selectedChannel) }}</h3>
+
+      <div class="dropmenu">
+        <div *ngIf="!selectedChannel.isDirect">
+          <div [formGroup]="searchForm">
+            <input placeholder="Add someone to the room" formControlName="search">
+            <button class="addbutton" *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
+          </div>
+          <h6>Members</h6>
+          <div *ngFor="let member of selectedChannel.users">
+            <button class="addbutton" (click)="onProfileClick(member.login)">{{member.login}}</button>
+            <button (click)="onLeave()" *ngIf="member.login == myUser.login">Leave this room</button>
+            <button *ngIf="member.login != myUser.login" (click)="onDMclick(member.login)">Send Message</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
+            <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
+            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
+            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
+            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login)" (click)="onRemove(member.login)">Remove</button>
+            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login)" (click)="onBan(member.login)">Ban</button>
+            <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
+          </div>
+          <div *ngIf="isAdmin(myUser.login)">
+            <div *ngIf="!selectedChannel.isPrivate && amICreator()">
+              <input placeholder="New Password" [(ngModel)]="newPassword">
+              <button (click)="onUpdatePassword()" [disabled]="newPassword == null || newPassword == ''">{{(selectedChannel.is_pwd)?"Update Password":"Set Password"}}</button>
+              <button (click)="onRemovePassword()" *ngIf="selectedChannel.is_pwd">Remove Password</button>
+            </div>
+            <div *ngFor="let user of selectedChannel.bannedUsers">
+              {{user.login}}
+              <button (click)="onUnban(user.login)">Unban</button>
+            </div>
+          </div>
+
+        </div>
+        <div *ngIf="selectedChannel.isDirect">
+          <div *ngFor="let member of selectedChannel.users">
+            <button  (click)="onProfileClick(member.login)" class="addbutton">{{member.login}}</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login, false)">Pong !</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onInvite(member.login, true)"> PowerUps !</button>
+            <button *ngIf="member.login != myUser.login && !myUser.blockUsers?.includes(member.login)" (click)="onBlock(member.login)">Block</button>
+            <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inboxContainer" #messageContainer>
+      <div *ngFor="let message of selectedChannel.messages; let i = index;"
+            class="message" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
+          <!-- <div class="message-header-time" *ngIf="i == 0 || selectedChannel.messages[i].createdAt + 60000 < message.createdAt">{{message.createdAt}}</div> -->
+        <h4 *ngIf="(i === 0 || (selectedChannel.messages[i-1].from !== message.from || selectedChannel.messages[i-1].isNotif)) && !message.isNotif">
+          {{message.from}}
+        </h4>
+        <div class="message-body" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
+          {{(!isBlocked(message.from)) ? message.message : 'blocked'}}
+        </div>
+      </div>
+    </div>
+    <div class="inputbar">
+      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..."
+        type="text" [(ngModel)]="curMessage" [disabled]="isMuted(myUser.login)"></textarea>
+      <button (click)="onSendMessage()" [disabled]="curMessage==null || curMessage=='' || isMuted(myUser.login)">Send</button>
+    </div>
+  </div>
+
+  <div class="contacts">
+    
+    <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
+
+    <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
+      <img [src]="contact.imgUrl">
+      
+      <div class="contactW">
+        <h6>
+          {{contact.realName}}
+        </h6>
+        <!-- <div class="contact-status">Online</div> -->
+      </div>
+    </div>
+    
+  </div>
+</div>
+<!-- 
+<div class="center">
+
+  <div class="contacts">
+    <i class="fas fa-bars fa-2x"></i>
+    <h2>
+      Contacts
+    </h2>
+    <div class="contact">
+      <div class="pic rogers"></div>
+      <div class="badge">
+        14
+      </div>
+      <div class="name">
+        Steve Rogers
+      </div>
+      <div class="message">
+        That is America's ass 🇺🇸🍑
+      </div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="contact bar">
+      <div class="pic stark"></div>
+      <div class="name">
+        Tony Stark
+      </div>
+      <div class="seen">
+        Today at 12:56
+      </div>
+    </div>
+    <div class="messages" id="chat">
+      <div class="time">
+        Today at 11:41
+      </div>
+      <div class="message parker">
+        Hey, man! What's up, Mr Stark? 👋
+      </div>
+      <div class="message stark">
+        Kid, where'd you come from? 
+      </div>
+      <div class="message parker">
+        Field trip! 🤣
+      </div>
+      <div class="message parker">
+        Uh, what is this guy's problem, Mr. Stark? 🤔
+      </div>
+      <div class="message stark">
+        Uh, he's from space, he came here to steal a necklace from a wizard.
+      </div>
+      <div class="message stark">
+        <div class="typing typing-1"></div>
+        <div class="typing typing-2"></div>
+        <div class="typing typing-3"></div>
+      </div>
+    </div>
+    <div class="input">
+      <i class="fas fa-camera"></i><i class="far fa-laugh-beam"></i><input placeholder="Type your message here!" type="text" /><i class="fas fa-microphone"></i>
+    </div>
+  </div>
+</div> -->

@@ -3,16 +3,18 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback, Profile } from 'passport-42';
 import { PrismaService } from '../prisma.service';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(private db: PrismaService, private authService: AuthService) {
+  constructor(private db: PrismaService, private authService: AuthService, private jwtService: JwtService) { 
     super({
       clientID: process.env.FORTYTWO_CLIENT_ID,
       clientSecret: process.env.FORTYTWO_CLIENT_SECRET,
       callbackURL: process.env.CALLBACK_URI,
       passReqToCallback: true,
     });
+    console.log('42 strategy loaded', process.env.FORTYTWO_CLIENT_SECRET);
   }
 
   async validate(
@@ -24,6 +26,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     cb: VerifyCallback,
   ): Promise<any> {
     try {
+      
       request.session.firstTime = !(await this.db.isUser(profile.username));
       const id = await this.db.setUser(
         profile.username,
@@ -34,6 +37,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         profile.photos[0].value,
       );
       request.session.userid = id;
+      this.payload = { userid: id };
+      this.jwt = this.jwtService.sign(this.payload);
+      request.session.jwt = this.jwt;
       return cb(null, profile);
     } catch (err) {
       return cb(err, profile);

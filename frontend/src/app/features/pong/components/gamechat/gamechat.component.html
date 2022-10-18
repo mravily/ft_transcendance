@@ -1,0 +1,38 @@
+<div class="messagezone">
+    <!-- <h3>Game chat</h3> -->
+    <div class="inboxContainer" #messageContainer>
+      <div *ngFor="let message of messages; let i = index;">
+        <div class="message" [ngClass]="{isMine: message.sender === 'me'}">
+          <h4 *ngIf="i === 0 || messages[i-1].sender !== message.sender">
+            {{message.sender}}
+          </h4>
+          <!-- <div class="message-header-time">{{message.time}}</div>-->
+          <div class="message-body" [ngClass]="{isMine: message.sender === 'me'}">
+            <div class="message-body-text">{{message.body}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="inputbar">
+      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage"></textarea>
+      <button (click)="onSendMessage()">Send</button>
+    </div>
+  </div>
+<!-- 
+
+
+<div class="messagezone">
+    <ul class="list inboxContainer" #messageContainer>
+        <li *ngFor="let message of messages">
+            <div class="message">
+                <div class="message-body" [ngClass]="{isMine: message.body === 'hey'}">
+                    <div class="message-body-text">{{message.body}}</div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="inputbar">
+        <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..." type="text" [(ngModel)]="curMessage">
+        <button (click)="onSendMessage()">Send</button> 
+    </div>
+</div> -->
