@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Message } from 'src/app/pong/models/chat.models';
+import { Message } from '../../models/chat.models';
 import { PongService } from '../../services/pong.service';
 
 @Component({

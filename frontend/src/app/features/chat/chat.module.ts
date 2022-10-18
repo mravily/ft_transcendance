@@ -8,15 +8,15 @@ import { PongService } from '../pong/services/pong.service';
 
 
 @NgModule({
-  declarations: [
-    ChatComponent,
-    NewroomComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  providers: [PongService],
+	declarations: [
+		ChatComponent,
+		NewroomComponent
+	],
+	imports: [
+		CommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+	],
+	providers: [PongService],
 })
 export class ChatModule { }

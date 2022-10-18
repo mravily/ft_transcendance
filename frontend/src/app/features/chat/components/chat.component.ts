@@ -2,8 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
+import { IChannel, IMessage,IAccount } from 'src/app/interfaces';
 import { PongService } from '../../pong/services/pong.service';
-import { IAccount, IChannel, IMessage } from '../../interfaces';
 import { ChatService } from '../services/chat.service';
 
 @Component({

@@ -15,7 +15,7 @@
 							<p class="text-muted mb-0">@{{ usersList[1].login }}</p>
 							<hr>
 							<div class="align-items-center">
-								<button class="btn btn-outline-silver btn-sm">Congratulate 🎉</button>
+								<!-- <button class="btn btn-outline-silver btn-sm">Congratulate 🎉</button> -->
 							</div>
 						</div>
 					</div>
@@ -33,7 +33,7 @@
 							<p class="text-muted mb-0">@{{ usersList[0].login }}</p>
 							<hr>
 							<div class="align-items-center">
-								<button class="btn btn-outline-gold btn-sm">Congratulate 🎉</button>
+								<!-- <button class="btn btn-outline-gold btn-sm">Congratulate 🎉</button> -->
 							</div>
 						</div>
 					</div>
@@ -51,7 +51,7 @@
 							<p class="text-muted mb-0">@{{ usersList[2].login }}</p>
 							<hr>
 							<div class="align-items-center">
-								<button class="btn btn-outline-bronze btn-sm">Congratulate 🎉</button>
+								<!-- <button class="btn btn-outline-bronze btn-sm">Congratulate 🎉</button> -->
 							</div>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 			<h5 class="three">Win/Lose</h5>
 			<h5 class="three">Rank</h5>
 			<h5 class="three">Status</h5>
-			<h5>Congratulate</h5>
+			<h5></h5>
 		</div>
 		<br>
 		<app-bloc-user *ngFor="let UserIt of usersList$ | async; let i = index" [user]="UserIt" [rank]="(i + 1)"></app-bloc-user>

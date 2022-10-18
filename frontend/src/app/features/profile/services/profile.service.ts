@@ -13,8 +13,6 @@ export class ProfileService {
   constructor(private http: HttpClient) { }
   
   upload(file: any) {
-	console.log('file', file);
-  	// if (!file){
 		let fileData = new FormData(); 
 		fileData.append('file', file);
 		this.http.post('api/upload', fileData).subscribe({
@@ -53,17 +51,20 @@ export class ProfileService {
   }
 
   blockUser(login: string) {
-	this.http.post('api/user/block', { login });
+	this.http.post('api/user/block', { login }).subscribe();
   }
 
   unBlockUser(login: string) {
-	this.http.post('api/user/unblock', { login });
+	this.http.post('api/user/unblock', { login }).subscribe();
+  }
+
+  isBlocked(login: string) {
+	return this.http.post('api/profile/isblocked', { login });
   }
 
   isUser(login: string) {
 	return this.http.post('api/user/isuser', { login });
   }
-
   getProfileFriends(): Observable<IProfileFriends[]> {
 	return this.http.get<IProfileFriends[]>('api/profile/friends');
   }
@@ -73,6 +74,18 @@ export class ProfileService {
   }
 
   getBlockedUser(): Observable<IAccount[]> {
-	return this.http.get<IAccount[]>('api/profile/blockeduser');
+	return this.http.get<IAccount[]>('api/profile/blockedusers');
+  }
+
+  acceptFriendRequest(login: string) {
+	this.http.post('api/user/acceptfriend', { login }).subscribe();
+  }
+
+  removeFriend(login: string) {
+	this.http.post('api/user/deletefriend',  { login }).subscribe();
+  }
+
+  isFriend(login: string): Observable<[boolean, boolean]> {
+	return this.http.post<[boolean, boolean]>('api/profile/isfriend', { login });
   }
 }

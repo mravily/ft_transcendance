@@ -1,0 +1,32 @@
+<div class="wrapper d-flex container-fluid">
+	<a [routerLink]="['/play/', match.gameID]"><img class="live" src="../../../../../../../assets/live.gif" alt="one-live"></a>
+	<div class="one">
+		<img alt="..." src="{{ match.p1Avatar }}" class="avatar avatar-sm rounded-circle me-2">
+		<a class="text-heading font-semibold" [routerLink]="['/user/', match.p1Login]">
+		  {{ match.p1Login }}
+		</a>
+	</div>
+	<div class="two">
+		<div *ngIf="match.p1Score > match.p2Score" class="text-success">
+			{{ match.p1Score }}
+		</div>
+		<div *ngIf="match.p1Score < match.p2Score" class="text-danger">
+			{{ match.p1Score }}
+		</div>
+		-
+		<div *ngIf="match.p1Score < match.p2Score" class="text-success">
+			{{ match.p2Score }}
+		</div>
+		<div *ngIf="match.p1Score > match.p2Score" class="text-danger">
+			{{ match.p2Score }}
+			</div>
+	</div>
+	<div class="three">
+		<a class="text-heading font-semibold" [routerLink]="['/user/', match.p2Login]">
+			{{ match.p2Login }}
+		</a>
+		<img alt="opposant-avatar" src="{{ match.p2Avatar }}" class="avatar avatar-sm rounded-circle me-2">
+	</div>
+</div>
+
+

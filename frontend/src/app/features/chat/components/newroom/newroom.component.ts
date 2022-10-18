@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, Observable, Subscription } from 'rxjs';
-import { IChannel } from '../../../interfaces';
+import { IChannel } from 'src/app/interfaces';
 import { ChatService } from '../../services/chat.service';
 
 @Component({

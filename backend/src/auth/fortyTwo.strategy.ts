@@ -11,7 +11,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     super({
       clientID: process.env.FORTYTWO_CLIENT_ID,
       clientSecret: process.env.FORTYTWO_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/42/return',//process.env.CALLBACK_URI,
+      callbackURL: process.env.CALLBACK_URI,
       passReqToCallback: true,
     });
     console.log('42 strategy loaded', process.env.FORTYTWO_CLIENT_SECRET);
@@ -28,7 +28,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     try {
       
       request.session.firstTime = !(await this.db.isUser(profile.username));
-      console.log('42 stategie', request.session.firstTime);
       const id = await this.db.setUser(
         profile.username,
         profile.displayName,

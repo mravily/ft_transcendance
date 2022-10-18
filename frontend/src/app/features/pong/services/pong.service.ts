@@ -4,8 +4,8 @@ import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { IMatch } from 'src/app/interfaces';
 import { IAccount } from 'src/app/model/user.model';
-import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/pong/models/pong.models';
 import { Message } from '../models/chat.models';
+import { PaddlePos, GameStatus, PowerUpEvent, Results } from '../models/pong.models';
 
 @Injectable({
 	providedIn: "root"
