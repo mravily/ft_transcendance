@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PongService } from 'src/app/features/pong/services/pong.service';
+import { IMatch } from 'src/app/interfaces';
 import { CurrentMatch } from '../models/current-match.model';
 
 @Component({
@@ -11,11 +11,16 @@ import { CurrentMatch } from '../models/current-match.model';
 export class CurrentMatchComponent implements OnInit {
 
 	matches!: CurrentMatch[];
+	time!: NodeJS.Timer;
 	
-  	constructor() {
+  	constructor(private pongService: PongService) {
+		pongService.liveGamesEvent.subscribe((v: IMatch[]) => {
+			console.log('v-current-match', v);
+		})
 	}
 
   	ngOnInit(): void {
+		this.time = setInterval(() => this.pongService.getLiveGames(), 1000);
 		this.matches = [
 			{
 				gameID: 1,
@@ -28,5 +33,8 @@ export class CurrentMatchComponent implements OnInit {
 			}
 		]
   	}
+	ngOnDestroy() {
+		clearInterval(this.time);
+	}
 
 }
