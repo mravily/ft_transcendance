@@ -9,12 +9,15 @@ enum powerType {
   slow_paddle,
 }
 export class PowerUp {
-  x: number;
-  y: number;
-  type: powerType;
+  x: number = 0;
+  y: number = 0;
+  type: powerType = powerType.power_paddle;
   size: number = 20;
+
   static colors = ["#ff0", "#00f", "#0f0", "#f00", "#0ff"];
   constructor(e: PowerUpEvent) {
+    if (e == undefined)
+      return;
     this.x = e.x;
     this.y = e.y;
     this.type = e.type;
