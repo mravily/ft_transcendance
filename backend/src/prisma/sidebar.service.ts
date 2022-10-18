@@ -11,6 +11,7 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
         imgUrl: true,
         friends: {
           select: {
+            isAccepted: true,
             requester: {
               select: {
                 login: true,
@@ -23,6 +24,7 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
         },
         befriend: {
           select: {
+            isAccepted: true,
             requested: {
               select: {
                 login: true,
@@ -45,22 +47,26 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
         n_friends: 0,
       }
       for (let i in usr.friends) {
-        sidebar.n_friends++;
-        sidebar.friends.push({
-          login: usr.friends[i].requester.login,
-          nickName: usr.friends[i].requester.nickName,
-          isOnline: usr.friends[i].requester.isOnline,
-          avatar: usr.friends[i].requester.imgUrl,
-        });
+        if (usr.friends[i].isAccepted == true) {
+          sidebar.n_friends++;
+          sidebar.friends.push({
+            login: usr.friends[i].requester.login,
+            nickName: usr.friends[i].requester.nickName,
+            isOnline: usr.friends[i].requester.isOnline,
+            avatar: usr.friends[i].requester.imgUrl,
+          });
+        }
       }
       for (let i in usr.befriend) {
-        sidebar.n_friends++,
-        sidebar.friends.push({
-          login: usr.befriend[i].requested.login,
-          nickName: usr.befriend[i].requested.nickName,
-          isOnline: usr.befriend[i].requested.isOnline,
-          avatar: usr.befriend[i].requested.imgUrl,
-        });
+        if (usr.befriend[i].isAccepted == true) {
+          sidebar.n_friends++,
+          sidebar.friends.push({
+            login: usr.befriend[i].requested.login,
+            nickName: usr.befriend[i].requested.nickName,
+            isOnline: usr.befriend[i].requested.isOnline,
+            avatar: usr.befriend[i].requested.imgUrl,
+          });
+        }
       }
     }
     return sidebar;

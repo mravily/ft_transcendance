@@ -16,12 +16,7 @@ export class UploadsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-    @Session() session: Record<string, any>,
-  ) {
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Session() session: Record<string, any>) {
     this.db.uploadPhoto(session.userid, file);
-    console.log(file);
-    return file;
   }
 }

@@ -475,32 +475,25 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
     });
     await this.prisma.user.update({
       where: { id: userId },
-      data: { imgUrl: 'http://localhost:4200/api/stream/' + usr.login },
+      data: { imgUrl: 'http://localhost:4200/api/stream/' + file.filename },
     });
   } catch (error) {
     console.log(error.message);
   }
 }
 
-export async function getLastPhoto(this: PrismaService, login: string): Promise<IPhoto> {
+export async function getLastPhoto(this: PrismaService, id: string): Promise<IPhoto> {
   try {
-    const tmp = await this.prisma.user.findUnique({
-      where: { login: login },
+    const tmp = await this.prisma.photos.findUnique({
+      where: { filename: id },
       select: {
-        photo: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-          select: {
-            filename: true,
-            path: true,
-            mimetype: true,
-            size: true,
-          },
-        },
+        filename: true,
+        path: true,
+        mimetype: true,
+        size: true,
       },
     });
-    return tmp.photo[0];
+    return tmp;
   } catch (error) {
     console.log(error.message);
   }
