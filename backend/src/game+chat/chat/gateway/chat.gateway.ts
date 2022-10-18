@@ -14,7 +14,7 @@ import { GameService } from '../../game/game.service';
 
 /*
 
-*/
+*/ 
 
 let DMPREFIX = '##DM##';
 
@@ -103,25 +103,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('getPublicChannels')
-  async onGetPublicchannels(socket: Socket, page) {
+  async onGetPublicchannels(socket: Socket, page) { 
+    if (socket.data?.user == undefined)
+      return;
     const channels = await this.db.getPublicChannels();
     return this.server.to(socket.id).emit('publicChannels', channels);
   }
 
   @SubscribeMessage('searchPublicChannels')
-  async onSearchPublicchannels(socket: Socket, key: string) {
+  async onSearchPublicchannels(socket: Socket, key: string) { 
+    if (socket.data?.user == undefined)
+      return;
     const channels: IChannel[]  = await this.db.searchPublicChannels(key);
     return this.server.to(socket.id).emit('publicChannels', channels);
   }
 
   @SubscribeMessage('searchUsers')
   async onSearchUser(socket: Socket, key: string) {
+    if (socket.data?.user == undefined)
+      return;
     const res: IAccount[] = await this.db.searchUser(key);
     socket.emit('users', res);
   }
   
   @SubscribeMessage('createChannel')
   async onCreatechannel(socket: Socket, channel: IChannel) {
+    if (socket.data?.user == undefined)
+      return;
     let login: string = socket.data.user.login;
     let userId: string = socket.data.userId;
 
@@ -170,12 +178,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     
   @SubscribeMessage('getMyChannels')
   async onPaginatechannel(socket: Socket, page: PageI) {
+    if (socket.data?.user == undefined)
+      return;
     const channels = await this.db.getChannelsForUser(socket.data.user.login, 0, 200);
     return this.server.to(socket.id).emit('channels', channels);
   }
 
   @SubscribeMessage('joinChannel')
   async onJoinchannel(socket: Socket, channelInfo: {name: string, password: string}) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(channelInfo.name);
     const login = socket.data.user.login;
 
@@ -213,6 +225,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   
   @SubscribeMessage('updatePassword')
   async onUpdatePassword(socket: Socket, channelInfo: {name: string, password?: string}) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(channelInfo.name);
     console.log('Updating password', channelInfo.name, channel.is_pwd, "creator", channel.creator, "user", socket.data.user.login);
     if (!channel || socket.data.user.login != channel.creator)
@@ -230,6 +244,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('leaveChannel')
   async onLeavechannel(socket: Socket, channelName: string) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -251,6 +267,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('addMember')
   async onAddMember(socket: Socket, addMemberInfo: {channelName: string, login: string}) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(addMemberInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -276,6 +294,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('removeMember')
   async onRemoveMember(socket: Socket, delMemberInfo: {channelName: string, login: string}) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(delMemberInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -299,6 +319,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('promoteToAdmin')
   async onPromoteToAdmin(socket: Socket, promoteInfo: {channelName: string, login: string}) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel = await this.db.getChannelInfo(promoteInfo.channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -319,6 +341,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('getDMinfo')
   async onGetDMinfo(socket: Socket, login: string) {
+    if (socket.data?.user == undefined)
+      return;
     let roomName = DMPREFIX+[socket.data.user.login, login].sort().join("-");
     let res: IChannel = await this.db.getChannelInfo(roomName);
 
@@ -343,6 +367,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('getChannelInfo')
   async onGetChannelInfo(socket: Socket, channelName: string) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -368,6 +394,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('getMessages')
   async onGetMessages(socket: Socket, channelName: string) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(channelName);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -381,6 +409,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: Socket, message: IMessage) {
+    if (socket.data?.user == undefined)
+      return;
     message.from = socket.data.user.login;
     const channel: IChannel= await this.db.getChannelInfo(message.channelId);
     if (!channel) {
@@ -433,6 +463,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('muteUser')
   async onMuteUser(socket: Socket, muteEvent: eventI) {
+    if (socket.data?.user == undefined)
+      return;
     // let user: string = await this.connectedUserService.getUserLogin(socket.id);
     console.log(muteEvent);
     let channel: IChannel= await this.db.getChannelInfo(muteEvent.from);
@@ -455,6 +487,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('unmuteUser')
   async onUnmuteUser(socket: Socket, muteEvent: eventI) {
+    if (socket.data?.user == undefined)
+      return;
     let channel: IChannel= await this.db.getChannelInfo(muteEvent.from);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -471,6 +505,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('banUser')
   async onBanUser(socket: Socket, banEvent: eventI) {
+    if (socket.data?.user == undefined)
+      return;
     // let user: string = await this.connectedUserService.getUserLogin(socket.id);
     let channel: IChannel= await this.db.getChannelInfo(banEvent.from);
     if (!channel) {
@@ -493,6 +529,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('unbanUser')
   async onUnbanUser(socket: Socket, banEvent: eventI) {
+    if (socket.data?.user == undefined)
+      return;
     // let user: string = await this.ConnectedUserService.getUserLogin(socket.id);
     let channel: IChannel= await this.db.getChannelInfo(banEvent.from);
     if (!channel) {
@@ -516,6 +554,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('blockUser')
   async onblockUser(socket: Socket, blockedLogin: string) {
+    if (socket.data?.user == undefined)
+      return;
     if (socket.data.user.blockUsers.includes(blockedLogin)) {
       return socket.emit('Error', new UnauthorizedException());
     }
@@ -529,6 +569,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   
   @SubscribeMessage('unblockUser')
   async onUnblockUser(socket: Socket, blockedLogin: string) {
+    if (socket.data?.user == undefined)
+      return;
     if (!socket.data.user.blockUsers.includes(blockedLogin)) {
       return socket.emit('Error', new UnauthorizedException());
     }
@@ -541,30 +583,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   
   @SubscribeMessage('invite')
-  async handleInvite(client: Socket, inviteInfo: {login: string, powerup: boolean})  {
+  async handleInvite(socket: Socket, inviteInfo: {login: string, powerup: boolean})  {
+    if (socket.data?.user == undefined)
+      return;
     console.log("invite", inviteInfo.login);
     
-    if (!(await this.db.isUser(inviteInfo.login)) || inviteInfo.login == client.data.user.login)
-      return client.emit('Error', 'User not found');
-    this.gameServ.invitePlayer(client, inviteInfo.login, inviteInfo.powerup);
+    if (!(await this.db.isUser(inviteInfo.login)) || inviteInfo.login == socket.data.user.login)
+      return socket.emit('Error', 'User not found');
+    this.gameServ.invitePlayer(socket, inviteInfo.login, inviteInfo.powerup);
     let invites: string[] = await this.gameServ.getInvites(inviteInfo.login);
     this.sendTo(inviteInfo.login, 'invites', invites);
   }
   @SubscribeMessage('acceptInvite')
-  async acceptInvite(client: Socket, login: string)  {
+  async acceptInvite(socket: Socket, login: string)  {
+    if (socket.data?.user == undefined)
+      return;
     let socketIds: Set<string> = this.connectedUsers.get(login);
     console.log("acceptInvite", login, socketIds);
     if (!socketIds) {
-      return client.emit('Error', 'User not connected');
+      return socket.emit('Error', 'User not connected');
     }
-    this.gameServ.acceptInvite(client, login);
+    this.gameServ.acceptInvite(socket, login);
   }
   async sendMatchId(login: string, gameId: number) {
     this.sendTo(login, 'matchId', gameId);
   }
   @SubscribeMessage('getInvites')
-  async getInvites(client: Socket)  {
-    let invites: string[] = await this.gameServ.getInvites(client.data.user.login);
-    client.emit('invites', invites);
+  async getInvites(socket: Socket)  {
+    if (socket.data?.user == undefined)
+      return;
+    let invites: string[] = this.gameServ.getInvites(socket.data.user.login);
+    socket.emit('invites', invites);
   }
 }
