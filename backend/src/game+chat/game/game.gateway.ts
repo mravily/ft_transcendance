@@ -104,7 +104,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   // }
   @SubscribeMessage('getLiveGames')
   async getLiveGames(client: Socket) {
-    let games = this.gameService.getLiveGames();
+    let games = await this.gameService.getLiveGames();
     client.emit('liveGames', games);
   }
 

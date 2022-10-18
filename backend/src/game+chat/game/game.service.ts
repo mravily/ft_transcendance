@@ -121,17 +121,20 @@ export class GameService  {
       this.PUqueue.splice(this.queue.indexOf(socket), 1);
     }
   }
-  getLiveGames(): IMatch[] {
+  async getLiveGames(): Promise<IMatch[]> {
     var res: IMatch[] = [];
 
     for (var gameId of this.games.keys()) {
       let game = this.games.get(gameId);
+      let users: IAccount[] = await game.getPlayersAccounts();
       res.push({
         gameId: gameId,
         winner: game.playerLogins[0],
         winnerScore: game.player2Score,
+        winnerAvatar: users[0].avatar,
         looser: game.playerLogins[1],
         looserScore: game.player2Score,
+        looserAvatar: users[1].avatar,
       });
     } 
     return res;
