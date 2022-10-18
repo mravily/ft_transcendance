@@ -7,27 +7,30 @@ import { LeaderboardRoutingModule } from './leaderboard-routing.module';
 import { BlocAllUserComponent } from './components/all-users/bloc-all-user/bloc-all-user.component';
 import { AllUsersComponent } from './components/all-users/all-users.component';
 import { SharingModule } from 'src/app/pipe/sharing.module';
+import { BlocCurrentMatchComponent } from './components/current-match/components/bloc-current-match/bloc-current-match.component';
+import { CurrentMatchModule } from './components/current-match/current-match.module';
 
 
 @NgModule({
-  declarations: [
-	NavBarComponent,
-	LeaderboardComponent,
-	BlocUserComponent,
-	AllUsersComponent,
-	BlocAllUserComponent
-],
-  imports: [
-	RouterModule,
-	LeaderboardRoutingModule,
-	SharingModule
-],
-  exports: [
-	NavBarComponent,
-	LeaderboardComponent,
-	BlocUserComponent,
-	AllUsersComponent,
-	BlocAllUserComponent
-]
+	declarations: [
+		NavBarComponent,
+		LeaderboardComponent,
+		BlocUserComponent,
+		AllUsersComponent,
+		BlocAllUserComponent,
+	],
+	imports: [
+		RouterModule,
+		LeaderboardRoutingModule,
+		CurrentMatchModule,
+		SharingModule,
+	],
+	exports: [
+		NavBarComponent,
+		LeaderboardComponent,
+		BlocUserComponent,
+		AllUsersComponent,
+		BlocAllUserComponent
+	]
 })
 export class LeaderboardModule { }

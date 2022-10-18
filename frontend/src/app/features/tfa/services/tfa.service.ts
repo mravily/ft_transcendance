@@ -31,6 +31,6 @@ export class TfaService {
 	}
 
 	delete2FA(): void {
-		this.http.post('api/tfa/delete', { observe: 'response' }).subscribe();
+		this.http.post('api/tfa/delete', { observe: 'response' });
 	}
 }
