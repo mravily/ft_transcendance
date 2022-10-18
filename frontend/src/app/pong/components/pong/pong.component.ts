@@ -16,7 +16,7 @@ import { Paddle, Ball, PowerUp } from './entities';
   styleUrls: ['./pong.component.scss'],
   providers: [PongService]
 })
-export class PongComponent implements AfterViewInit {
+export class PongComponent implements AfterViewInit, OnDestroy {
   @HostListener('window:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
     if (event.key != "ArrowUp" && event.key != "ArrowDown")
@@ -45,6 +45,7 @@ export class PongComponent implements AfterViewInit {
   }
   @ViewChild('canvas')
   gameCanvas!: ElementRef<HTMLCanvasElement>;
+  subs: Subscription[] = [];
 
   private game!: PongMatch;
   isSpec: boolean = false;
@@ -52,18 +53,18 @@ export class PongComponent implements AfterViewInit {
   players: IAccount[] = [];
 
   constructor(private route: ActivatedRoute, private pongService: PongService, private router: Router) {
-    this.pongService.specModeEvent.subscribe(() => {
+    this.subs.push(this.pongService.specModeEvent.subscribe(() => {
       console.log("spec mode");
       this.isSpec = true;
       this.game = new PongMatch(this.route, this.pongService, this.gameCanvas);
-    });
-    this.pongService.redirectToLobbyEvent.subscribe(() => {
+    }));
+    this.subs.push(this.pongService.redirectToLobbyEvent.subscribe(() => {
       this.router.navigate(["/play"]);
-    });
-    this.pongService.matchUsersEvent.subscribe((users: IAccount[]) => {
+    }));
+    this.subs.push(this.pongService.matchUsersEvent.subscribe((users: IAccount[]) => {
       console.log("users", users);
       this.players = users;
-    });
+    }));
 
   }
 
@@ -71,7 +72,9 @@ export class PongComponent implements AfterViewInit {
     this.game = new PlayingPongMatch(this.route, this.pongService, this.gameCanvas);
     this.game.ready();
   }
-
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
+  }
 }
 
 export class PongMatch {

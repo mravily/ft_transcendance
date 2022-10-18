@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { ChatService } from '../services/chat.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
 
   @ViewChild("messageContainer")
   mContainer!: ElementRef;
@@ -23,10 +23,11 @@ export class ChatComponent implements OnInit {
   curMessage!: string;
   // newMemberLogin!: string;
   newPassword!: string;
-  myUser!: IAccount;
+  myUser: IAccount = {login: 'no'};
   searchForm!: FormGroup;
   userSearchResult$!: Observable<IAccount[]>;
   searchSubcription!: Subscription;
+  subs: Subscription[] = [];
 
   constructor(private chatServ: ChatService,
       // private pongServ: PongService,
@@ -34,21 +35,21 @@ export class ChatComponent implements OnInit {
       private router: Router) { }
   
   ngOnInit(): void {
-    this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
+    this.subs.push(this.chatServ.getAddedMessageObs().subscribe((message: IMessage) => {
       if (this.selectedChannel && this.selectedChannel.messages &&
           message.channelId == this.selectedChannel.channelName) {
         this.selectedChannel.messages.push(message);
       }
-    });
-    this.chatServ.getMessagesObs().subscribe((messages: IMessage[]) => {
+    }));
+    this.subs.push(this.chatServ.getMessagesObs().subscribe((messages: IMessage[]) => {
       if (this.selectedChannel && messages[0].channelId == this.selectedChannel.channelName)
         this.selectedChannel.messages = messages
-    });
-    this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
+    }));
+    this.subs.push(this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
       this.selectedChannel = channel;
       this.create = false;
-    });
-    this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
+    }));
+    this.subs.push(this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
       // console.log(channel);
       if (this.selectedChannel && this.selectedChannel.channelName == channel.channelName)  {
         let tmp!: IMessage[];
@@ -57,7 +58,7 @@ export class ChatComponent implements OnInit {
         this.selectedChannel = channel;
         this.selectedChannel.messages = tmp;
       }
-    });
+    }));
     this.contacts = this.chatServ.getChannelsObs().pipe(
       map((channels: IChannel[]) => 
         channels.map((channel: IChannel) => {
@@ -67,15 +68,15 @@ export class ChatComponent implements OnInit {
         })
       )
     );
-    this.chatServ.getBlockersObs().subscribe((blockers: string[]) => {
+    this.subs.push(this.chatServ.getBlockersObs().subscribe((blockers: string[]) => {
       this.myUser.blockedFrom = blockers;
-    });
-    this.chatServ.getErrorObs().subscribe((error: string) => {
+    }));
+    this.subs.push(this.chatServ.getErrorObs().subscribe((error: string) => {
       console.log(error);
-    });
-    this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
+    }));
+    this.subs.push(this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
       this.myUser = user;
-    });
+    }));
     this.searchForm = this.builder.group({
       search: [null]
     });
@@ -85,16 +86,18 @@ export class ChatComponent implements OnInit {
       this.chatServ.searchUsers(search);
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
-    this.chatServ.getInviteObs().subscribe((login: string) => {
+    this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
       // a refaire avec medhi
       console.log('invite', login);
   
       this.chatServ.acceptInvite(login);
-    });
-    this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
+    }));
+    this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
       console.log('game found', gameId);
       this.router.navigate(['play', gameId]);
-    });
+    }));
+    this.chatServ.getMyUser();
+    this.chatServ.getMyChannels({page: 0, limit: 100});
 
   }
 
@@ -102,6 +105,11 @@ export class ChatComponent implements OnInit {
     if (this.mContainer) {
       this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
     }
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach((sub: Subscription) => sub.unsubscribe());
+    this.searchSubcription.unsubscribe();
   }
 
   amICreator() {
@@ -200,12 +208,12 @@ export class ChatComponent implements OnInit {
     if (!room.isDirect) {
       return room.channelName;
     }
-    return room.users?.find((user) => user.login != this.myUser.login)?.nickName;
+    return room.users?.find((user) => user.login != this.myUser?.login)?.nickName;
   }
   getRoomPhoto(room: IChannel) {
     if (!room.isDirect)
       return "https://cdn-icons-png.flaticon.com/512/57/57269.png";
-    return room.users?.find((user) => user.login != this.myUser.login)?.avatar;
+    return room.users?.find((user) => user.login != this.myUser?.login)?.avatar;
   }
   onBlock(login: string) {
     this.chatServ.blockUser(login);

@@ -122,6 +122,9 @@ export class ChatService {
   getErrorObs(): Observable<string> {
     return this.socket.fromEvent<any>('Error');
   }
+  getMyUser() {
+    this.socket.emit('getMyUser');
+  }
   getMyUserObs(): Observable<IAccount> {
     return this.socket.fromEvent<IAccount>('myUser');
   }

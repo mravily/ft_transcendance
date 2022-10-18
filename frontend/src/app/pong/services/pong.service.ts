@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { IMatch } from 'src/app/interfaces';
 import { IAccount } from 'src/app/model/user.model';
 import { GameStatus, PaddlePos, PowerUpEvent, Results } from 'src/app/pong/models/pong.models';
 import { Message } from '../models/chat.models';
@@ -23,6 +24,7 @@ export class PongService {
   syncEvent: Observable<number>;
   redirectToLobbyEvent: Observable<void>;
   matchUsersEvent: Observable<IAccount[]>;
+  liveGamesEvent: Observable<IMatch[]>;
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
@@ -40,8 +42,12 @@ export class PongService {
     this.syncEvent = this.socket.fromEvent<number>('sync');
     this.redirectToLobbyEvent = this.socket.fromEvent<void>('redirectToLobby');
     this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
+    this.liveGamesEvent = this.socket.fromEvent<IMatch[]>('liveGames');
   }
 
+  getLiveGames(): void {
+    this.socket.emit('getLiveGames');
+  }
   getNewMatchmaking(): void {
     this.socket.emit('findMatch');
   }

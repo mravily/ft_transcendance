@@ -5,7 +5,7 @@
     </head>
     <body>
         <div class='game' style="font-family: Orbitron;">
-            <div class="playercolumn">
+            <div class="playercolumn" *ngIf="players.length > 1">
                 <div class="player" [ngClass]="{player: !isSpec}">
                     <img [src]="players[0].avatar">
                     <div class="playername">{{players[0].login}}</div>

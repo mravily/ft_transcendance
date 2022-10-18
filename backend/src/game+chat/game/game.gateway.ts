@@ -108,6 +108,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     client.emit('liveGames', games);
   }
 
+  @SubscribeMessage('getMyUser')
+  async getMyUser(client: Socket) {
+    client.emit('myUser', client.data.user);
+  }
+
   @SubscribeMessage('findMatch')
   async findMatch(client: Socket) {
     this.gameService.getMatchmakingGame(client, false);
