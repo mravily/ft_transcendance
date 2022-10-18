@@ -141,7 +141,7 @@ export class GameService {
       res.push({
         gameId: gameId,
         winner: game.playerLogins[0],
-        winnerScore: game.player2Score,
+        winnerScore: game.player1Score,
         winnerAvatar: users[0].avatar,
         looser: game.playerLogins[1],
         looserScore: game.player2Score,

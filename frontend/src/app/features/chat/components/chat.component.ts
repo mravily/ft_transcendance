@@ -221,7 +221,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chatServ.unblockUser(login);
   }
   onProfileClick(login: string) {
-    this.router.navigateByUrl("/profile/" + login);
+    this.router.navigateByUrl("/user/" + login);
   }
   onInvite(login: string, powerup: boolean) {
     this.chatServ.inviteUser(login, powerup);
