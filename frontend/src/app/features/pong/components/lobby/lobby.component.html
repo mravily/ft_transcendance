@@ -1,0 +1,38 @@
+<div class="landing-block">
+  <img src="assets/logo.png" alt="Snapface logo">
+  <!-- <form #email="ngForm" (ngSubmit)="onSubmitForm(email)">
+    <label for="emailInput">Inscrivez-vous pour recevoir la newsletter</label>
+    <input type="email" name="userEmail" id="emailInput" placeholder="Votre adresse email" [(ngModel)]="userEmail">
+    <button type="submit">OK</button>
+  </form> -->
+  <h2 style="margin: 20px;">Join the Legacy</h2>
+  <div class="leagacy">
+
+    <div class="matchmakinglink">
+      <h2>Get old school 1v1</h2>
+      <button (click)="onMatchmaking()" #findMatch>{{buttonText}}</button>
+    </div>
+    <div class="matchmakinglink">
+      <h2>Get PowerUps Trouble 1v1</h2>
+      <button (click)="onPUMatchmaking()" #findPUMatch>{{PUbuttonText}}</button>
+    </div>
+  </div>
+  <h2 style="margin: 20px;">Invite Friend</h2>
+  <div class="friends" [formGroup]="searchForm">
+    <input id="search" type="text" placeholder="Search someone..." formControlName="search">
+    <div class="friend" *ngFor="let user of searchResult$ | async">
+      <img [src]="user.avatar">
+      <div class="friendname">{{user.login}}</div>
+      <div class="friendratio">{{user.win}} / {{user.lost}}</div>      
+      <button (click)="onInvite(user, false)">Invite</button>
+      <button (click)="onInvite(user, true)">Invite with PowerUps !</button>
+    </div>
+  </div>
+  <h2 style="margin: 20px;">Match requests</h2>
+  <div class="friends" [formGroup]="searchForm">
+    <div class="friend" *ngFor="let user of invites$ | async">
+      <div class="friendname">{{user}}</div>
+      <button (click)="onAcceptInvite(user)">Accept</button>
+    </div>
+  </div>
+</div>

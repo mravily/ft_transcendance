@@ -1,0 +1,49 @@
+<div class="form-card">
+    <h2 style="margin: 20px;">Create new room</h2>
+    <form [formGroup]="roomForm" class="publicChannels">   
+        <div class="form-group">
+            <label for="name">Room name</label>
+            <input id="name" type="text" formControlName="name">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" type="text" formControlName="description" rows="4">
+            </textarea>
+        </div>
+        <div class="form-group" formArrayName="members">
+            <label for="members">Members</label>
+            <div class="memberList">
+                <input *ngFor="let number of members.controls; let i = index" 
+                        id="members" type="text" formControlName="{{i}}"
+                        (keyup.enter)="addMember()">
+                <span>
+                    <button (click)="addMember()">+</button>
+                    <button (click)="deleteMember()">-</button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ispublic">Public</label>
+            <input id="ispublic" type="checkbox" formControlName="ispublic">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" formControlName="password">
+        </div>
+        <div class="action-buttons">
+            <button type="submit" (click)="onCreateChan()" [disabled]="roomForm.invalid">Create</button>
+        </div>
+    </form>
+
+    <h2 style="margin: 20px;">Join public room</h2>
+    <div class="publicChannels">
+        <div [formGroup]="searchForm">
+            <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
+        </div>
+        <div class="publicChannel" *ngFor="let channel of publicChannels$ | async">
+            <div class="channelName">{{channel.channelName}}</div>
+            <span>password: <input [(ngModel)]="password" type="password"></span>
+            <button (click)="onJoin(channel.channelName)">Join</button>
+        </div>
+    </div>
+</div>

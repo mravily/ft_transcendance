@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+.landing-block {
+  height: 100%;
+  overflow-y: auto;
+}
+
+button {
+  background-color: transparent;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  border: none;
+  box-shadow: lightgray 5px 5px 7px;
+  margin-right: 20px;
+  outline: none;
+  font-size: 20px;
+  font-weight: 500;
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: lightgray 0 0 5px;
+  }
+}
+
+.leagacy {
+  background-color: #f5f5f5;
+  color: #333;
+  box-shadow: lightgray 0 0 5px;
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+.matchmakinglink {
+  margin: 10px;
+  padding: 20px;
+	background: #fff;
+	margin-bottom: 30px;
+	border-radius: 5px;
+	overflow: hidden;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  color: #333;
+  height: 100%;
+  flex: 1;
+  text-align: center;
+}
+
+.friends {
+  background-color: #f5f5f5;
+  color: #333;
+  box-shadow: lightgray 0 0 5px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  margin-top: 20px;
+  text-align: center;
+  align-items: center;
+}
+input {
+  width: 95%;
+  height: 30px;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  outline: none;
+}
+.friend {
+  background-color: #fff;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 97%;
+  height: 80px;
+  margin: 10px auto;
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  img {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}

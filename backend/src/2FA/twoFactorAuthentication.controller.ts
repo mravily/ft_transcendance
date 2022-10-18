@@ -52,8 +52,8 @@ export class TwoFactorAuthenticationController {
   ) {
     const isValid = await this.tfaService.isTfaCodeValid(token, session.userid);
     if (isValid) {
-      const tokens = await this.authService.getTokens(session.userid);
-      res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
+      // const tokens = await this.authService.getTokens(session.userid);
+      res.cookie('access', session.userid, { maxAge: 900000000000000 });
     }
     return this.tfaService.isTfaCodeValid(token, session.userid);
   }
@@ -74,9 +74,8 @@ export class TwoFactorAuthenticationController {
   }
 
   @Post('delete')
-  async delete2FA(@Session() session: Record<string, any>) {
-    await this.db.delete2FA(session.userid);
-    return { msg: '2FA Deleted' };
+  delete2FA(@Session() session: Record<string, any>) {
+    this.db.delete2FA(session.userid);
   }
 
   @Get('switch')

@@ -10,11 +10,11 @@ import { ProfileSettingsComponent } from './components/profile-settings/profile-
 
 const routes: Routes = [
 	{ path: '', component: ProfileNavBarComponent, children: [
-		{ path: '', component: ProfileOverviewComponent },
-		{ path: 'friends', component: ProfileFriendsComponent },
-		{ path: 'block-users', component: ProfileBlockUsersComponent },
-		{ path: 'settings', component: ProfileSettingsComponent },
-		{ path: 'security', component: ProfileSecurityComponent },
+		{ path: '', component: ProfileOverviewComponent, canActivate: [AuthGuard] },
+		{ path: 'friends', component: ProfileFriendsComponent, canActivate: [AuthGuard] },
+		{ path: 'block-users', component: ProfileBlockUsersComponent, canActivate: [AuthGuard]},
+		{ path: 'settings', component: ProfileSettingsComponent, canActivate: [AuthGuard] },
+		{ path: 'security', component: ProfileSecurityComponent, canActivate: [AuthGuard] },
 	], canActivate: [AuthGuard]},
 ];
 

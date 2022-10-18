@@ -1,5 +1,5 @@
-import { PrismaService } from '../prisma.service';
-import { IAccount } from '../interfaces';
+import { PrismaService } from "../prisma.service";
+import { IAccount } from "../interfaces";
 
 export async function getTotalFiends(this: PrismaService, login: string): Promise<number> {
   try {

@@ -9,12 +9,11 @@ import { IProfileFriends } from '../models/profile.user.model';
   providedIn: 'root'
 })
 export class ProfileService {
-    
+
   constructor(private http: HttpClient) { }
-  
+
   upload(file: any) {
-  	// if (!file){
-		let fileData = new FormData(); 
+		let fileData = new FormData();
 		fileData.append('file', file);
 		this.http.post('api/upload', fileData).subscribe({
 			next: (response) => console.log(response),
@@ -48,7 +47,7 @@ export class ProfileService {
   }
 
   sendFriendRequest(login: string) {
-	this.http.post('api/user/friendrequest', { login });
+	this.http.post('api/user/friendrequest', { login }).subscribe();
   }
 
   blockUser(login: string) {
@@ -78,11 +77,11 @@ export class ProfileService {
 	return this.http.get<IAccount[]>('api/profile/blockedusers');
   }
 
-  acceptFriendRequest(login: string): void {
-	this.http.post('api/user/acceptfriend', { login });
+  acceptFriendRequest(login: string) {
+	this.http.post('api/user/acceptfriend', { login }).subscribe();
   }
 
-  removeFriend(login: string): void {
+  removeFriend(login: string) {
 	this.http.post('api/user/deletefriend',  { login }).subscribe();
   }
 

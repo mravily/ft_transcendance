@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil, takeWhile } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { ProfileService } from '../../services/profile.service';
 
@@ -15,7 +15,7 @@ export class ProfilePublicComponent implements OnInit {
 
 	data$!: Observable<IAccount>;
 	userID!: string;
-	actionBlock: string = 'Block';
+	actionBlock!: string;
 	actionAdd!: string;
 	myProfile!: boolean;
 	
@@ -35,15 +35,15 @@ export class ProfilePublicComponent implements OnInit {
 
 	isFriend(login: string) {
 		this.profileService.isFriend(login).subscribe(v => {
-			if (v[0] || v[1]) this.actionAdd = 'UnBlock';
-			else this.actionAdd = 'Block';
+			if (v[0] || v[1]) this.actionAdd = 'Remove Friend';
+			else this.actionAdd = 'Add Friend';
 		})
 	}
 
 	isBlocked(login: string) {
 		this.profileService.isBlocked(login).subscribe(v => {
-			if (v) this.actionAdd = 'Remove Friend';
-			else this.actionAdd = 'Add Friend';
+			if (v) this.actionBlock = 'UnBlock';
+			else this.actionBlock = 'Block';
 		})
 	}
 	isLogin() {

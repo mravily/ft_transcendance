@@ -16,6 +16,7 @@ export class ContactListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  
   reload(route: string) {
 	this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
 		this.router.navigate([route]);

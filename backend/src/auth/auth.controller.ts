@@ -28,11 +28,9 @@ export class AuthController {
     @Session() session: Record<string, any>,
   ) {
     const tfa = await this.db.is2FA(session.userid).then();
-    // Stocker le JWT RT dans la DB
     if (tfa == true) return { url: process.env.TFA_URL };
-    const tokens = await this.authService.getTokens(session.userid);
-    res.cookie('access', tokens.access_token, { maxAge: 900000000000000 });
-    console.log('FirstTime Baby ?', session.firstTime);
+    // const tokens = await this.authService.getTokens(session.userid);
+    res.cookie('access', session.jwt, { maxAge: 900000000000000 });
     if (session.firstTime) return { url: process.env.FRONT_SETTINGS };
     return { url: process.env.FRONT_URL };
   }
