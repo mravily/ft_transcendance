@@ -205,7 +205,7 @@ export class GameMatch {
     
     this.lastPowerUp = 0;
     this.player1 = new Paddle(this.paddleWidth,this.paddleHeight,this.wallOffset+this.ballSize, this.canvasHeight / 2 - this.paddleHeight / 2); 
-    this.player2 = new Paddle(this.paddleWidth,this.paddleHeight,this.canvasWidth - (this.wallOffset + this.paddleWidth) - this.ballSize, this.canvasWidth / 2 - this.paddleHeight / 2);
+    this.player2 = new Paddle(this.paddleWidth,this.paddleHeight,this.canvasWidth - (this.wallOffset + this.paddleWidth) - this.ballSize, this.canvasHeight / 2 - this.paddleHeight / 2);
     this.ball = new Ball(this.ballSize,this.ballSize,this.canvasWidth / 2 - this.ballSize / 2, this.canvasWidth / 2 - this.ballSize / 2, this);
     this.powerUps = [];
     this.socketIds = ['', ''];
