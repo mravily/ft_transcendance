@@ -72,7 +72,11 @@ export class PongService {
     this.socket.emit('sync', t);
     return t;
   }
-  //
+  
+  checkforgame(): void {
+    this.socket.emit('checkforgame');
+  }
+
   invitePlayer(playerId: number): void {
     this.socket.emit('invite', playerId);
   }

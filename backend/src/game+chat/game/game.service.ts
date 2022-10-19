@@ -42,6 +42,12 @@ export class GameService {
     );
     this.wsg.sendMatchUsers(client.id, users);
   }
+  checkforgame(login: string) {
+    console.log('checking game for', login);
+    if (this.gameIdByLogin.has(login))
+      return this.gameIdByLogin.get(login);
+    return -1;
+  }
 
   createGame(players: string[], powerUps: boolean): number {
     let gameId = Math.floor(Math.random() * 1000000);
@@ -141,7 +147,7 @@ export class GameService {
       res.push({
         gameId: gameId,
         winner: game.playerLogins[0],
-        winnerScore: game.player2Score,
+        winnerScore: game.player1Score,
         winnerAvatar: users[0].avatar,
         looser: game.playerLogins[1],
         looserScore: game.player2Score,
@@ -166,7 +172,7 @@ export class GameMatch {
   startGame(socket: Socket): void {
     let i = this.playerLogins.indexOf(socket.data.user.login);
     
-    console.log("starting game", this.playerLogins);
+    console.log("connection of", socket.data.user.login, this.playerLogins);
     
     if (i != -1)  {
       if (!this.socketIds.includes(socket.id)) {
@@ -177,10 +183,19 @@ export class GameMatch {
         console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
       }
       console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
-      if (!this.socketIds.includes('') && !this.idInterval)
-        this.start();
-      else if (!this.idInterval)
-        this.wsg.sendStart([socket.id], -1);
+      if (!this.idInterval) {
+        if (this.socketIds.includes(''))
+          this.wsg.sendStart([socket.id], -1);
+        else
+          this.start();
+      }
+      else
+      {
+        this.wsg.sendStart([socket.id], 0);
+        this.wsg.sendGameStatus(socket.id,
+        this.getGameStatus(socket.data.user.login),
+      );
+      }
     }
     else  {
       this.socketIdsSpec.push(socket.id);

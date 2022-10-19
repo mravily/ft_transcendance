@@ -69,7 +69,9 @@ export class PongComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.game = new PlayingPongMatch(this.route, this.pongService, this.gameCanvas);
+    if (!this.isSpec) {
+      this.game = new PlayingPongMatch(this.route, this.pongService, this.gameCanvas);
+    }
     this.game.ready();
   }
   ngOnDestroy(): void {
@@ -106,7 +108,7 @@ export class PongMatch {
     this.gameContext.textBaseline = "middle";
     this.gameContext.font = "60px Orbitron";
     this.gameContext.fillStyle = "#fff";
-    this.gameContext.fillText("Click when you are ready", this.gameCanvas.nativeElement.width / 2, this.gameCanvas.nativeElement.height / 2, 1000);
+    this.gameContext.fillText("PONG LEGACY", this.gameCanvas.nativeElement.width / 2, this.gameCanvas.nativeElement.height / 2, 1000);
     var paddleWidth:number = 20, 
       paddleHeight:number = 120, 
       ballSize:number = 20; 

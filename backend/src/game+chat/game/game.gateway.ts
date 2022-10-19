@@ -100,11 +100,14 @@ export class GameGateway
     client.emit('sync', Date.now());
     console.log('sync', client.id);
   }
-  // @SubscribeMessage('checkforgame')
-  // checkforgame(client: Socket) {
-  //   let gameid = this.gameService.checkforgame(client.data.user.login);
-  //   this.sendMatchId(client.id, gameid);
-  // }
+  @SubscribeMessage('checkforgame') // a implementer dans le front
+  checkforgame(client: Socket) {
+    let id = this.gameService.checkforgame(client.data.user.login);
+    if (id != -1) {
+      this.sendMatchId(client.id, id);
+    }
+    // client.emit('currentGame', gameid);
+  }
 
   // @SubscribeMessage('invite')
   // async handleInvite(client: Socket, login: string)  {

@@ -53,6 +53,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.subs.push(this.pongServ.gameFoundEvent.subscribe((id: number) => {
       this.router.navigateByUrl('/play/' + id);
     }));
+    this.pongServ.checkforgame();
     // this.subs.push(this.chatServ.getInvitesObs().subscribe((login: string) => {
     //   console.log('invite', login);
     //   // if (confirm(login + ' wants to play with you'))
