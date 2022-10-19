@@ -1,11 +1,7 @@
 import { PrismaService } from '../prisma.service';
 import { IMatch } from '../interfaces';
 
-export async function setMatch(this: PrismaService,
-                              winnerId: string,
-                              looserId:string,
-                              winnerScore: number,
-                              looserScore: number): Promise<number> {
+export async function setMatch(this: PrismaService, winnerId: string, looserId:string, winnerScore: number, looserScore: number): Promise<number> {
   try {
     const match = await this.prisma.match.create({
       data: {
@@ -14,6 +10,14 @@ export async function setMatch(this: PrismaService,
         winnerScore: winnerScore,
         looserScore: looserScore
       },
+    });
+    await this.prisma.user.update({
+      where: {id: winnerId},
+      data: { score: {increment: winnerScore} },
+    });
+    await this.prisma.user.update({
+      where: {id: looserId},
+      data: { score: {increment: looserScore} },
     });
     return match.id;
   }
