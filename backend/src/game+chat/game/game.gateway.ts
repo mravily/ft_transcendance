@@ -168,8 +168,8 @@ export class GameGateway
     this.wss.to(sockId).emit('matchUsers', users);
   }
 
-  async redirectToLobby(client: Socket) {
-    client.emit('redirectToLobby');
+  async redirectToLobby(sockId: string) {
+    this.wss.to(sockId).emit('redirectToLobby');
   }
   async sendSpecMode(client: Socket) {
     client.emit('specMode');

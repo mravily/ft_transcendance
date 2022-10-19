@@ -30,7 +30,7 @@ export class GameService {
 
   async startGame(gameId: number, client: Socket) {
     if (!this.games.has(gameId)) {
-      return this.wsg.redirectToLobby(client);
+      return this.wsg.redirectToLobby(client.id);
     }
     this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
@@ -310,6 +310,10 @@ export class GameMatch {
 
     this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
     this.wsg.removeGame(this.playerLogins[0]);
+    setTimeout(() => {
+      this.socketIds.forEach(id => this.wsg.redirectToLobby(id));
+      this.socketIdsSpec.forEach(id => this.wsg.redirectToLobby(id));
+    }, 2000);
   }
 
   update_powerups(): void {
