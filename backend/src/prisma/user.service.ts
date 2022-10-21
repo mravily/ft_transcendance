@@ -475,7 +475,7 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
     });
     await this.prisma.user.update({
       where: { id: userId },
-      data: { imgUrl: 'http://localhost:4200/api/stream/' + usr.login },
+      data: { imgUrl: '/api/stream/' + usr.login },
     });
   } catch (error) {
     console.log(error.message);

@@ -8,6 +8,7 @@
       "request": "launch",
       "preLaunchTask": "npm: start",
       "url": "http://localhost:4200/"
+      // "url": "http://localhost:4200/"
     },
     {
       "name": "ng test",

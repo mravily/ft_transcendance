@@ -19,7 +19,7 @@ import { GameService } from '../../game/game.service';
 let DMPREFIX = '##DM##';
 
 @WebSocketGateway({ namespace: '/chat',
-             cors: { origin: [ 'localhost:4200']  }})
+             cors: { origin: [ 'localhost:4200', '*']  }})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
 
   @WebSocketServer()

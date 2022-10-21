@@ -101,9 +101,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.mContainer) {
+    if (this.mContainer)
       this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
-    }
+    this.chatServ.getMyUser();
   }
 
   ngOnDestroy() {

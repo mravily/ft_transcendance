@@ -8,6 +8,7 @@
 	"/socket.io/": {
 	  "target": "http://api:3000",
 	  "secure": false,
+	  "ws": true,
 	  "changeOrigin": true
 	}
 }
