@@ -14,7 +14,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       callbackURL: process.env.CALLBACK_URI,
       passReqToCallback: true,
     });
-    console.log('42 strategy loaded', process.env.FORTYTWO_CLIENT_SECRET);
+    //console.log('42 strategy loaded', process.env.FORTYTWO_CLIENT_SECRET);
   }
 
   async validate(

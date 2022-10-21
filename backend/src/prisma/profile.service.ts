@@ -101,7 +101,7 @@ export async function getProfileFriends(this: PrismaService, userId: string): Pr
     return friends.sort((a, b) => (a.score > b.score ? -1 : 1));
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -148,7 +148,7 @@ export async function getUserRank(this: PrismaService, login: string): Promise<n
     return 0;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -276,6 +276,6 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
     return profile;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }

@@ -31,7 +31,7 @@ export async function getTotalFiends(this: PrismaService, login: string): Promis
     }
     return n;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -135,6 +135,6 @@ export async function getProfileOverview(this: PrismaService, userid: string): P
     }
     return profile;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }

@@ -57,7 +57,7 @@ export class NewroomComponent implements OnInit {
     this.members.removeAt(this.members.length - 1);
   }
   onCreateChan()  {
-    console.log(this.roomForm.value);
+    //console.log(this.roomForm.value);
     let chan: IChannel = {
       channelName: this.roomForm.value.name,
       // description: this.roomForm.value.description,
@@ -71,7 +71,7 @@ export class NewroomComponent implements OnInit {
     this.chatService.createChannel(chan);
   }
   onJoin(channelName: string) {
-    console.log(channelName, this.password);
+    //console.log(channelName, this.password);
     this.chatService.joinChannel(channelName, this.password);
   }
 

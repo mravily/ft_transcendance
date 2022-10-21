@@ -20,7 +20,7 @@ export class GameService {
     @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway,
     public db: PrismaService,
   ) {
-    console.log('Game Service created');
+    //console.log('Game Service created');
     this.games = new Map<number, GameMatch>();
     this.invites = new Map<string, any>();
     this.queue = [];
@@ -66,12 +66,12 @@ export class GameService {
       var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
-      console.log(
-        'creating',
-        client.data.user.login,
-        'vs',
-        oppo.data.user.login,
-      );
+      // console.log(
+      //   'creating',
+      //   client.data.user.login,
+      //   'vs',
+      //   oppo.data.user.login,
+      // );
     } else {
       queue.push(client);
     }
@@ -95,7 +95,7 @@ export class GameService {
     if (invited[0] != client.data.user.login)
       return;
     this.invites.delete(login);
-    console.log("invite accepted", client.data.user.login, "vs", login);
+    //console.log("invite accepted", client.data.user.login, "vs", login);
     let gameId = this.createGame([login, client.data.user.login], invited[1]);
     this.chatGW.sendMatchId(client.data.user.login, gameId);
     this.chatGW.sendMatchId(login, gameId);
@@ -153,7 +153,7 @@ export class GameService {
 
   sendMessage(login: string, message: string) {
     if (this.gameIdByLogin.has(login)) {
-      console.log('sending message', login, message);
+      //console.log('sending message', login, message);
       const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         this.games.get(gameId).sendMessage(login, message);
@@ -166,7 +166,7 @@ export class GameMatch {
   startGame(socket: Socket): void {
     let i = this.playerLogins.indexOf(socket.data.user.login);
     
-    console.log("starting game", this.playerLogins);
+    //console.log("starting game", this.playerLogins);
     
     if (i != -1)  {
       if (!this.socketIds.includes(socket.id)) {
@@ -174,9 +174,9 @@ export class GameMatch {
       }
       if (!this.playerIds.includes(socket.data.userId)) {
         this.playerIds[i] = socket.data.userId;
-        console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
+        //console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
       }
-      console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
+      //console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
       if (!this.socketIds.includes('') && !this.idInterval)
         this.start();
       else if (!this.idInterval)
@@ -184,7 +184,7 @@ export class GameMatch {
     }
     else  {
       this.socketIdsSpec.push(socket.id);
-      console.log(socket.data.user.login, 'spectating');
+      //console.log(socket.data.user.login, 'spectating');
       this.wsg.sendSpecMode(socket);
       this.wsg.sendGameStatus(
         socket.id,

@@ -15,7 +15,7 @@ export class HeaderComponent implements OnInit {
   }
   
   onSignOut() {
-	console.log("toto");
+	//console.log("toto");
 	this.cookieService.deleteAll();
   }
 
