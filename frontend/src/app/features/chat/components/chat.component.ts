@@ -19,6 +19,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   create: boolean = false;
 
   contacts!: Observable<IChannel[]>;
+  channels: IChannel[] = [];
+
   selectedChannel!: IChannel;
   curMessage!: string;
   // newMemberLogin!: string;
@@ -60,12 +62,14 @@ export class ChatComponent implements OnInit, OnDestroy {
       }
     }));
     this.contacts = this.chatServ.getChannelsObs().pipe(
-      map((channels: IChannel[]) => 
-        channels.map((channel: IChannel) => {
+      map((channels: IChannel[]) => {
+        this.channels = channels;
+        return channels.map((channel: IChannel) => {
           channel.imgUrl = this.getRoomPhoto(channel);
           channel.realName = this.getRealName(channel);
           return channel;
         })
+      }
       )
     );
     this.subs.push(this.chatServ.getBlockersObs().subscribe((blockers: string[]) => {
@@ -75,6 +79,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       console.log(error);
     }));
     this.subs.push(this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
+      console.log(user);      
       this.myUser = user;
     }));
     this.searchForm = this.builder.group({
@@ -86,15 +91,12 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.chatServ.searchUsers(search);
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
-    // this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
-    //   console.log('invite', login);
-    //   // if (confirm(login + ' wants to play with you'))
-    //   this.chatServ.acceptInvite(login);
-    // }));
     this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
       console.log('game found', gameId);
       this.router.navigate(['play', gameId]);
     }));
+    console.log('geting myuser');
+    
     this.chatServ.getMyUser();
     this.chatServ.getMyChannels({page: 0, limit: 100});
 
@@ -103,14 +105,19 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngAfterViewChecked() {
     if (this.mContainer)
       this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
-    this.chatServ.getMyUser();
+    // this.chatServ.getMyUser();
   }
 
   ngOnDestroy() {
     this.subs.forEach((sub: Subscription) => sub.unsubscribe());
     this.searchSubcription.unsubscribe();
   }
-
+  isOnChan(login: string): boolean {
+    if (this.selectedChannel && this.selectedChannel.users) {
+      return this.selectedChannel.users.map((user) => user.login).includes(login);
+    }
+    return false;
+  }
   amICreator() {
     if (this.selectedChannel && this.myUser)
       return this.selectedChannel.creator == this.myUser.login;
@@ -167,7 +174,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
   onDMclick(login: string) {
     this.create = false;
-    this.selectedChannel.messages = undefined;
+    if (this.selectedChannel)
+      this.selectedChannel.messages = undefined;
     this.chatServ.getDMinfo(login);
   }
   onLeave() {
@@ -226,7 +234,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   onInvite(login: string, powerup: boolean) {
     this.chatServ.inviteUser(login, powerup);
   }
-  onAcceptInvite(login: string) {
-    this.chatServ.acceptInvite(login);
-  }
+  // onAcceptInvite(login: string) {
+  //   this.chatServ.acceptInvite(login);
+  // }
 }

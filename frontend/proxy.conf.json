@@ -6,9 +6,8 @@
 		"changeOrigin": true
 	},
 	"/socket.io/": {
-	  "target": "http://api:3000",
+	  "target": "http://api:3000/socket.io/",
 	  "secure": false,
-	  "ws": true,
 	  "changeOrigin": true
 	}
 }

@@ -579,6 +579,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.sendTo(blockedLogin, 'blockers', blockers);
   }
   
+  @SubscribeMessage('getMyUser')
+  async onGetMyUser(socket: Socket) {
+    if (socket.data?.user == undefined)
+      return;
+    socket.emit('myUser', socket.data.user);
+  }
+
   @SubscribeMessage('invite')
   async handleInvite(socket: Socket, inviteInfo: {login: string, powerup: boolean})  {
     if (socket.data?.user == undefined)

@@ -19,7 +19,9 @@
         <div *ngIf="!selectedChannel.isDirect">
           <div [formGroup]="searchForm">
             <input placeholder="Add someone to the room" formControlName="search">
-            <button class="addbutton" *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
+            <div *ngFor="let user of (userSearchResult$ | async)">
+              <button class="addbutton" *ngIf="!isOnChan(user.login)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
+            </div>
           </div>
           <h6>Members</h6>
           <div *ngFor="let member of selectedChannel.users">
@@ -67,7 +69,7 @@
           {{message.from}}
         </h4>
         <div class="message-body" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
-          {{(!isBlocked(message.from)) ? message.message : 'blocked'}}
+          {{(!isBlocked(message.from) || message.isNotif) ? message.message : 'You blocked ' + message.from}}
         </div>
       </div>
     </div>
@@ -80,7 +82,7 @@
 
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
+    <div class="contact" (click)="create = !create"><h5 style="margin-left: 20px">+  Add new room</h5></div>
 
     <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
       <img [src]="contact.imgUrl">
