@@ -46,7 +46,7 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
     }
 
     afterInit(server) {
-        console.log('sidebar server', server);
+        console.log('sidebar afterInit');
         this.server = server;
     }
 
