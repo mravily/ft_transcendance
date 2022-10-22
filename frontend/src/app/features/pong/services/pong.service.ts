@@ -28,6 +28,7 @@ export class PongService {
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
+      transports: ['websocket'],
       withCredentials: false,
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');

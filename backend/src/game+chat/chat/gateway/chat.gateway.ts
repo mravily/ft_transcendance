@@ -35,6 +35,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async onModuleInit() {
     console.log('ChatGateway initialized');
   }
+  async afterInit() {
+    console.log('ChatGateway afterInit');
+  }
 
   async handleConnection(client: Socket) {
     try {
