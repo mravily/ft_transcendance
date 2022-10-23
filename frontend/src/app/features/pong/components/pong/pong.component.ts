@@ -54,7 +54,7 @@ export class PongComponent implements OnInit, AfterViewInit, OnDestroy {
   players: IAccount[] = [];
 
   constructor(private route: ActivatedRoute, private pongService: PongService, private router: Router) {
-    this.gameId = this.route.snapshot.params["id"];
+    this.gameId = this.route.snapshot.params["gameId"];
   }
   ngOnInit(): void {
     this.subs.push(this.pongService.specModeEvent.subscribe(() => {

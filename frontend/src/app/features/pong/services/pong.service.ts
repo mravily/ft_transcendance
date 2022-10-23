@@ -44,6 +44,8 @@ export class PongService {
     this.redirectToLobbyEvent = this.socket.fromEvent<void>('redirectToLobby');
     this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
     this.liveGamesEvent = this.socket.fromEvent<IMatch[]>('liveGames');
+
+    console.log('connecting to socket');
   }
 
   getLiveGames(): void {

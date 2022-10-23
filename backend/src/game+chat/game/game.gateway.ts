@@ -91,8 +91,11 @@ export class GameGateway
   }
 
   async handleDisconnect(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.removeConnection(client);
     console.log('Client disconnected', client.id);
+    client.disconnect();
   }
 
   @SubscribeMessage('sync')
@@ -158,7 +161,7 @@ export class GameGateway
   async handleStart(client: Socket, gameId: number) {
     console.log('handlestart', client.data?.user?.login, gameId);
     
-    if (client.data?.user == undefined)
+    if (client.data?.user?.login == undefined)
       return;
     this.gameService.startGame(gameId, client);
   }

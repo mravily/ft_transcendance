@@ -30,10 +30,12 @@ export class GameService {
   }
 
   async startGame(gameId: number, client: Socket) {
+    
     if (!this.games.has(gameId)) {
+      console.log("no game", client.data.user.login, gameId, this.games.keys());
       return this.wsg.redirectToLobby(client.id);
     }
-    console.log(client.data.user.login, 'starting game', gameId);
+    console.log(client.data.user.login, 'starting game22', gameId);
     
     // this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
@@ -55,13 +57,20 @@ export class GameService {
   }
 
   createGame(players: string[], powerUps: boolean): number {
-    let gameId = Math.floor(Math.random() * 1000000);
+    let gameId: number = Math.floor(Math.random() * 1000000);
     while (this.games.has(gameId)) {
       gameId = Math.floor(Math.random() * 1000000);
     }
     this.games.set(gameId, new GameMatch(this.wsg, players, powerUps, this.db));
+    
     this.gameIdByLogin.set(players[0], gameId);
     this.gameIdByLogin.set(players[1], gameId);
+    console.log(
+      'creating',
+      players[0],
+      'vs',
+      players[1], gameId
+    );
     return gameId;
   }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
@@ -77,12 +86,6 @@ export class GameService {
       var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
       this.wsg.sendMatchId(client.id, gameId);
       this.wsg.sendMatchId(oppo.id, gameId);
-      console.log(
-        'creating',
-        client.data.user.login,
-        'vs',
-        oppo.data.user.login,
-      );
     } else {
       queue.push(client);
     }
@@ -118,13 +121,10 @@ export class GameService {
         for (var player of this.games.get(gameId).playerLogins) {
           this.gameIdByLogin.delete(player);
         }
-        for (var player of this.games.get(gameId).playerLogins) {
-          this.gameIdByLogin.delete(player);
-        }
         this.games.delete(gameId);
       }
     }
-    // console.log("running games remaining", this.games.size);
+    console.log("running games remaining", this.games.size);
   }
 
   setPlayerPos(login: string, paddle: GamePaddle) {
