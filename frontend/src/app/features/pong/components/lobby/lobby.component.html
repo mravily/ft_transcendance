@@ -20,12 +20,14 @@
   <h2 style="margin: 20px;">Invite Friend</h2>
   <div class="friends" [formGroup]="searchForm">
     <input id="search" type="text" placeholder="Search someone..." formControlName="search">
-    <div class="friend" *ngFor="let user of searchResult$ | async">
-      <img [src]="user.avatar">
-      <div class="friendname">{{user.login}}</div>
-      <div class="friendratio">{{user.win}} / {{user.lost}}</div>      
-      <button (click)="onInvite(user, false)">Invite</button>
-      <button (click)="onInvite(user, true)">Invite with PowerUps !</button>
+    <div *ngFor="let user of searchResult$ | async">
+      <div class="friend">
+        <img [src]="user.avatar">
+        <div class="friendname">{{user.login}}</div>
+        <div class="friendratio">{{user.win}} / {{user.lost}}</div>      
+        <button (click)="onInvite(user, false)">Invite</button>
+        <button (click)="onInvite(user, true)">Invite with PowerUps !</button>
+      </div>
     </div>
   </div>
   <h2 style="margin: 20px;">Match requests</h2>

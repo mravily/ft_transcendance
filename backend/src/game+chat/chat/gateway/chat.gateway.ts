@@ -126,7 +126,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (socket.data?.user == undefined)
       return;
     const res: IAccount[] = await this.db.searchUser(key);
-    socket.emit('users', res);
+    socket.emit('users', res.filter(user => user.login != socket.data.user.login));
   }
   
   @SubscribeMessage('createChannel')

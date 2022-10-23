@@ -13,8 +13,7 @@ import { PongMatch } from './PongMatch.class';
 @Component({
   selector: 'app-pong',
   templateUrl: './pong.component.html',
-  styleUrls: ['./pong.component.scss'],
-  providers: [PongService]
+  styleUrls: ['./pong.component.scss']
 })
 export class PongComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:keydown', ['$event'])
@@ -54,7 +53,7 @@ export class PongComponent implements OnInit, AfterViewInit, OnDestroy {
   players: IAccount[] = [];
 
   constructor(private route: ActivatedRoute, private pongService: PongService, private router: Router) {
-    this.gameId = this.route.snapshot.params["gameId"];
+    this.gameId = +this.route.snapshot.params["gameId"];
   }
   ngOnInit(): void {
     this.subs.push(this.pongService.specModeEvent.subscribe(() => {
@@ -63,10 +62,10 @@ export class PongComponent implements OnInit, AfterViewInit, OnDestroy {
       this.game.turnOnSpecMode();
     }));
     this.subs.push(this.pongService.redirectToLobbyEvent.subscribe(() => {
-      this.router.navigate(["/play"]);
+      this.router.navigateByUrl("/play");
     }));
     this.subs.push(this.pongService.matchUsersEvent.subscribe((users: IAccount[]) => {
-      console.log("users", users);
+      // console.log("users", users);
       this.players = users;
     }));
   }

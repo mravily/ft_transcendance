@@ -45,7 +45,7 @@ export class PongService {
     this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
     this.liveGamesEvent = this.socket.fromEvent<IMatch[]>('liveGames');
 
-    console.log('connecting to socket');
+    console.log('PongService created');
   }
 
   getLiveGames(): void {
@@ -64,7 +64,6 @@ export class PongService {
 
   sendStartGame(gameId: number): void {
     console.log('sending start game !!!!');
-    
     this.socket.emit('startGame', gameId);
   }
 

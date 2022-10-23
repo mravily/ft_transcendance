@@ -144,7 +144,7 @@ export class GameGateway
     if (client.data?.user == undefined)
       return;
     this.gameService.getMatchmakingGame(client, false);
-    // console.log('find', client.id );
+    console.log('find', client.id );
   }
 
   @SubscribeMessage('findPUMatch')

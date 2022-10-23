@@ -718,9 +718,7 @@ export async function deleteUser(this: PrismaService, userId: string) {
 }
 
 export async function getUserAccount(this: PrismaService, userId: string): Promise<IAccount> {
-  try {
-    console.log('getting account of', userId);
-    
+  try {    
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {

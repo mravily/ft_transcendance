@@ -29,6 +29,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   searchSubcription!: Subscription;
   subs: Subscription[] = [];
 
+
   constructor(private router: Router,
               private pongServ: PongService,
               private chatServ: ChatService,

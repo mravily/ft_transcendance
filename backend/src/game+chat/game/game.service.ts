@@ -32,10 +32,11 @@ export class GameService {
   async startGame(gameId: number, client: Socket) {
     
     if (!this.games.has(gameId)) {
+      this.gameIdByLogin.delete(client.data.user.login);
       console.log("no game", client.data.user.login, gameId, this.games.keys());
       return this.wsg.redirectToLobby(client.id);
     }
-    console.log(client.data.user.login, 'starting game22', gameId);
+    // console.log(client.data.user.login, 'starting game22', gameId);
     
     // this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
