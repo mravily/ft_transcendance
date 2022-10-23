@@ -98,7 +98,7 @@ export class GameGateway
   @SubscribeMessage('sync')
   async sync(client: Socket) {
     client.emit('sync', Date.now());
-    console.log('sync', client.id);
+    // console.log('sync', client.id);
   }
   @SubscribeMessage('checkforgame')
   checkforgame(client: Socket) {
