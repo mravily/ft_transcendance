@@ -32,7 +32,7 @@ export class GameService {
     if (!this.games.has(gameId)) {
       return this.wsg.redirectToLobby(client.id);
     }
-    this.gameIdByLogin.set(client.data.user.login, gameId);
+    // this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
     const users = await this.games.get(gameId).getPlayersAccounts();
     users.sort(
@@ -42,6 +42,7 @@ export class GameService {
     );
     this.wsg.sendMatchUsers(client.id, users);
   }
+  
   checkforgame(login: string) {
     console.log('checking game for', login);
     if (this.gameIdByLogin.has(login))
@@ -159,7 +160,7 @@ export class GameService {
 
   sendMessage(login: string, message: string) {
     if (this.gameIdByLogin.has(login)) {
-      console.log('sending message', login, message);
+      // console.log('sending message', login, message);
       const gameId = this.gameIdByLogin.get(login);
       if (this.games.has(gameId)) {
         this.games.get(gameId).sendMessage(login, message);

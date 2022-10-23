@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CurrentMatch } from '../../models/current-match.model';
+import { IMatch } from 'src/app/interfaces';
 
 @Component({
 	selector: 'app-bloc-current-match',
@@ -8,7 +8,7 @@ import { CurrentMatch } from '../../models/current-match.model';
 })
 export class BlocCurrentMatchComponent implements OnInit {
 
-	@Input() match!: CurrentMatch;
+	@Input() match!: IMatch;
 
 	constructor() { }
 

@@ -9,11 +9,11 @@ import { IProfileFriends } from '../models/profile.user.model';
   providedIn: 'root'
 })
 export class ProfileService {
-    
+
   constructor(private http: HttpClient) { }
-  
+
   upload(file: any) {
-		let fileData = new FormData(); 
+		let fileData = new FormData();
 		fileData.append('file', file);
 		this.http.post('api/upload', fileData).subscribe({
 			next: (response) => console.log(response),

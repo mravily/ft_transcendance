@@ -8,11 +8,8 @@ export class ProfileController {
   constructor(private db: PrismaService) {}
 
   @Post('update')
-  async updateProfile(
-    @Session() session: Record<string, any>,
-    @Body() account: IAccount,
-  ) {
-    await this.db.updateUserAccount(session.userid, account);
+  updateProfile(@Session() session: Record<string, any>, @Body() account: IAccount) {
+    this.db.updateUserAccount(session.userid, account);
   }
 
   @Get('private')
@@ -39,21 +36,18 @@ export class ProfileController {
   }
 
   @Post('isfriend')
-  async isMyFriend(@Session() session, @Body() bod): Promise<[boolean, boolean]> {
-    const tuple =  await this.db.isFriend(session.userid, bod.login);
-    return tuple;
+  isMyFriend(@Session() session, @Body() bod): Promise<[boolean, boolean]> {
+    return this.db.isFriend(session.userid, bod.login);
   }
 
   @Post('isblocked')
-  async isBlocked(@Session() session, @Body() bod): Promise<boolean> {
-    return await this.db.isBlocked(session.userid, bod.login);
+  isBlocked(@Session() session, @Body() bod): Promise<boolean> {
+    return this.db.isBlocked(session.userid, bod.login);
   }
 
   @Get('blockedusers')
   async getBlockedUsers(@Session() session): Promise<IAccount[]> {
-    return await this.db.getBlockedUsers(
-      await this.db.getUserLogin(session.userid),
-    );
+    return this.db.getBlockedUsers(await this.db.getUserLogin(session.userid));
   }
 
   @Get(':id')

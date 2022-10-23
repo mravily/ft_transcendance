@@ -17,11 +17,12 @@ export class ProfileSettingsComponent implements OnInit {
   user$!: Observable<IAccount>
   urlRegex!: RegExp;
   selectedFile!: File
-  reloader$ = new BehaviorSubject(null);
   
   constructor(private profileService: ProfileService,
 			  private formBuilder: FormBuilder,
-			  private router: Router) { }
+			  private router: Router) {
+				this.user$ = this.profileService.getPrivateProfile();
+			  }
 
 	initForm(user$: Observable<IAccount>) {
 		this.user$.subscribe(v => {

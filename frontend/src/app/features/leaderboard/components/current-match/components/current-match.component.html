@@ -11,6 +11,6 @@
 		<div class="text"></div>
 	</div>
 		<div class="card-body py-0 position-relative scrollable-y" style="min-height: 500px; max-height: 500px">
-			<app-bloc-current-match *ngFor="let matchIt of matches" [match]="matchIt"></app-bloc-current-match>
+			<app-bloc-current-match *ngFor="let matchIt of matches$ | async" [match]="matchIt"></app-bloc-current-match>
 		</div>
 </div>

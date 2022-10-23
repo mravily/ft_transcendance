@@ -7,31 +7,24 @@ export class UserController {
 
   @Post('friendrequest')
   async sendFriendReques(@Body() req, @Session() session: Record<string, any>) {
-    console.log('in-friend-req', req);
-    await this.db.sendFriendReq(
-      await this.db.getUserLogin(session.userid),
-      req.login,
-    );
+    const login = await this.db.getUserLogin(session.userid);
+    this.db.sendFriendReq(login, req.login);
   }
 
   @Post('acceptfriend')
   async acceptFrienship(@Body() req, @Session() session: Record<string, any>) {
-    console.log('in-accept', req);
-    await this.db.acceptFriendship(
-      await this.db.getUserLogin(session.userid),
-      req.login,
-    );
+    const login = await this.db.getUserLogin(session.userid);
+    this.db.acceptFriendship(login, req.login);
   }
 
-  @Post('deletefriend')
-  async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
-    console.log('in-delete', bod);
-    await this.db.deleteFriend(session.userid, bod.login);
-  }
+    @Post('deletefriend')
+    async deleteFriend(@Body() bod, @Session() session: Record<string, any>) {
+      await this.db.deleteFriend(session.userid, bod.login);
+    }
 
   @Post('block')
   async blockUser(@Body() bod, @Session() session: Record<string, any>) {
-    console.log('in-block', bod);
+    console.log('block', bod.login);
     await this.db.setBlockUser(session.userid, bod.login);
   }
 
@@ -42,7 +35,7 @@ export class UserController {
   }
 
   @Post('isuser')
-  async isUser(@Body() req): Promise<boolean> {
-    return await this.db.isUser(req.login);
+  isUser(@Body() req): Promise<boolean> {
+    return this.db.isUser(req.login);
   }
 }
