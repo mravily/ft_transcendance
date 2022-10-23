@@ -61,10 +61,12 @@ export class PongService {
   }
 
   sendStartGame(gameId: number): void {
+    console.log('sending start game !!!!');
+    
     this.socket.emit('startGame', gameId);
   }
 
-  sendMessage(message: string): void {
+  sendMessage(message: {gameId: number, text: string}): void {
     this.socket.emit('message', message);
   }
 

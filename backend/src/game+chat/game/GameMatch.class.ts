@@ -10,7 +10,7 @@ export class GameMatch {
       let i = this.playerLogins.indexOf(socket.data.user.login);
       
       console.log("connection of", socket.data.user.login, this.playerLogins);
-      
+
       if (i != -1)  {
         if (!this.socketIds.includes(socket.id)) {
           this.socketIds[i] = socket.id;

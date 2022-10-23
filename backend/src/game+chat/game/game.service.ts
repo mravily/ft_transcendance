@@ -33,8 +33,11 @@ export class GameService {
     if (!this.games.has(gameId)) {
       return this.wsg.redirectToLobby(client.id);
     }
+    console.log(client.data.user.login, 'starting game', gameId);
+    
     // this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
+    console.log(client.data.user.login, 'sending players', gameId);
     const users = await this.games.get(gameId).getPlayersAccounts();
     users.sort(
       (a, b) =>
@@ -57,8 +60,8 @@ export class GameService {
       gameId = Math.floor(Math.random() * 1000000);
     }
     this.games.set(gameId, new GameMatch(this.wsg, players, powerUps, this.db));
-    // this.gameIdByLogin.set(players[0], gameId);
-    // this.gameIdByLogin.set(players[1], gameId);
+    this.gameIdByLogin.set(players[0], gameId);
+    this.gameIdByLogin.set(players[1], gameId);
     return gameId;
   }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
@@ -139,6 +142,7 @@ export class GameService {
     if (this.PUqueue.includes(socket)) {
       this.PUqueue.splice(this.queue.indexOf(socket), 1);
     }
+    this.invites.delete(socket.data.user.login);
   }
   async getLiveGames(): Promise<IMatch[]> {
     var res: IMatch[] = [];
@@ -159,13 +163,9 @@ export class GameService {
     return res;
   }
 
-  sendMessage(login: string, message: string) {
-    if (this.gameIdByLogin.has(login)) {
-      // console.log('sending message', login, message);
-      const gameId = this.gameIdByLogin.get(login);
-      if (this.games.has(gameId)) {
-        this.games.get(gameId).sendMessage(login, message);
-      }
+  sendMessage(login: string, message: {gameId: number, text: string}) {
+    if (this.games.has(message.gameId)) {
+      this.games.get(message.gameId).sendMessage(login, message.text);
     }
   }
 }

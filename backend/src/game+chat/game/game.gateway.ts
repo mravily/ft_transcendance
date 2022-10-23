@@ -156,6 +156,8 @@ export class GameGateway
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
+    console.log('handlestart', client.data?.user?.login, gameId);
+    
     if (client.data?.user == undefined)
       return;
     this.gameService.startGame(gameId, client);
@@ -288,10 +290,10 @@ export class GameGateway
   }
 
   @SubscribeMessage('message')
-  async handleMessage(client: Socket, payload: string)  {
+  async handleMessage(client: Socket, message: {gameId: number, text: string})  {
     if (client.data?.user == undefined)
       return;
-    this.gameService.sendMessage(client.data.user.login, payload);
+    this.gameService.sendMessage(client.data.user.login, message);
   }
   sendMessage(
     sockIds: string[],

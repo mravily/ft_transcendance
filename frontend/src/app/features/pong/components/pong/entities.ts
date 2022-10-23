@@ -1,5 +1,5 @@
 import { PowerUpEvent } from '../../models/pong.models';
-import { PlayingPongMatch, PongMatch } from './pong.component';
+import { PongMatch } from './PongMatch.class';
 
 enum powerType {
   double_paddle,
@@ -97,7 +97,7 @@ export class Paddle extends Entity{
     }    
   }
   update_dir()  {
-    let dir = -(PlayingPongMatch.upIsPressed?1:0) + (PlayingPongMatch.downIsPressed?1:0);
+    let dir = -(PongMatch.upIsPressed?1:0) + (PongMatch.downIsPressed?1:0);
     this.yVel = dir;
   }
   
