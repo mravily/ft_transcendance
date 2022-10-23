@@ -224,6 +224,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     channel = await this.db.getChannelInfo(channelInfo.name);
     this.sendToChan(channelInfo.name, 'channelUpdate', channel);
     this.onGetChannelInfo(socket, channelInfo.name);
+    this.onGetMessages(socket, channelInfo.name);
   }
   
   @SubscribeMessage('updatePassword')
@@ -384,13 +385,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     {
       let mute : eventI = await this.db.getMuteInfo(channel.channelName, socket.data.user.login);
       mute.eventDuration = 10000;
-      if (mute.eventDate.getTime() + mute.eventDuration < Date.now()) { // a reverifier
+      if (mute.eventDate.getTime() + mute.eventDuration < Date.now()) {
         await this.db.deleteMuteUser(channel.channelName, socket.data.user.login);
+        this.sendNotif(socket.data.user.login + " is now unmuted", channel.channelName, socket.data.userId);
         channel = await this.db.getChannelInfo(channelName);
-        this.sendToChan(channelName, 'channelUpdate', channel);    
-      }
-      else
-        return socket.emit('Error', new UnauthorizedException());      
+        this.sendToChan(channelName, 'channelUpdate', channel);
+      }  
     }
     socket.emit('channelInfo', channel);
   }
@@ -528,6 +528,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     // avertir le mec qui a été ban
     channel = await this.db.getChannelInfo(banEvent.from);
     this.sendToChan(banEvent.from, 'channelUpdate', channel);
+    this.updateChannels(banEvent.to);
   }
 
   @SubscribeMessage('unbanUser')

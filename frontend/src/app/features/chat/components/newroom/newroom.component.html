@@ -57,7 +57,7 @@
         <div *ngFor="let channel of publicChannels$ | async">
             <div class="publicChannel" *ngIf="!amIonChan(channel.channelName)">
                 <div class="channelName">{{channel.channelName}}</div>
-                <span *ngIf="channel.is_pwd">password: <input [(ngModel)]="channel.password" type="password"></span>
+                <span *ngIf="channel.is_pwd">password: <input [(ngModel)]="channel.password" type="password" (keydown.enter)="onJoin(channel)"></span>
                 <button (click)="onJoin(channel)">Join</button>
             </div>
         </div>

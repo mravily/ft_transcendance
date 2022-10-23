@@ -64,6 +64,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.contacts = this.chatServ.getChannelsObs().pipe(
       map((channels: IChannel[]) => {
         this.channels = channels;
+        if (this.selectedChannel && !channels.map(chan => chan.channelName).includes(this.selectedChannel.channelName))
+          this.selectedChannel.messages = undefined;
         return channels.map((channel: IChannel) => {
           channel.imgUrl = this.getRoomPhoto(channel);
           channel.realName = this.getRealName(channel);

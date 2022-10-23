@@ -1,4 +1,4 @@
-import { GameMatch } from "./game.service";
+import { GameMatch } from "./GameMatch.class";
 
 enum powerType {
   double_paddle,

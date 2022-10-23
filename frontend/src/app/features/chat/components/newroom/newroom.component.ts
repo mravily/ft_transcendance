@@ -107,6 +107,7 @@ export class NewroomComponent implements OnInit {
   onJoin(channel: IChannel) {
     // console.log(channel.channelName, channel.password);
     this.chatService.joinChannel(channel.channelName, channel.password? channel.password : "");
+    channel.password = "";
   }
 
   onDMclick(login: string) {
