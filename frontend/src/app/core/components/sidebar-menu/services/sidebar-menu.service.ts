@@ -5,9 +5,7 @@ import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { Socket } from 'ngx-socket-io';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class SidebarMenuService {
 	socket!: Socket;
 	data!: Observable<IAccount>;
@@ -25,8 +23,8 @@ export class SidebarMenuService {
 				}
 
 	getData() {
-		this.socket.emit('event');
-		this.data = this.socket.fromEvent<IAccount>('event');
+		// this.socket.emit('event');
+		// this.data = this.socket.fromEvent<IAccount>('event');
 	}
 
 	signOut() {
