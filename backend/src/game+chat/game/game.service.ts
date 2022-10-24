@@ -21,7 +21,7 @@ export class GameService {
     @Inject(forwardRef(() => ChatGateway)) private readonly chatGW: ChatGateway,
     public db: PrismaService,
   ) {
-    console.log('Game Service created');
+    //console.log('Game Service created');
     this.games = new Map<number, GameMatch>();
     this.invites = new Map<string, any>();
     this.queue = [];
@@ -116,7 +116,7 @@ export class GameService {
     if (invited[0] != client.data.user.login)
       return;
     this.invites.delete(login);
-    console.log("invite accepted", client.data.user.login, "vs", login);
+    //console.log("invite accepted", client.data.user.login, "vs", login);
     let gameId = this.createGame([login, client.data.user.login], invited[1]);
     this.chatGW.sendMatchId(client.data.user.login, gameId);
     this.chatGW.sendMatchId(login, gameId);

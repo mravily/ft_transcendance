@@ -31,7 +31,7 @@ export async function setUser(
     });
     return user.id;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 }
 
@@ -44,7 +44,7 @@ export async function getUserLogin(this: PrismaService, userId: string): Promise
     return usr.login;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -76,7 +76,7 @@ export async function updateUserAccount(this: PrismaService, userId: string, use
     }
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -87,7 +87,7 @@ export async function setUserToken(this: PrismaService, userId: string, token: s
       data: { token: token },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -103,7 +103,7 @@ export async function getUserToken(this: PrismaService, userId: string): Promise
     });
     return user;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -119,7 +119,7 @@ export async function get2FASecret(this: PrismaService, userId: string): Promise
     });
     return user;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -134,7 +134,7 @@ export async function isUser(this: PrismaService, login: string): Promise<boolea
       return false;
     }
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -146,7 +146,7 @@ export async function getUserEmail(this: PrismaService, userId: string): Promise
     });
     return user.email;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -159,7 +159,7 @@ export async function setBlockUser(this: PrismaService, userId: string, login: s
       },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -177,7 +177,7 @@ export async function getBlockers(this: PrismaService, login: string): Promise<I
     });
     return blockedList.map((blocker) => blocker.blocker);
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -196,7 +196,7 @@ export async function deleteBlockUser(
       },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -217,7 +217,7 @@ export async function sendFriendReq(this: PrismaService, requester: string, requ
       },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -234,7 +234,7 @@ export async function acceptFiendship(this: PrismaService, requersted: string, r
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -257,7 +257,7 @@ export async function deleteFriend(this: PrismaService, userId: string, login: s
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -272,7 +272,7 @@ export async function isSecret(this: PrismaService, userId: string): Promise<boo
     return user.isSecret;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -288,7 +288,7 @@ export async function set2FA(this: PrismaService, userId: string, secret: string
       },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -306,7 +306,7 @@ export async function delete2FA(this: PrismaService, userId: string) {
       },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -318,7 +318,7 @@ export async function is2FA(this: PrismaService, userId: string): Promise<boolea
     });
     return user.twoFA;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -335,7 +335,7 @@ export async function get2FA(this: PrismaService, userId: string): Promise<IAcco
     });
     return user;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -358,7 +358,7 @@ export async function switch2FA(this: PrismaService, userId: string) {
       });
     }
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -369,7 +369,7 @@ export async function updateUserScore(this: PrismaService, login: string, points
       data: { score: { increment: points } },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -380,7 +380,7 @@ export async function updateUserStatus(this: PrismaService, userId: string, stat
       data: { isOnline: status },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -427,7 +427,7 @@ export async function getBlockedUsers(this: PrismaService, login: string): Promi
     }
     return list;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -454,7 +454,7 @@ export async function isBlocked(this: PrismaService, userId: string, login: stri
     return (count > 0 ? true : false);
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -478,7 +478,7 @@ export async function uploadPhoto(this: PrismaService, userId: string, file: any
       data: { imgUrl: 'http://localhost:4200/api/stream/' + file.filename },
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -495,7 +495,7 @@ export async function getLastPhoto(this: PrismaService, id: string): Promise<IPh
     });
     return tmp;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -531,7 +531,7 @@ export async function isFriend(this: PrismaService, userId: string, login: strin
     return [isFriend, isAccepted];
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -580,7 +580,7 @@ export async function getFriends(this: PrismaService, login: string): Promise<IA
     }
     return friendlist;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -629,7 +629,7 @@ export async function getFriendsById(this: PrismaService, userId: string): Promi
     }
     return friendlist;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -653,7 +653,7 @@ export async function searchUser(this: PrismaService, key: string): Promise<IAcc
     });
     return users.map((user) => {return {login: user.login, nickName: user.nickName, avatar: user.imgUrl, win: user.winnedMatchs.length, lost: user.lostMatchs.length}});
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -713,12 +713,14 @@ export async function deleteUser(this: PrismaService, userId: string) {
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
 export async function getUserAccount(this: PrismaService, userId: string): Promise<IAccount> {
-  try {    
+  try {
+    //console.log('getting account of', userId);
+    
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -846,7 +848,7 @@ export async function getUserAccount(this: PrismaService, userId: string): Promi
     return userAccount;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     return null;
   }
 }

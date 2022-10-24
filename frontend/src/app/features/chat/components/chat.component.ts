@@ -77,7 +77,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.myUser.blockedFrom = blockers;
     }));
     this.subs.push(this.chatServ.getErrorObs().subscribe((error: string) => {
-      console.log(error);
+      //console.log(error);
     }));
     this.subs.push(this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
       console.log(user);      
@@ -93,7 +93,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
     this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
-      console.log('game found', gameId);
+      //console.log('game found', gameId);
       this.router.navigate(['play', gameId]);
     }));
     console.log('geting myuser');

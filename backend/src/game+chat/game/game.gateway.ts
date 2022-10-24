@@ -28,8 +28,7 @@ import { PrismaService } from '../../prisma.service';
   // }
 })
 export class GameGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
   constructor(
@@ -40,7 +39,7 @@ export class GameGateway
   ) {}
 
   afterInit(server: Server) {
-    console.log('GameGateway initialized');
+    //console.log('GameGateway initialized');
     this.wss = server;
   }
 
@@ -50,21 +49,21 @@ export class GameGateway
       const cookie = parse(client.handshake.headers.cookie);
       const token = cookie['access'];
       if (!token) {
-        console.log('token not found');
+        //console.log('token not found');
         client.disconnect();
         return;
       }
       const userId = await this.authService.getUseridFromToken(token);
       // console.log('userId...', userId);
       if (!userId) {
-        console.log('User not found');
+        //console.log('User not found');
         client.disconnect();
         return;
       }
       client.data.userId = userId;
       // client.emit('myId', userId);
     } catch (e) {
-      console.log('Error', e);
+      //console.log('Error', e);
       client.disconnect();
       return;
     }
@@ -72,7 +71,7 @@ export class GameGateway
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
       // console.log('User', user);
       if (user.login == undefined) {
-        console.log('User', user);
+        //console.log('User', user);
         return client.disconnect();
       }
       client.data.user = user; // save user in client
@@ -80,14 +79,14 @@ export class GameGateway
       // Save connection
       // this.gameService.addConnection(client);
     } catch {
-      console.log('Error', 'connection failed');
+      //console.log('Error', 'connection failed');
       return client.disconnect();
     }
-    console.log('Client connected to pong', {
-      login: client.data.user.login,
-      socketId: client.id,
-      userId: client.data.userId,
-    });
+    //console.log('Client connected to pong', {
+    //   login: client.data.user.login,
+    //   socketId: client.id,
+    //   userId: client.data.userId,
+    // });
   }
 
   async handleDisconnect(client: Socket) {

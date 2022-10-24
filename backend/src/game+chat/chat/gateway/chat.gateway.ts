@@ -33,7 +33,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         private db: PrismaService) { }
 
   async onModuleInit() {
-    console.log('ChatGateway initialized');
+    //console.log('ChatGateway initialized');
   }
   async afterInit() {
     console.log('ChatGateway afterInit');
@@ -44,28 +44,28 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const cookie = parse(client.handshake.headers.cookie);
       const token = cookie['access'];
       if (!token) {
-        console.log('token not found');
+        //console.log('token not found');
         client.disconnect();
         return;
       }
       const userId = await this.authService.getUseridFromToken(token);
       // console.log('userId...', userId);
       if (!userId) {
-        console.log('User not found');
+        //console.log('User not found');
         client.disconnect();
         return;
       }
       client.data.userId = userId;
     }
     catch (e) {
-      console.log('Error', e);
+      //console.log('Error', e);
       client.disconnect();
       return;
     }
     try {
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
       if (user.login == undefined) {
-        console.log('User', user);
+        //console.log('User', user);
         return this.disconnect(client);
       }
       client.data.user = user; // save user in client
@@ -76,14 +76,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       this.connectedUsers.get(user.login).add(client.id);
 
-      console.log('Connected users', this.connectedUsers);
+      //console.log('Connected users', this.connectedUsers);
       // Only emit channels to the specific connected client
       this.onPaginatechannel(client, { page: 0, limit: 200 });
     } catch {
-      console.log('Error', 'connection failed');
+      //console.log('Error', 'connection failed');
       return this.disconnect(client);
     }
-    console.log('Client connected to chat', {login: client.data.user.login, socketId: client.id, userId: client.data.userId});
+    //console.log('Client connected to chat', {login: client.data.user.login, socketId: client.id, userId: client.data.userId});
   }
   // dan sle front faire un isready pour empecher de renvoyer
 
@@ -136,7 +136,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     let login: string = socket.data.user.login;
     let userId: string = socket.data.userId;
 
-    console.log('Creating', channel.channelName);
+    //console.log('Creating', channel.channelName);
     if ((await this.db.getChannelInfo(channel.channelName)) !== null || channel.channelName.startsWith(DMPREFIX)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
@@ -145,13 +145,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     
     let members: string[] = [login];
     for (const user of channel.users) {
-      console.log('Joining', user);
+      //console.log('Joining', user);
       if (user.login == null || !(await this.db.isUser(user.login)))  {
-        console.log(user, " not found");
+        //console.log(user, " not found");
         continue;
       }
       if (members.includes(user.login)) {
-        console.log(user, " already in channel");
+        //console.log(user, " already in channel");
         continue;
       }
       await this.db.setJoinChannel(user.login, channel.channelName);
@@ -232,7 +232,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (socket.data?.user == undefined)
       return;
     let channel: IChannel= await this.db.getChannelInfo(channelInfo.name);
-    console.log('Updating password', channelInfo.name, channel.is_pwd, "creator", channel.creator, "user", socket.data.user.login);
+    //console.log('Updating password', channelInfo.name, channel.is_pwd, "creator", channel.creator, "user", socket.data.user.login);
     if (!channel || socket.data.user.login != channel.creator)
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     if ("password" in channelInfo) {
@@ -423,7 +423,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       || channel.mutedUsers.map(user => user.login).includes(socket.data.user.login)) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
-    console.log(message);
+    //console.log(message);
     // if (channel.isDirect = true && channel.getChannelUsers()) {
     //   return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     // }
@@ -469,7 +469,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (socket.data?.user == undefined)
       return;
     // let user: string = await this.connectedUserService.getUserLogin(socket.id);
-    console.log(muteEvent);
+    //console.log(muteEvent);
     let channel: IChannel= await this.db.getChannelInfo(muteEvent.from);
     if (!channel) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
@@ -481,7 +481,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return socket.emit('Error', new UnauthorizedException()); 
     }
     muteEvent.eventDuration = 10000;
-    console.log(muteEvent);
+    //console.log(muteEvent);
     await this.db.setMuteUser(muteEvent.from, muteEvent.to, muteEvent.eventDuration);
     this.sendNotif(muteEvent.to + " got muted", muteEvent.from, socket.data.userId);
     channel = await this.db.getChannelInfo(muteEvent.from);
@@ -597,7 +597,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async handleInvite(socket: Socket, inviteInfo: {login: string, powerup: boolean})  {
     if (socket.data?.user == undefined)
       return;
-    console.log("invite", inviteInfo.login);
+    //console.log("invite", inviteInfo.login);
     
     if (!(await this.db.isUser(inviteInfo.login)) || inviteInfo.login == socket.data.user.login)
       return socket.emit('Error', 'User not found');
@@ -610,7 +610,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (socket.data?.user == undefined)
       return;
     let socketIds: Set<string> = this.connectedUsers.get(login);
-    console.log("acceptInvite", login, socketIds);
+    //console.log("acceptInvite", login, socketIds);
     if (!socketIds) {
       return socket.emit('Error', 'User not connected');
     }

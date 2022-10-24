@@ -72,7 +72,7 @@ export async function getSidebar(this: PrismaService, id: string): Promise<IAcco
     return sidebar;
   }
   catch (error) {
-    // console.log('Sidebar service', error.message);
+    //console.log('Sidebar service', error.message);
     return {} as IAccount;
   }
 }

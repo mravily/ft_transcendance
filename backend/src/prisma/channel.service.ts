@@ -14,7 +14,7 @@ export async function setChannel(this: PrismaService, channel: IChannel, creator
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -40,7 +40,7 @@ export async function deleteChannel(this: PrismaService, channel: string) {
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -67,7 +67,7 @@ export async function setChannelMessage(this: PrismaService, userId: string, cha
     )
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -81,7 +81,7 @@ export async function setJoinChannel(this: PrismaService, login: string, channel
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -97,7 +97,7 @@ export async function leaveChannel(this: PrismaService, login: string, channel_n
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -112,7 +112,7 @@ export async function setMuteUser(this: PrismaService, channel_name: string, log
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -128,7 +128,7 @@ export async function deleteMuteUser(this: PrismaService, channel_name: string, 
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -155,7 +155,7 @@ export async function getMuteInfo(this: PrismaService, channel_name: string, log
     return res;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -177,7 +177,7 @@ export async function setBanUser(this: PrismaService, channel_name: string, logi
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -193,7 +193,7 @@ export async function deleteBan(this: PrismaService, channel_name: string, login
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 export async function getBanInfo(this: PrismaService, channel_name: string, login: string) {
@@ -219,7 +219,7 @@ export async function getBanInfo(this: PrismaService, channel_name: string, logi
     return res;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -233,7 +233,7 @@ export async function isAdmin(this: PrismaService, login: string, channel_name: 
     return channels.adminChannel.map((chan) => chan.channelId).includes(channel_name);
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 // pareil plus vraiment necessaire
@@ -253,7 +253,7 @@ export async function isCreator(this: PrismaService, channel_name: string, userI
     return false;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -267,7 +267,7 @@ export async function setMakeAdmin(this: PrismaService, login: string, channel_n
     });
   }
   catch (error) {
-    console.log(error.message)
+    //console.log(error.message)
   }
 }
 
@@ -283,7 +283,7 @@ export async function deleteMakeAdmin(this: PrismaService, login: string, channe
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -295,7 +295,7 @@ export async function setChannelPass(this: PrismaService, channel_name: string, 
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -307,7 +307,7 @@ export async function removeChannelPass(this: PrismaService, channel_name: strin
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -342,7 +342,7 @@ export async function getChannelUsers(this: PrismaService, channel_name: string)
     return list;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -361,7 +361,7 @@ export async function getPublicChannels(this: PrismaService): Promise<IChannel[]
     return channels;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 export async function searchPublicChannels(this: PrismaService, key: string): Promise<IChannel[]> {
@@ -384,7 +384,7 @@ export async function searchPublicChannels(this: PrismaService, key: string): Pr
     });
     return chans;
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -431,7 +431,7 @@ export async function getchannelsForUser(this: PrismaService, login: string, ski
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -519,7 +519,7 @@ export async function getChannelInfo(this: PrismaService, channel_name: string):
     return channel;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     return null;
   }
 }
@@ -550,6 +550,6 @@ export async function getChannelMessages(this: PrismaService, channel_name: stri
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }

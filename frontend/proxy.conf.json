@@ -5,8 +5,8 @@
 		"logLevel": "debug",
 		"changeOrigin": true
 	},
-	"/socket.io/": {
-	  "target": "http://api:3000/socket.io/",
+	"/socket.io/*": {
+	  "target": "http://api:3000",
 	  "secure": false,
 	  "ws": true,
 	  "changeOrigin": true

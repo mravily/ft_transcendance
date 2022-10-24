@@ -91,7 +91,7 @@ export class NewroomComponent implements OnInit {
     this.members.removeAt(this.members.length - 1);
   }
   onCreateChan()  {
-    console.log(this.roomForm.value);
+    //console.log(this.roomForm.value);
     let chan: IChannel = {
       channelName: this.roomForm.value.name,
       // description: this.roomForm.value.description,

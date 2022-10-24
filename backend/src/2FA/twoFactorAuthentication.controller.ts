@@ -30,7 +30,7 @@ export class TwoFactorAuthenticationController {
     @Res() response: Response,
     @Session() session: Record<string, any>,
   ) {
-    console.log('user.id.tfa', session.userid);
+    ////console.log('user.id.tfa', session.userid);
     const { otpauthUrl, secret } = await this.tfaService.generateTfaSecret(
       session.userid,
     );

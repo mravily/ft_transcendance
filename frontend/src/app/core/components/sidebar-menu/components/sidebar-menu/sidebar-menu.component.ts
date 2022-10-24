@@ -14,21 +14,24 @@ import { SidebarMenuService } from '../../services/sidebar-menu.service';
 export class SidebarMenuComponent implements OnInit {
 
 	data$!: Observable<IAccount>;
-	// time!: NodeJS.Timer;
+	time!: NodeJS.Timer;
+	isSocket: boolean = false;
 
 	constructor(private cookieService: CookieService,
 		private sidebarServices:SidebarMenuService,
 		private router: Router) {
-			this.data$ = this.sidebarServices.getData();
+			this.data$ = this.sidebarServices.data;
+			console.log(this.data$);
 		}
-	
 		
 		ngOnInit(): void {
-			// this.time = setInterval(() => { this.data$ = this.sidebarServices.getData();}, 5000);
+				this.sidebarServices.getData();
+				this.time = setInterval(() => { this.data$ = this.sidebarServices.data;}, 5000);
 		}
-		
+
 		reload() {
-			this.data$ = this.sidebarServices.getData();
+				this.sidebarServices.getData();
+				this.data$ = this.sidebarServices.data;
 		}
 		
 		isLogin() {
