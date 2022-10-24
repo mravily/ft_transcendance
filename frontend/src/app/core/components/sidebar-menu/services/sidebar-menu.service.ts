@@ -23,8 +23,8 @@ export class SidebarMenuService {
 				}
 
 	getData() {
-		// this.socket.emit('event');
-		// this.data = this.socket.fromEvent<IAccount>('event');
+		this.socket.emit('event');
+		this.data = this.socket.fromEvent<IAccount>('event');
 	}
 
 	signOut() {
