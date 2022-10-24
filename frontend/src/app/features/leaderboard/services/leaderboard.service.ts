@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 
@@ -8,13 +9,23 @@ import { IAccount } from 'src/app/model/user.model';
 })
 export class LeaderboardService {
 
-  constructor(private http: HttpClient) { }
-
-  getTopTen(): Observable<IAccount[]> {
-	return this.http.get<IAccount[]>("api/leaderboard");
+  initSocket(): Socket {
+	return new Socket({ url: '/leaderboard', options: {
+		withCredentials: false,
+	  } });
   }
 
-  getAllUsers(): Observable<IAccount[]> {
-	return this.http.get<IAccount[]>("api/leaderboard/all")
+  getDataTop10(socket: Socket): Observable<IAccount[]> {
+	socket.emit('top-ten');
+	return socket.fromEvent<IAccount[]>('top-ten');
+  }
+
+  getAllUsers(socket: Socket): Observable<IAccount[]> {
+	socket.emit('allUsers');
+	return socket.fromEvent<IAccount[]>('allUsers');
+  }
+
+  disconnectSocket(socket: Socket): void {
+	socket.disconnect();
   }
 }
