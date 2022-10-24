@@ -26,6 +26,7 @@ export class SidebarMenuComponent implements OnInit {
 		
 		ngOnInit(): void {
 				this.sidebarServices.getData();
+				this.data$ = this.sidebarServices.data
 				this.time = setInterval(() => { this.data$ = this.sidebarServices.data;}, 5000);
 		}
 
