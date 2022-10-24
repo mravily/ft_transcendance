@@ -208,9 +208,11 @@ export class Ball extends Entity  {
   
   update(player1: Paddle, player2: Paddle, canvasWidth:number, canvasHeight:number, wallOffset: number): void {
     //check top canvas bounds
-    if(this.y <= wallOffset || this.y + this.height >= canvasHeight - wallOffset){
-      this.yVel = -this.yVel;
-    }
+    if(this.y <= wallOffset)
+      this.yVel = Math.abs(this.yVel);
+    if (this.y + this.height >= canvasHeight - wallOffset)
+      this.yVel = - Math.abs(this.yVel);
+    
     //check players collision
     if (this.xVel < 0 && player1.collides(this)) {
       this.xVel = player1.coef_force;
@@ -225,12 +227,14 @@ export class Ball extends Entity  {
       this.x = canvasWidth / 2 - this.width / 2;
       this.pong.player2Score += 1;
       this.xVel = 1;
+      this.yVel = 0;
     }
     //check right canvas bounds
     if(this.x + this.width >= canvasWidth)  {
       this.x = canvasWidth / 2 - this.width / 2;
       this.pong.player1Score += 1;
       this.xVel = -1;
+      this.yVel = 0;
     }
     
     this.x += this.xVel * this.speed;

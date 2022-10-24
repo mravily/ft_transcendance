@@ -25,6 +25,7 @@ export class PongService {
   redirectToLobbyEvent: Observable<void>;
   matchUsersEvent: Observable<IAccount[]>;
   liveGamesEvent: Observable<IMatch[]>;
+  queuingEvent: Observable<{PU: boolean, joined: boolean}>;
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
@@ -44,6 +45,7 @@ export class PongService {
     this.redirectToLobbyEvent = this.socket.fromEvent<void>('redirectToLobby');
     this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
     this.liveGamesEvent = this.socket.fromEvent<IMatch[]>('liveGames');
+    this.queuingEvent = this.socket.fromEvent<{PU: boolean, joined: boolean}>('queuing');
 
     console.log('PongService created');
   }
@@ -51,11 +53,11 @@ export class PongService {
   getLiveGames(): void {
     this.socket.emit('getLiveGames');
   }
-  getNewMatchmaking(): void {
-    this.socket.emit('findMatch');
+  getNewMatchmaking(PU: boolean): void {
+    this.socket.emit('findMatch', PU);
   }
-  getNewPUMatchmaking(): void {
-    this.socket.emit('findPUMatch');
+  cancelQueuing(PU: boolean): void {
+    this.socket.emit('cancelQueuing', PU);
   }
 
   sendPaddlePos(y: number, yVel: number, timestamp: number): void {

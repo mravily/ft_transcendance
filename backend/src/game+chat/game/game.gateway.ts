@@ -8,7 +8,7 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { session } from 'passport';
+// import { session } from 'passport';
 import { Socket, Server } from 'socket.io';
 import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
@@ -140,21 +140,20 @@ export class GameGateway
   }
 
   @SubscribeMessage('findMatch')
-  async findMatch(client: Socket) {
+  async findMatch(client: Socket, PU: boolean) {
     if (client.data?.user == undefined)
       return;
-    this.gameService.getMatchmakingGame(client, false);
-    console.log('find', client.id );
-  }
-
-  @SubscribeMessage('findPUMatch')
-  async findPUMatch(client: Socket) {
-    if (client.data?.user == undefined)
-      return;
-    this.gameService.getMatchmakingGame(client, true);
+    this.gameService.getMatchmakingGame(client, PU);
+    // console.log('find', client.id );
   }
   async sendMatchId(sockId: string, gameId: number) {
     this.wss.to(sockId).emit('matchId', gameId);
+  }
+  @SubscribeMessage('cancelQueuing')
+  async cancelQueuing(client: Socket, PU: boolean) {
+    if (client.data?.user == undefined)
+      return;
+    this.gameService.cancelMatchmaking(client, PU);
   }
 
   @SubscribeMessage('startGame')

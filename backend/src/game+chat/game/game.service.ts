@@ -36,11 +36,9 @@ export class GameService {
       console.log("no game", client.data.user.login, gameId, this.games.keys());
       return this.wsg.redirectToLobby(client.id);
     }
-    // console.log(client.data.user.login, 'starting game22', gameId);
     
-    // this.gameIdByLogin.set(client.data.user.login, gameId);
     this.games.get(gameId).startGame(client);
-    console.log(client.data.user.login, 'sending players', gameId);
+    // console.log(client.data.user.login, 'sending players', gameId);
     const users = await this.games.get(gameId).getPlayersAccounts();
     users.sort(
       (a, b) =>
@@ -90,8 +88,16 @@ export class GameService {
     } else {
       queue.push(client);
     }
-    client.emit('queuing');
+    client.emit('queuing', {PU: powerUps, joined: true});
   }
+  cancelMatchmaking(client: Socket, PU: boolean): void {
+    let queue = (PU) ? this.PUqueue : this.queue;
+    if (queue.includes(client)) {
+      queue.splice(queue.indexOf(client), 1);
+    }
+    client.emit('queuing', {PU: PU, joined: false});
+  }
+
   getInvites(login: string) {
     let res: string[] = [];
     for (var invite of this.invites.entries()) {

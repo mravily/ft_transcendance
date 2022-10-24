@@ -134,6 +134,8 @@ export class GameMatch {
     }
   
     gameLoop() {
+      // console.log("gameLoop");
+      
       while (Date.now() - this.cur >= this.period) {
         this.update();
         this.cur += this.period;
@@ -146,11 +148,11 @@ export class GameMatch {
       this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[1], scores[0]);
   
       this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
-      this.wsg.removeGame(this.playerLogins[0]);
       setTimeout(() => {
         this.socketIds.forEach(id => this.wsg.redirectToLobby(id));
         this.socketIdsSpec.forEach(id => this.wsg.redirectToLobby(id));
       }, 2000);
+      this.wsg.removeGame(this.playerLogins[0]);
     }
   
     update_powerups(): void {
