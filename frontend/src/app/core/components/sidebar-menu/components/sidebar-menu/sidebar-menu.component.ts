@@ -25,14 +25,14 @@ export class SidebarMenuComponent implements OnInit {
 		}
 		
 		ngOnInit(): void {
-				this.sidebarServices.getData();
-				this.data$ = this.sidebarServices.data
-				this.time = setInterval(() => { this.data$ = this.sidebarServices.data;}, 5000);
+			this.data$ = this.sidebarServices.data
+			this.sidebarServices.getData();
+				// this.time = setInterval(() => { this.data$ = this.sidebarServices.data;}, 5000);
 		}
 
 		reload() {
 				this.sidebarServices.getData();
-				this.data$ = this.sidebarServices.data;
+				// this.data$ = this.sidebarServices.data;
 		}
 		
 		isLogin() {
