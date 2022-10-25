@@ -3,10 +3,8 @@ import {
   Post,
   Session,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PrismaService } from '../prisma.service';
 
@@ -17,6 +15,9 @@ export class UploadsController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File, @Session() session: Record<string, any>) {
-    this.db.uploadPhoto(session.userid, file);
+    // console.log(file.mimetype);
+    if (file.mimetype.includes('image')){
+      this.db.uploadPhoto(session.userid, file);
+    }
   }
 }
