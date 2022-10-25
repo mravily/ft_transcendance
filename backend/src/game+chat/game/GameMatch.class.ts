@@ -56,7 +56,8 @@ export class GameMatch {
     sendMessage(login: string, message: string) {
       this.wsg.sendMessage(this.socketIds, this.socketIdsSpec, login, message);
     }
-  
+    
+    private isRunning: boolean = false;
     private idInterval!: NodeJS.Timer;
     private playerIds: string[];
     private socketIds:  string[];
@@ -116,6 +117,8 @@ export class GameMatch {
     }
   
     async start(): Promise<void> {
+      if (this.isRunning) return;
+      this.isRunning = true;
       this.sendGameStatus();
       this.wsg.sendStart(this.socketIds, 5);
       await delay(1000);
@@ -135,6 +138,10 @@ export class GameMatch {
   
     gameLoop() {
       // console.log("gameLoop");
+      if (this.isRunning == false) {
+        clearInterval(this.idInterval);
+        return;
+      };
       
       while (Date.now() - this.cur >= this.period) {
         this.update();
@@ -142,11 +149,12 @@ export class GameMatch {
       }
     }
     end(): void {
+      this.isRunning = false;
       clearInterval(this.idInterval);
       let winner = (this.player1Score > this.player2Score) ? 0 : 1;
-      let scores = [this.player1Score, this.player2Score].sort();
-      this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[1], scores[0]);
-  
+      let scores = [this.player1Score, this.player2Score];
+      this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[winner], scores[1 - winner]);
+      
       this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
       setTimeout(() => {
         this.socketIds.forEach(id => this.wsg.redirectToLobby(id));

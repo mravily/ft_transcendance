@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { ElementRef } from '@angular/core';
 
 export class PongMatch {
-
+    private isRunning = false;
     private gameContext!: CanvasRenderingContext2D;
     private period = 1000 / 60;
     public playerScore: number = 0;
@@ -146,6 +146,8 @@ export class PongMatch {
         this.wss.sendStartGame(this.gameId);
     }
     start(): void {
+        if (this.isRunning == true) return;
+        this.isRunning = true;
         if (this.cur !== undefined) {
             return;
         }
@@ -157,6 +159,10 @@ export class PongMatch {
     }
 
     gameLoop() {
+        if (this.isRunning == false) {
+            clearInterval(this.idInterval);
+            return;
+        };
         while (this.myNow() - this.cur >= this.period) {
             this.update();
             this.cur += this.period;
@@ -165,6 +171,7 @@ export class PongMatch {
     }
 
     end(): void {
+        this.isRunning = false;
         clearInterval(this.idInterval);
         this.otherSubcriptions.forEach((sub) => sub.unsubscribe());
     }

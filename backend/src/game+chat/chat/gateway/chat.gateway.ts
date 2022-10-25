@@ -13,7 +13,9 @@ import { GameService } from '../../game/game.service';
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
 /*
-
+ qd on creer une channel avec password le premier get channel n'indique pas de password
+ le mode spec demarre sa physique solo
+ 
 */ 
 
 let DMPREFIX = '##DM##';
@@ -362,9 +364,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.db.setJoinChannel(socket.data.user.login, roomName);
       await this.db.setJoinChannel(login, roomName);
       res = await this.db.getChannelInfo(roomName);
+      this.updateChannels(login);
       this.sendNotif(socket.data.user.login + ' started direct messages', roomName, socket.data.userId);
-      this.onPaginatechannel(socket, { page: 0, limit: 200 });
     }
+    this.onPaginatechannel(socket, { page: 0, limit: 200 });
     socket.emit('channelInfo', res);
     this.onGetMessages(socket, roomName);
   }
