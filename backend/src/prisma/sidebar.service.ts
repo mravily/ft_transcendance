@@ -2,7 +2,7 @@ import { PrismaService } from '../prisma.service';
 import { IAccount } from '../interfaces';
 
 export async function getSidebar(this: PrismaService, id: string): Promise<IAccount> {
-  try {
+  try { 
     const usr = await this.prisma.user.findUnique({
       where: { id: id },
       select: {

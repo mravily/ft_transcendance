@@ -53,5 +53,9 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
     @SubscribeMessage('event')
     async getInfo(@ConnectedSocket() client: Socket) {
         client.emit('event', await this.db.getSidebar(client.data.userId));
+        setInterval(async () => {
+            client.emit('event', await this.db.getSidebar(client.data.userId)),
+            5000
+        });
     }
 }

@@ -26,36 +26,6 @@ export async function setMatch(this: PrismaService, winnerId: string, looserId:s
   }
 }
 
-// export async function setMatchWinner(this: PrismaService, matchId: number, userId: string, score: number) {
-//   try {
-//     await this.prisma.match.update({
-//       where: { id: matchId },
-//       data: {
-//         winnerid: userId,
-//         winnerScore: score
-//       },
-//     });
-//   }
-//   catch (error) {
-//     console.log(error.message);
-//   }
-// }
-
-// export async function setMatchLooser(this: PrismaService, matchId: number, userId: string, score: number) {
-//     try {
-//       await this.prisma.match.update({
-//         where: { id: matchId },
-//         data: {
-//           looserid: userId,
-//           looserScore: score
-//         },
-//       });
-//     }
-//     catch (error) {
-//       console.log(error.message);
-//     }
-//   }
-
 export async function getNoWinnedMatchs(this: PrismaService, login: string): Promise<number> {
   try {
     return await this.prisma.match.count({
