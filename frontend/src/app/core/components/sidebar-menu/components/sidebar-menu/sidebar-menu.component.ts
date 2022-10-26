@@ -40,6 +40,6 @@ export class SidebarMenuComponent implements OnInit {
 		}
 
 		ngOnDestroy() {
-			clearInterval(this.time);
+			// clearInterval(this.time);
 		}
 	}

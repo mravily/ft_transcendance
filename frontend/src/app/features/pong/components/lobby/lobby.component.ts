@@ -29,6 +29,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   searchSubcription!: Subscription;
   subs: Subscription[] = [];
 
+
   constructor(private router: Router,
               private pongServ: PongService,
               private chatServ: ChatService,
@@ -53,6 +54,14 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.subs.push(this.pongServ.gameFoundEvent.subscribe((id: number) => {
       this.router.navigateByUrl('/play/' + id);
     }));
+    this.subs.push(this.pongServ.queuingEvent.subscribe((queuing: {PU: boolean, joined: boolean}) => {
+      if (!queuing.PU) {
+        this.buttonText = queuing.joined ? "Cancel" : "Find Opponent";
+      } else {
+        this.PUbuttonText = queuing.joined ? "Cancel" : "Find Opponent";
+      }
+    }));
+    this.pongServ.checkforgame();
     // this.subs.push(this.chatServ.getInvitesObs().subscribe((login: string) => {
     //   console.log('invite', login);
     //   // if (confirm(login + ' wants to play with you'))
@@ -65,19 +74,16 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.subs.forEach((sub) => sub.unsubscribe());
   }
   onMatchmaking() {
-    this.findMatchButton.nativeElement.disabled = true;
-    this.buttonText = "Searching...";
-    
-    this.pongServ.getNewMatchmaking();
+    if (this.buttonText === "Cancel")
+      this.pongServ.cancelQueuing(false);
+    else
+      this.pongServ.getNewMatchmaking(false);
   }
   onPUMatchmaking() {
-    this.findPUMatchButton.nativeElement.disabled = true;
-    this.PUbuttonText = "Searching...";
-    
-    this.pongServ.getNewPUMatchmaking();
-    this.pongServ.gameFoundEvent.subscribe((id: number) => {
-      this.router.navigateByUrl('/play/' + id);
-    });
+    if (this.PUbuttonText === "Cancel")
+      this.pongServ.cancelQueuing(true);
+    else
+      this.pongServ.getNewMatchmaking(true);
   }
   onInvite(user: IAccount, powerup: boolean) {
     this.chatServ.inviteUser(user.login, powerup);

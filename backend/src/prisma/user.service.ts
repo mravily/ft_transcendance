@@ -644,13 +644,14 @@ export async function searchUser(this: PrismaService, key: string): Promise<IAcc
       },
       select: {
         login: true,
+        nickName: true,
         imgUrl: true,
         winnedMatchs: true,
         lostMatchs: true
       },
       take: 5,
     });
-    return users.map((user) => {return {login: user.login, avatar: user.imgUrl, win: user.winnedMatchs.length, lost: user.lostMatchs.length}});
+    return users.map((user) => {return {login: user.login, nickName: user.nickName, avatar: user.imgUrl, win: user.winnedMatchs.length, lost: user.lostMatchs.length}});
   } catch (error) {
     //console.log(error.message);
   }

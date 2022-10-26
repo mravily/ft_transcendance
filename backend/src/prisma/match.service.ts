@@ -13,11 +13,11 @@ export async function setMatch(this: PrismaService, winnerId: string, looserId:s
     });
     await this.prisma.user.update({
       where: {id: winnerId},
-      data: { score: {increment: winnerScore} },
+      data: { score: {increment: 2} },
     });
     await this.prisma.user.update({
       where: {id: looserId},
-      data: { score: {increment: looserScore} },
+      data: { score: {decrement: 1} },
     });
     return match.id;
   }

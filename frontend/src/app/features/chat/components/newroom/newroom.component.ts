@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, Observable, Subscription } from 'rxjs';
 import { IChannel } from 'src/app/interfaces';
+import { IAccount } from 'src/app/model/user.model';
 import { ChatService } from '../../services/chat.service';
+import { ChatComponent } from '../chat.component';
 
 @Component({
   selector: 'app-newroom',
@@ -12,38 +14,70 @@ import { ChatService } from '../../services/chat.service';
 export class NewroomComponent implements OnInit {
 
   roomForm!: FormGroup;
-  searchForm!: FormGroup;
-  searchSubcription!: Subscription;
-  publicChannels$: Observable<IChannel[]>;
-  password: string = "";
+  ispublicSubcription!: Subscription | undefined;
 
-  constructor(private builder: FormBuilder, private chatService: ChatService) {
+  chanSearchForm!: FormGroup;
+  chanSearchSubcription!: Subscription;
+  publicChannels$: Observable<IChannel[]>;
+
+  userSearchForm!: FormGroup;
+  userSearchSubcription!: Subscription;
+  users$: Observable<IAccount[]>;
+  // password: string = "";
+
+  constructor(private comp: ChatComponent, private builder: FormBuilder, private chatService: ChatService) {
     this.publicChannels$ = chatService.getPublicChannelsObs();
+    this.users$ = chatService.getSearchUsersObs();
+  }
+
+  get myUser() {
+    return this.comp.myUser;
+  }
+  amIonChan(channelName: string)
+  {
+    return this.comp.channels.map((chan) => chan.channelName).includes(channelName);
   }
 
   ngOnInit(): void {
     this.roomForm = this.builder.group({
       name: [null, [Validators.required]],
-      description: [null, []],
+      // description: [null, []],
       members: this.builder.array([new FormControl()]),
-      ispublic: [null, []],
-      password: [null]
-    },
-    {
-      updateOn: 'blur'
+      ispublic: [false, []],
+      password: [{value: '', disabled: true}, ]
     })
-    this.searchForm = this.builder.group({
+    this.ispublicSubcription = this.roomForm.get('ispublic')?.valueChanges.subscribe((ispublic: boolean) => {
+      if (ispublic) {
+        this.roomForm.get('password')?.enable();
+      } else {
+        this.roomForm.get('password')?.disable();
+      }
+    });
+    // this.addMemberSubcription = this.roomForm.get('members')?.valueChanges.subscribe((members: string[]) => {
+
+    this.chanSearchForm = this.builder.group({
       search: [null]
     });
-    this.searchSubcription = this.searchForm.valueChanges.pipe(
+    this.chanSearchSubcription = this.chanSearchForm.valueChanges.pipe(
       map((form) => form.search)
     ).subscribe((search) => {
       this.chatService.searchPublicChannels(search);
     });
-    this.chatService.getPublicChannels({page: 1, limit: 10});
+    this.userSearchForm = this.builder.group({
+      search: [null]
+    });
+    this.userSearchSubcription = this.userSearchForm.valueChanges.pipe(
+      map((form) => form.search)
+    ).subscribe((search) => {
+      this.chatService.searchUsers(search);
+    });
+    // this.chatService.getPublicChannels({page: 0, limit: 20});
+
   }
   ngOnDestroy() {
-    this.searchSubcription.unsubscribe();
+    this.chanSearchSubcription.unsubscribe();
+    this.userSearchSubcription.unsubscribe();
+    this.ispublicSubcription?.unsubscribe();
   }
   get members() {
     return this.roomForm.get('members') as FormArray;
@@ -70,9 +104,17 @@ export class NewroomComponent implements OnInit {
     }
     this.chatService.createChannel(chan);
   }
-  onJoin(channelName: string) {
-    //console.log(channelName, this.password);
-    this.chatService.joinChannel(channelName, this.password);
+  onJoin(channel: IChannel) {
+    // console.log(channel.channelName, channel.password);
+    this.chatService.joinChannel(channel.channelName, channel.password? channel.password : "");
+    channel.password = "";
+  }
+
+  onDMclick(login: string) {
+    this.comp.onDMclick(login);
+    // this.create = false;
+    // this.selectedChannel.messages = undefined;
+    // this.chatServ.getDMinfo(login);
   }
 
 }

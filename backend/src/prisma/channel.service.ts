@@ -377,6 +377,7 @@ export async function searchPublicChannels(this: PrismaService, key: string): Pr
       },
       select: {
         channelName: true,
+        is_pwd: true,
       },
       take:
         30,

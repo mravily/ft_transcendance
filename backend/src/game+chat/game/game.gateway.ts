@@ -8,7 +8,7 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { session } from 'passport';
+// import { session } from 'passport';
 import { Socket, Server } from 'socket.io';
 import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
@@ -90,20 +90,28 @@ export class GameGateway
   }
 
   async handleDisconnect(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.removeConnection(client);
-    //console.log('Client disconnected', client.id);
+    console.log('Client disconnected', client.id);
+    client.disconnect();
   }
 
   @SubscribeMessage('sync')
   async sync(client: Socket) {
     client.emit('sync', Date.now());
-    //console.log('sync', client.id);
+    // console.log('sync', client.id);
   }
-  // @SubscribeMessage('checkforgame')
-  // checkforgame(client: Socket) {
-  //   let gameid = this.gameService.checkforgame(client.data.user.login);
-  //   this.sendMatchId(client.id, gameid);
-  // }
+  @SubscribeMessage('checkforgame')
+  checkforgame(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
+    let id = this.gameService.checkforgame(client.data.user.login);
+    if (id != -1) {
+      this.sendMatchId(client.id, id);
+    }
+    // client.emit('currentGame', gameid);
+  }
 
   // @SubscribeMessage('invite')
   // async handleInvite(client: Socket, login: string)  {
@@ -131,26 +139,27 @@ export class GameGateway
   }
 
   @SubscribeMessage('findMatch')
-  async findMatch(client: Socket) {
+  async findMatch(client: Socket, PU: boolean) {
     if (client.data?.user == undefined)
       return;
-    this.gameService.getMatchmakingGame(client, false);
+    this.gameService.getMatchmakingGame(client, PU);
     // console.log('find', client.id );
-  }
-
-  @SubscribeMessage('findPUMatch')
-  async findPUMatch(client: Socket) {
-    if (client.data?.user == undefined)
-      return;
-    this.gameService.getMatchmakingGame(client, true);
   }
   async sendMatchId(sockId: string, gameId: number) {
     this.wss.to(sockId).emit('matchId', gameId);
   }
+  @SubscribeMessage('cancelQueuing')
+  async cancelQueuing(client: Socket, PU: boolean) {
+    if (client.data?.user == undefined)
+      return;
+    this.gameService.cancelMatchmaking(client, PU);
+  }
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
-    if (client.data?.user == undefined)
+    console.log('handlestart', client.data?.user?.login, gameId);
+    
+    if (client.data?.user?.login == undefined)
       return;
     this.gameService.startGame(gameId, client);
   }
@@ -164,8 +173,8 @@ export class GameGateway
     this.wss.to(sockId).emit('matchUsers', users);
   }
 
-  async redirectToLobby(client: Socket) {
-    client.emit('redirectToLobby');
+  async redirectToLobby(sockId: string) {
+    this.wss.to(sockId).emit('redirectToLobby');
   }
   async sendSpecMode(client: Socket) {
     client.emit('specMode');
@@ -282,10 +291,10 @@ export class GameGateway
   }
 
   @SubscribeMessage('message')
-  async handleMessage(client: Socket, payload: string)  {
+  async handleMessage(client: Socket, message: {gameId: number, text: string})  {
     if (client.data?.user == undefined)
       return;
-    this.gameService.sendMessage(client.data.user.login, payload);
+    this.gameService.sendMessage(client.data.user.login, message);
   }
   sendMessage(
     sockIds: string[],
