@@ -192,6 +192,7 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
         },
         winnedMatchs: {
           select: {
+            createdAt: true,
             winnerScore: true,
               looserScore: true,
               looser: {
@@ -201,10 +202,12 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
                   login: true,
                 }
               },
-            }
+            },
+            orderBy: { createdAt: 'desc' },
           },
           lostMatchs: {
             select: {
+              createdAt: true,
               looserScore: true,
               winnerScore: true,
               winner: {
@@ -214,7 +217,8 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
                   login: true,
                 }
               },
-            }
+            },
+            orderBy: { createdAt: 'desc' },
           },
         },
     });
@@ -250,8 +254,18 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
           profile.n_friends++;
         }
       }
+      let matches: {
+        opDisplayName: string,
+        opLogin: string,
+        opScore: number,
+        opAvatar: string,
+        usrAvatar: string, 
+        usrDisplayName: string,
+        usrScore: number,
+        createdAt: Date,
+      }[] = [];
       for (let i = 0; user.winnedMatchs[i]; i++) {
-        profile.matches.push({
+        matches.push({
           opDisplayName: user.winnedMatchs[i].looser.nickName,
           opLogin: user.winnedMatchs[i].looser.login,
           opScore: user.winnedMatchs[i].looserScore,
@@ -259,10 +273,11 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
           usrAvatar: user.imgUrl,
           usrDisplayName: user.nickName,
           usrScore: user.winnedMatchs[i].winnerScore,
+          createdAt: user.winnedMatchs[i].createdAt,
         });
       }
       for (let i = 0; user.lostMatchs[i]; i++) {
-        profile.matches.push({
+        matches.push({
           opDisplayName: user.lostMatchs[i].winner.nickName,
           opLogin: user.lostMatchs[i].winner.login,
           opScore: user.lostMatchs[i].winnerScore,
@@ -270,8 +285,10 @@ export async function getPublicProfile(this: PrismaService, login: string): Prom
           usrAvatar: user.imgUrl,
           usrDisplayName: user.nickName,
           usrScore: user.lostMatchs[i].looserScore,
+          createdAt: user.lostMatchs[i].createdAt,
         });
       }
+      profile.matches = matches.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
     }
     return profile;
   }
