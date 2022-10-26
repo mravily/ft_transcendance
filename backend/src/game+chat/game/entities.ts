@@ -56,18 +56,19 @@ class DoublePaddle extends Entity {
   }
 
   update() {
-    this.y = this.y + (this.mainpaddle.y - this.y) * 0.1;
+    this.y = this.mainpaddle.y;
   }
 }
 export class Paddle extends Entity{
   
-  private baseSpeed = 20;
+  private baseSpeed = 10;
   private speed:number = 20;
   private powerUps: Map<powerType, number> = new Map<powerType, number>();
   private double_paddle!: DoublePaddle;
   private coef_height: number = 1;
   public coef_force: number = 1;
   private coef_speed: number = 1;
+  private realspeed: number = 0;
   
   constructor(private w:number, private h:number,x:number,y:number){
     super(w,h,x,y);
@@ -102,21 +103,24 @@ export class Paddle extends Entity{
     }
     this.height = this.h * this.coef_height;
     this.speed = this.baseSpeed * this.coef_speed;
+    this.realspeed += 0.2 * (this.yVel * this.speed - this.realspeed);
     this.width = this.w * this.coef_force;
 
     if( this.yVel === -1 ){
-      if(this.y + this.yVel * this.speed <= wallOffset){
-        this.yVel = 0
+      if(this.y + this.realspeed <= wallOffset){
+        this.yVel = 0;
+        this.realspeed = 0;
       }
     }else if( this.yVel === 1 ){
-      if(this.y + this.yVel * this.speed + this.height >= canvasHeight - wallOffset){
+      if(this.y + this.realspeed + this.height >= canvasHeight - wallOffset){
         this.yVel = 0;
+        this.realspeed = 0;
       }
     }
     if (this.double_paddle !== undefined) {
       this.double_paddle.update();
     }
-    this.y += this.yVel * this.speed;
+    this.y += this.realspeed;
   }
   collides(ball: Ball): boolean {
     if (this.double_paddle !== undefined
@@ -190,7 +194,7 @@ export class Paddle extends Entity{
   
 export class Ball extends Entity  {
   
-  private speed:number = 10;
+  private speed:number = 13;
   lastXVel: number;
   lastYVel: number;
   lastXsign: boolean;

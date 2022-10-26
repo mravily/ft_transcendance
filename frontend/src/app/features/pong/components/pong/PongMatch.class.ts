@@ -180,7 +180,7 @@ export class PongMatch {
         //draw court outline
         this.gameContext.strokeStyle = "#bbb";
         this.gameContext.lineWidth = 10;
-        this.gameContext.strokeRect(this.wallOffset, this.wallOffset, this.gameCanvas.nativeElement.width - 2 * this.wallOffset, this.gameCanvas.nativeElement.height - 2 * this.wallOffset);
+        this.gameContext.strokeRect(this.wallOffset -5, this.wallOffset -5, this.gameCanvas.nativeElement.width - 2 * this.wallOffset +5, this.gameCanvas.nativeElement.height - 2 * this.wallOffset +5);
         //draw center lines
         this.gameContext.fillStyle = "#bbb";
         for (var i = this.wallOffset; i + 30 <= this.gameCanvas.nativeElement.height - this.wallOffset; i += 60) {
