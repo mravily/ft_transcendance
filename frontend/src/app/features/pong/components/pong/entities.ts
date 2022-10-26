@@ -111,16 +111,12 @@ export class Paddle extends Entity{
     if (this.isPlayer)
       this.update_dir();
     
-    if( this.yVel == -1 ){
-      if(this.y + this.realspeed <= wallOffset){
-        this.yVel = 0
-        this.realspeed = 0;
-      }
-    }else if( this.yVel == 1 ){
-      if(this.y + this.realspeed + this.height >= canvas.height - wallOffset){
-        this.yVel = 0;
-        this.realspeed = 0;
-      }
+    if( this.realspeed < 0 && this.y + this.realspeed <= wallOffset)  {
+      this.yVel = 0
+      this.realspeed = 0;
+    }else if( this.realspeed > 0 && this.y + this.height + this.realspeed >= canvas.height - wallOffset)  {
+      this.yVel = 0;
+      this.realspeed = 0;
     }
     if (this.double_paddle !== undefined) {
       this.double_paddle.update();
@@ -197,7 +193,7 @@ export class Ball extends Entity{
       this.yVel = Math.abs(this.yVel);
     if (this.y + this.height >= canvasHeight - wallOffset){
       this.yVel = -Math.abs(this.yVel);
-    }    
+    }
     // //check left canvas bounds
     // if(this.x <= wallOffset)  {  
     //     this.x = canvasWidth / 2 - this.width / 2;

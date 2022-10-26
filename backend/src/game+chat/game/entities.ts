@@ -105,17 +105,14 @@ export class Paddle extends Entity{
     this.speed = this.baseSpeed * this.coef_speed;
     this.realspeed += 0.2 * (this.yVel * this.speed - this.realspeed);
     this.width = this.w * this.coef_force;
-
-    if( this.yVel === -1 ){
-      if(this.y + this.realspeed <= wallOffset){
-        this.yVel = 0;
-        this.realspeed = 0;
-      }
-    }else if( this.yVel === 1 ){
-      if(this.y + this.realspeed + this.height >= canvasHeight - wallOffset){
-        this.yVel = 0;
-        this.realspeed = 0;
-      }
+    
+    if (this.realspeed < 0 && this.y + this.realspeed <= wallOffset)  {
+      this.yVel = 0
+      this.realspeed = 0;
+    }
+    if( this.realspeed > 0 && this.y + this.height + this.realspeed >= canvasHeight - wallOffset)  {
+      this.yVel = 0;
+      this.realspeed = 0;
     }
     if (this.double_paddle !== undefined) {
       this.double_paddle.update();
@@ -207,7 +204,7 @@ export class Ball extends Entity  {
     }else{
       this.xVel = -1;
     }
-    this.yVel = 1;
+    this.yVel = Math.random() * 1.5 - 0.75;
   }
   
   update(player1: Paddle, player2: Paddle, canvasWidth:number, canvasHeight:number, wallOffset: number): void {
@@ -228,17 +225,17 @@ export class Ball extends Entity  {
     }
     //check left canvas bounds
     if(this.x <= 0) {  
-      this.x = canvasWidth / 2 - this.width / 2;
+      this.x = canvasWidth / 2 - this.width / 2 - canvasWidth / 4;
       this.pong.player2Score += 1;
       this.xVel = 1;
-      this.yVel = 0;
+      this.yVel = Math.random() * 1.5 - 0.75;
     }
     //check right canvas bounds
     if(this.x + this.width >= canvasWidth)  {
-      this.x = canvasWidth / 2 - this.width / 2;
+      this.x = canvasWidth / 2 - this.width / 2 + canvasWidth / 4;
       this.pong.player1Score += 1;
       this.xVel = -1;
-      this.yVel = 0;
+      this.yVel = Math.random() * 1.5 - 1;
     }
     
     this.x += this.xVel * this.speed;

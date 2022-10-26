@@ -13,9 +13,9 @@ import { GameService } from '../../game/game.service';
 // Checker que l'on va chercher les created_at dans la base de donnée ;
 
 /*
- qd on creer une channel avec password le premier get channel n'indique pas de password
+ qd on creer une channel avec password le premier get channel n'indique pas de password OK
  le mode spec demarre sa physique solo
- 
+ colorier les user dans le drop down en focntion de leur droit
 */ 
 
 let DMPREFIX = '##DM##';
@@ -130,7 +130,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const res: IAccount[] = await this.db.searchUser(key);
     socket.emit('users', res.filter(user => user.login != socket.data.user.login));
   }
-  
+
   @SubscribeMessage('createChannel')
   async onCreatechannel(socket: Socket, channel: IChannel) {
     if (socket.data?.user == undefined)
@@ -144,7 +144,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     await this.db.createchannel(channel, userId);
     await this.db.setJoinChannel(login, channel.channelName);
-    
+
     let members: string[] = [login];
     for (const user of channel.users) {
       //console.log('Joining', user);
@@ -159,18 +159,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.db.setJoinChannel(user.login, channel.channelName);
       members.push(user.login);
     }
-    for (const member of members) {
-      this.updateChannels(member);
-    }
     await this.db.setMakeAdmin(login, channel.channelName);
     if (channel.is_pwd) {
       channel.password = hashPassword(channel.password);
       this.db.setChannelPass(channel.channelName, channel.password);
     }
+    for (const member of members) {
+      this.updateChannels(member);
+    }
     this.sendNotif(login + ' created channel ' + channel.channelName, channel.channelName, userId);
     this.onGetChannelInfo(socket, channel.channelName);
   }
-  
+
   async updateChannels(login: string) {
     const socketIds: Set<string> = this.connectedUsers.get(login);
     if (socketIds) {
@@ -180,7 +180,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
     }
   }
-    
+
   @SubscribeMessage('getMyChannels')
   async onPaginatechannel(socket: Socket, page: PageI) {
     if (socket.data?.user == undefined)
