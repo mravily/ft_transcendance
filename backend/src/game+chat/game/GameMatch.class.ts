@@ -30,18 +30,25 @@ export class GameMatch {
         {
           this.wsg.sendStart([socket.id], 0);
           this.wsg.sendGameStatus(socket.id,
-          this.getGameStatus(socket.data.user.login),
-        );
+            this.getGameStatus(socket.data.user.login),
+          );
         }
       }
       else  {
         this.socketIdsSpec.push(socket.id);
         console.log(socket.data.user.login, 'spectating');
         this.wsg.sendSpecMode(socket);
-        this.wsg.sendGameStatus(
-          socket.id,
-          this.getGameStatus(socket.data.user.login),
-        );
+        if (!this.idInterval) {
+          this.wsg.sendStart([socket.id], -1);
+        }
+        else
+        {
+          this.wsg.sendStart([socket.id], 0);
+          this.wsg.sendGameStatus(
+            socket.id,
+            this.getGameStatus(socket.data.user.login),
+          );
+        }
       }
     }
   
@@ -154,7 +161,7 @@ export class GameMatch {
       let winner = (this.player1Score > this.player2Score) ? 0 : 1;
       let scores = [this.player1Score, this.player2Score];
       this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[winner], scores[1 - winner]);
-      
+
       this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
       setTimeout(() => {
         this.socketIds.forEach(id => this.wsg.redirectToLobby(id));
@@ -207,7 +214,8 @@ export class GameMatch {
         this.end();
       }
   
-      if (this.custom) this.update_powerups();
+      if (this.custom)
+        this.update_powerups();
   
       if (
         this.ball.xVel != this.ball.lastXVel ||

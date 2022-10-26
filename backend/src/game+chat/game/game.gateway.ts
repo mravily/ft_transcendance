@@ -137,7 +137,12 @@ export class GameGateway
       return;
     client.emit('myUser', client.data.user);
   }
-
+  @SubscribeMessage('getQueues')
+  async getQueues(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
+    this.gameService.getQueuesInfo(client);
+  }
   @SubscribeMessage('findMatch')
   async findMatch(client: Socket, PU: boolean) {
     if (client.data?.user == undefined)

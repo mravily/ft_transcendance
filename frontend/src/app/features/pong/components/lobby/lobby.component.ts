@@ -68,6 +68,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     //   this.chatServ.acceptInvite(login);
     // }));
     this.chatServ.getInvites();
+    this.pongServ.getQueuingStatus();
   }
   ngOnDestroy() {
     this.searchSubcription.unsubscribe();

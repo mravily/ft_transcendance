@@ -53,6 +53,9 @@ export class PongService {
   getLiveGames(): void {
     this.socket.emit('getLiveGames');
   }
+  getQueuingStatus(): void {
+    this.socket.emit('getQueues');
+  }
   getNewMatchmaking(PU: boolean): void {
     this.socket.emit('findMatch', PU);
   }

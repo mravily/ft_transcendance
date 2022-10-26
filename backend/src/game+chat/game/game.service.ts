@@ -7,14 +7,13 @@ import { IAccount, IMatch } from '../../interfaces';
 import { PrismaService } from '../../prisma.service';
 import { GameMatch } from './GameMatch.class';
 
-
 @Injectable()
 export class GameService {
   games: Map<number, GameMatch>;
   gameIdByLogin: Map<string, number>;
   invites: Map<string, any>;
-  queue: Socket[];
-  PUqueue: Socket[];
+  queue: string[];
+  PUqueue: string[];
 
   constructor(
     @Inject(forwardRef(() => GameGateway)) private readonly wsg: GameGateway,
@@ -72,28 +71,45 @@ export class GameService {
     );
     return gameId;
   }
+  getQueuesInfo(client: Socket) {
+    let login = client.data.user.login;
+
+    if (this.queue.includes(login)) {
+      client.emit('queuing', {PU: false, joined: true});
+    }
+    if (this.PUqueue.includes(login)) {
+      client.emit('queuing', {PU: true, joined: true});
+    }
+  }
   getMatchmakingGame(client: Socket, powerUps: boolean): void {
+    let login = client.data.user.login;
     let queue = (powerUps) ? this.PUqueue : this.queue;
     let otherqueue = (!powerUps) ? this.PUqueue : this.queue;
-    // console.log("queue", queue);
-    if (queue.length > 0) {
+
+    if (queue.includes(login)) {
+      queue.splice(queue.indexOf(login), 1);
+      client.emit('queuing', {PU: powerUps, joined: true});
+      return;
+    }
+    else if (queue.length > 0) {
       var oppo = queue.pop();
       if (otherqueue.includes(oppo))
         otherqueue.splice(queue.indexOf(oppo), 1);
-      if (otherqueue.includes(client))
-        otherqueue.splice(queue.indexOf(client), 1);
-      var gameId = this.createGame([client.data.user.login, oppo.data.user.login], powerUps);
-      this.wsg.sendMatchId(client.id, gameId);
-      this.wsg.sendMatchId(oppo.id, gameId);
+      if (otherqueue.includes(login))
+        otherqueue.splice(queue.indexOf(login), 1);
+      var gameId = this.createGame([login, oppo], powerUps);
+      this.chatGW.sendMatchId(login, gameId);
+      this.chatGW.sendMatchId(oppo, gameId);
     } else {
-      queue.push(client);
+      queue.push(login);
     }
     client.emit('queuing', {PU: powerUps, joined: true});
   }
   cancelMatchmaking(client: Socket, PU: boolean): void {
+    let login = client.data.user.login;
     let queue = (PU) ? this.PUqueue : this.queue;
-    if (queue.includes(client)) {
-      queue.splice(queue.indexOf(client), 1);
+    if (queue.includes(login)) {
+      queue.splice(queue.indexOf(login), 1);
     }
     client.emit('queuing', {PU: PU, joined: false});
   }
@@ -143,11 +159,12 @@ export class GameService {
     }
   }
   removeConnection(socket: Socket) {
-    if (this.queue.includes(socket)) {
-      this.queue.splice(this.queue.indexOf(socket), 1);
+    let login = socket.data.user.login;
+    if (this.queue.includes(login)) {
+      this.queue.splice(this.queue.indexOf(login), 1);
     }
-    if (this.PUqueue.includes(socket)) {
-      this.PUqueue.splice(this.queue.indexOf(socket), 1);
+    if (this.PUqueue.includes(login)) {
+      this.PUqueue.splice(this.queue.indexOf(login), 1);
     }
     this.invites.delete(socket.data.user.login);
   }

@@ -23,7 +23,7 @@ export class PongMatch {
     private clockdifftab: number[] = [];
 
     constructor(public gameId: number, protected wss: PongService, private gameCanvas: ElementRef<HTMLCanvasElement>) {
-        console.log("ngAfterViewInit");
+        // console.log("ngAfterViewInit");
         this.gameContext = <CanvasRenderingContext2D>this.gameCanvas.nativeElement.getContext("2d");
         this.gameContext.strokeStyle = "#fff";
         this.gameContext.lineWidth = 5;
@@ -68,6 +68,8 @@ export class PongMatch {
         }));
         // qd le jeu va commencer
         this.otherSubcriptions.push(this.wss.startEvent.subscribe((compteur: number) => {
+            console.log("startEvent", compteur);
+            
             if (compteur == 5) {
                 this.clockdiff = this.wss.sendSync();
             }
@@ -146,11 +148,11 @@ export class PongMatch {
         this.wss.sendStartGame(this.gameId);
     }
     start(): void {
-        if (this.isRunning == true) return;
-        this.isRunning = true;
-        if (this.cur !== undefined) {
+        if (this.isRunning == true)
             return;
-        }
+        this.isRunning = true;
+        if (this.cur !== undefined)
+            return;
         this.cur = this.myNow();
         this.idInterval = setInterval(() => this.gameLoop(), 1000 / 62);
     }
