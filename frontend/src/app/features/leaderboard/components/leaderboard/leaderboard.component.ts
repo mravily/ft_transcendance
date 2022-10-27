@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 import { Observable} from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { LeaderboardService } from '../../services/leaderboard.service';
@@ -11,17 +12,17 @@ import { LeaderboardService } from '../../services/leaderboard.service';
 export class LeaderboardComponent implements OnInit {
 
 	usersList$!: Observable<IAccount[]>;
-  time!: NodeJS.Timer;
+	socket!: Socket;
 
     constructor(private leaderboardService: LeaderboardService) {
-      this.usersList$ = this.leaderboardService.getTopTen();
+		this.socket = leaderboardService.initSocket();
+	  	this.usersList$ = leaderboardService.getDataTop10(this.socket);
     }
 
 	ngOnInit(): void {
-    this.time = setInterval(() => { this.usersList$ = this.leaderboardService.getTopTen();}, 5000);
 	}
 
-  ngOnDestroy() {
-    clearInterval(this.time);
-  }
+  	ngOnDestroy() {
+		this.leaderboardService.disconnectSocket(this.socket);
+  	}
 }

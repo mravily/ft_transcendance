@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { LeaderboardService } from 'src/app/features/leaderboard/services/leaderboard.service';
 import { IAccount } from 'src/app/model/user.model';
@@ -8,13 +9,17 @@ import { IAccount } from 'src/app/model/user.model';
   templateUrl: './all-users.component.html',
   styleUrls: ['./all-users.component.scss']
 })
-export class AllUsersComponent implements OnInit {
+export class AllUsersComponent implements OnDestroy {
 
 	usersList$!: Observable<IAccount[]>;
-	
-	constructor(private leaderboardService: LeaderboardService) { }
+	socket!: Socket;
 
-	ngOnInit(): void {
-			this.usersList$ = this.leaderboardService.getAllUsers();
+	constructor(private leaderboardService: LeaderboardService) {
+		this.socket = leaderboardService.initSocket();
+		this.usersList$ = leaderboardService.getAllUsers(this.socket);
+	}
+
+	ngOnDestroy(): void {
+		this.leaderboardService.disconnectSocket(this.socket);
 	}
 }
