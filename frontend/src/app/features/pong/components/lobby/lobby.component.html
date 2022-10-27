@@ -25,8 +25,8 @@
         <img [src]="user.avatar">
         <div class="friendname">{{user.login}}</div>
         <div class="friendratio">{{user.win}} / {{user.lost}}</div>      
-        <button (click)="onInvite(user, false)" [disabled]="invited[0] == user.login && invited[1] == false">Invite</button>
-        <button (click)="onInvite(user, true)" [disabled]="invited[0] == user.login && invited[1] == true">Invite with PowerUps !</button>
+        <button (click)="onInvite(user, false)" [disabled]="invited != null && invited[0] == user.login && invited[1] == false">Invite</button>
+        <button (click)="onInvite(user, true)" [disabled]="invited != null && invited[0] == user.login && invited[1] == true">Invite with PowerUps !</button>
       </div>
     </div>
   </div>
