@@ -4,9 +4,10 @@
   "configurations": [
     {
       "name": "ng serve",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: start",
+      // "url": "http://pong-legacy.42.fr/"
       "url": "http://localhost:4200/"
     },
     {

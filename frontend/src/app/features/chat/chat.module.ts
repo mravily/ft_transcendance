@@ -17,6 +17,6 @@ import { PongService } from '../pong/services/pong.service';
 		FormsModule,
 		ReactiveFormsModule,
 	],
-	providers: [PongService],
+	// providers: [PongService],
 })
 export class ChatModule { }

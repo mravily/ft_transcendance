@@ -5,11 +5,11 @@
             <label for="name">Room name</label>
             <input id="name" type="text" formControlName="name">
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="description">Description</label>
             <textarea id="description" type="text" formControlName="description" rows="4">
             </textarea>
-        </div>
+        </div> -->
         <div class="form-group" formArrayName="members">
             <label for="members">Members</label>
             <div class="memberList">
@@ -35,15 +35,31 @@
         </div>
     </form>
 
+    <h2 style="margin: 20px;">Direct Message someone</h2>
+    <div class="publicChannels">
+        <div [formGroup]="userSearchForm">
+            <input class="searchBar" id="chanSearch" type="text" placeholder="Search..." formControlName="search">
+        </div>
+        <div *ngFor="let user of users$ | async">
+            <div class="publicChannel" *ngIf="user.login != myUser.login">
+                <img [src]="user.avatar">
+                <div class="channelName">{{user.nickName}}</div>
+                <button (click)="onDMclick(user.login)">Start talking</button>
+            </div>
+        </div>
+    </div>
+
     <h2 style="margin: 20px;">Join public room</h2>
     <div class="publicChannels">
-        <div [formGroup]="searchForm">
-            <input class="searchBar" id="search" type="text" placeholder="Search..." formControlName="search">
+        <div [formGroup]="chanSearchForm">
+            <input class="searchBar" id="userSearch" type="text" placeholder="Search..." formControlName="search">
         </div>
-        <div class="publicChannel" *ngFor="let channel of publicChannels$ | async">
-            <div class="channelName">{{channel.channelName}}</div>
-            <span>password: <input [(ngModel)]="password" type="password"></span>
-            <button (click)="onJoin(channel.channelName)">Join</button>
+        <div *ngFor="let channel of publicChannels$ | async">
+            <div class="publicChannel" *ngIf="!amIonChan(channel.channelName)">
+                <div class="channelName">{{channel.channelName}}</div>
+                <span *ngIf="channel.is_pwd">password: <input [(ngModel)]="channel.password" type="password" (keydown.enter)="onJoin(channel)"></span>
+                <button (click)="onJoin(channel)">Join</button>
+            </div>
         </div>
     </div>
 </div>

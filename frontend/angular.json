@@ -29,11 +29,11 @@
             ],
             "styles": [
               "src/styles.scss",
-			  "./node_modules/bootstrap/dist/css/bootstrap.css"
+              "./node_modules/bootstrap/dist/css/bootstrap.css"
             ],
             "scripts": [
-				"./node_modules/bootstrap/dist/js/bootstrap.bundle.js"
-			]
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -76,10 +76,10 @@
             },
             "development": {
               "browserTarget": "frontend:build:development",
-			  "proxyConfig": "./proxy.conf.json"
+              "proxyConfig": "./proxy.conf.json"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -100,8 +100,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
-			  "./node_modules/@webpixels/css/dist/index.css"
+              "src/styles.scss",
+              "./node_modules/@webpixels/css/dist/index.css"
             ],
             "scripts": []
           }

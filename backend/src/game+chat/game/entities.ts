@@ -1,4 +1,4 @@
-import { GameMatch } from "./game.service";
+import { GameMatch } from "./GameMatch.class";
 
 enum powerType {
   double_paddle,
@@ -56,18 +56,19 @@ class DoublePaddle extends Entity {
   }
 
   update() {
-    this.y = this.y + (this.mainpaddle.y - this.y) * 0.1;
+    this.y = this.mainpaddle.y;
   }
 }
 export class Paddle extends Entity{
   
-  private baseSpeed = 20;
+  private baseSpeed = 10;
   private speed:number = 20;
   private powerUps: Map<powerType, number> = new Map<powerType, number>();
   private double_paddle!: DoublePaddle;
   private coef_height: number = 1;
   public coef_force: number = 1;
   private coef_speed: number = 1;
+  private realspeed: number = 0;
   
   constructor(private w:number, private h:number,x:number,y:number){
     super(w,h,x,y);
@@ -102,21 +103,21 @@ export class Paddle extends Entity{
     }
     this.height = this.h * this.coef_height;
     this.speed = this.baseSpeed * this.coef_speed;
+    this.realspeed += 0.2 * (this.yVel * this.speed - this.realspeed);
     this.width = this.w * this.coef_force;
-
-    if( this.yVel === -1 ){
-      if(this.y + this.yVel * this.speed <= wallOffset){
-        this.yVel = 0
-      }
-    }else if( this.yVel === 1 ){
-      if(this.y + this.yVel * this.speed + this.height >= canvasHeight - wallOffset){
-        this.yVel = 0;
-      }
+    
+    if (this.realspeed < 0 && this.y + this.realspeed <= wallOffset)  {
+      this.yVel = 0
+      this.realspeed = 0;
+    }
+    if( this.realspeed > 0 && this.y + this.height + this.realspeed >= canvasHeight - wallOffset)  {
+      this.yVel = 0;
+      this.realspeed = 0;
     }
     if (this.double_paddle !== undefined) {
       this.double_paddle.update();
     }
-    this.y += this.yVel * this.speed;
+    this.y += this.realspeed;
   }
   collides(ball: Ball): boolean {
     if (this.double_paddle !== undefined
@@ -190,7 +191,7 @@ export class Paddle extends Entity{
   
 export class Ball extends Entity  {
   
-  private speed:number = 10;
+  private speed:number = 13;
   lastXVel: number;
   lastYVel: number;
   lastXsign: boolean;
@@ -203,14 +204,16 @@ export class Ball extends Entity  {
     }else{
       this.xVel = -1;
     }
-    this.yVel = 1;
+    this.yVel = Math.random() * 1.5 - 0.75;
   }
   
   update(player1: Paddle, player2: Paddle, canvasWidth:number, canvasHeight:number, wallOffset: number): void {
     //check top canvas bounds
-    if(this.y <= wallOffset || this.y + this.height >= canvasHeight - wallOffset){
-      this.yVel = -this.yVel;
-    }
+    if(this.y <= wallOffset)
+      this.yVel = Math.abs(this.yVel);
+    if (this.y + this.height >= canvasHeight - wallOffset)
+      this.yVel = - Math.abs(this.yVel);
+    
     //check players collision
     if (this.xVel < 0 && player1.collides(this)) {
       this.xVel = player1.coef_force;
@@ -222,15 +225,17 @@ export class Ball extends Entity  {
     }
     //check left canvas bounds
     if(this.x <= 0) {  
-      this.x = canvasWidth / 2 - this.width / 2;
+      this.x = canvasWidth / 2 - this.width / 2 - canvasWidth / 4;
       this.pong.player2Score += 1;
       this.xVel = 1;
+      this.yVel = Math.random() * 1.5 - 0.75;
     }
     //check right canvas bounds
     if(this.x + this.width >= canvasWidth)  {
-      this.x = canvasWidth / 2 - this.width / 2;
+      this.x = canvasWidth / 2 - this.width / 2 + canvasWidth / 4;
       this.pong.player1Score += 1;
       this.xVel = -1;
+      this.yVel = Math.random() * 1.5 - 1;
     }
     
     this.x += this.xVel * this.speed;

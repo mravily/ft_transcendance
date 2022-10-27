@@ -12,6 +12,7 @@ export class ChatService {
   
   constructor() { 
     this.socket = new Socket({ url: '/chat', options: {
+      transports: ['websocket'],
       withCredentials: false,
     } });
   }

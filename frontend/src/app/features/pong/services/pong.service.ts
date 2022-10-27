@@ -25,9 +25,11 @@ export class PongService {
   redirectToLobbyEvent: Observable<void>;
   matchUsersEvent: Observable<IAccount[]>;
   liveGamesEvent: Observable<IMatch[]>;
+  queuingEvent: Observable<{PU: boolean, joined: boolean}>;
 
   constructor(private cookieService: CookieService) {
     this.socket = new Socket({ url: '/pong', options: {
+      transports: ['websocket'],
       withCredentials: false,
     } });
     this.gameFoundEvent = this.socket.fromEvent<number>('matchId');
@@ -43,16 +45,22 @@ export class PongService {
     this.redirectToLobbyEvent = this.socket.fromEvent<void>('redirectToLobby');
     this.matchUsersEvent = this.socket.fromEvent<IAccount[]>('matchUsers');
     this.liveGamesEvent = this.socket.fromEvent<IMatch[]>('liveGames');
+    this.queuingEvent = this.socket.fromEvent<{PU: boolean, joined: boolean}>('queuing');
+
+    console.log('PongService created');
   }
 
   getLiveGames(): void {
     this.socket.emit('getLiveGames');
   }
-  getNewMatchmaking(): void {
-    this.socket.emit('findMatch');
+  getQueuingStatus(): void {
+    this.socket.emit('getQueues');
   }
-  getNewPUMatchmaking(): void {
-    this.socket.emit('findPUMatch');
+  getNewMatchmaking(PU: boolean): void {
+    this.socket.emit('findMatch', PU);
+  }
+  cancelQueuing(PU: boolean): void {
+    this.socket.emit('cancelQueuing', PU);
   }
 
   sendPaddlePos(y: number, yVel: number, timestamp: number): void {
@@ -60,10 +68,11 @@ export class PongService {
   }
 
   sendStartGame(gameId: number): void {
+    console.log('sending start game !!!!');
     this.socket.emit('startGame', gameId);
   }
 
-  sendMessage(message: string): void {
+  sendMessage(message: {gameId: number, text: string}): void {
     this.socket.emit('message', message);
   }
 
@@ -72,7 +81,11 @@ export class PongService {
     this.socket.emit('sync', t);
     return t;
   }
-  //
+  
+  checkforgame(): void {
+    this.socket.emit('checkforgame');
+  }
+
   invitePlayer(playerId: number): void {
     this.socket.emit('invite', playerId);
   }

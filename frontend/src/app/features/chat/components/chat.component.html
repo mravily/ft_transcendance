@@ -19,7 +19,9 @@
         <div *ngIf="!selectedChannel.isDirect">
           <div [formGroup]="searchForm">
             <input placeholder="Add someone to the room" formControlName="search">
-            <button class="addbutton" *ngFor="let user of (userSearchResult$ | async)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
+            <div *ngFor="let user of (userSearchResult$ | async)">
+              <button class="addbutton" *ngIf="!isOnChan(user.login)" (click)="onAddMember(user.login)">Add {{user.login}}</button>
+            </div>
           </div>
           <h6>Members</h6>
           <div *ngFor="let member of selectedChannel.users">
@@ -30,13 +32,13 @@
             <button *ngIf="myUser.blockUsers?.includes(member.login)" (click)="onUnblock(member.login)">Unblock</button>
             <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login) && !isMuted(member.login)" (click)="onMute(member.login)">Mute</button>
             <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login) && isMuted(member.login)" (click)="onUnmute(member.login)">Unmute</button>
-            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login)" (click)="onRemove(member.login)">Remove</button>
+            <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login)" (click)="onRemove(member.login)">Kick</button>
             <button *ngIf="member.login != myUser.login && isAdmin(myUser.login) && !isCreator(member.login)" (click)="onBan(member.login)">Ban</button>
             <button *ngIf="isAdmin(myUser.login) && !isAdmin(member.login)" (click)="onPromote(member.login)">Promote</button>
           </div>
           <div *ngIf="isAdmin(myUser.login)">
             <div *ngIf="!selectedChannel.isPrivate && amICreator()">
-              <input placeholder="New Password" [(ngModel)]="newPassword">
+              <input placeholder="New Password" type="password" [(ngModel)]="newPassword">
               <button (click)="onUpdatePassword()" [disabled]="newPassword == null || newPassword == ''">{{(selectedChannel.is_pwd)?"Update Password":"Set Password"}}</button>
               <button (click)="onRemovePassword()" *ngIf="selectedChannel.is_pwd">Remove Password</button>
             </div>
@@ -67,12 +69,12 @@
           {{message.from}}
         </h4>
         <div class="message-body" [ngClass]="{isMine: message.from === myUser.login && !message.isNotif, isNotif: message.isNotif}">
-          {{(!isBlocked(message.from)) ? message.message : 'blocked'}}
+          {{(!isBlocked(message.from) || message.isNotif) ? message.message : 'You blocked ' + message.from}}
         </div>
       </div>
     </div>
     <div class="inputbar">
-      <textarea (keyup.enter)="onSendMessage()" placeholder="Enter message here..."
+      <textarea (keydown.enter)="onSendMessage()" placeholder="Enter message here..."
         type="text" [(ngModel)]="curMessage" [disabled]="isMuted(myUser.login)"></textarea>
       <button (click)="onSendMessage()" [disabled]="curMessage==null || curMessage=='' || isMuted(myUser.login)">Send</button>
     </div>
@@ -80,7 +82,7 @@
 
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create"><span class="plus"></span>+  Add new room</div>
+    <div class="contact" (click)="create = !create"><h5 style="margin-left: 20px">+  Add new room</h5></div>
 
     <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
       <img [src]="contact.imgUrl">

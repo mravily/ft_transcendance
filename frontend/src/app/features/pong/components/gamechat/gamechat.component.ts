@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Message } from '../../models/chat.models';
 import { PongService } from '../../services/pong.service';
+import { PongComponent } from '../pong/pong.component';
 
 @Component({
   selector: 'app-gamechat',
@@ -16,10 +17,10 @@ export class GamechatComponent implements OnInit {
   messages: Message[] = [
   ];
   
-  constructor(private wss: PongService, builer: FormBuilder) { }
+  constructor(private wss: PongService, private comp: PongComponent) { }
 
   onSendMessage() {
-    this.wss.sendMessage(this.curMessage);
+    this.wss.sendMessage({gameId: this.comp.gameId, text: this.curMessage});
     this.curMessage = "";
   }
 

@@ -8,7 +8,7 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { session } from 'passport';
+// import { session } from 'passport';
 import { Socket, Server } from 'socket.io';
 import { PowerUp } from './entities';
 import { GamePaddle, GameStatus } from './game.interface';
@@ -28,8 +28,7 @@ import { PrismaService } from '../../prisma.service';
   // }
 })
 export class GameGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
   constructor(
@@ -40,7 +39,7 @@ export class GameGateway
   ) {}
 
   afterInit(server: Server) {
-    console.log('GameGateway initialized');
+    //console.log('GameGateway initialized');
     this.wss = server;
   }
 
@@ -50,21 +49,21 @@ export class GameGateway
       const cookie = parse(client.handshake.headers.cookie);
       const token = cookie['access'];
       if (!token) {
-        console.log('token not found');
+        //console.log('token not found');
         client.disconnect();
         return;
       }
       const userId = await this.authService.getUseridFromToken(token);
       // console.log('userId...', userId);
       if (!userId) {
-        console.log('User not found');
+        //console.log('User not found');
         client.disconnect();
         return;
       }
       client.data.userId = userId;
       // client.emit('myId', userId);
     } catch (e) {
-      console.log('Error', e);
+      //console.log('Error', e);
       client.disconnect();
       return;
     }
@@ -72,7 +71,7 @@ export class GameGateway
       const user: IAccount = await this.db.getUserAccount(client.data.userId);
       // console.log('User', user);
       if (user.login == undefined) {
-        console.log('User', user);
+        //console.log('User', user);
         return client.disconnect();
       }
       client.data.user = user; // save user in client
@@ -80,31 +79,39 @@ export class GameGateway
       // Save connection
       // this.gameService.addConnection(client);
     } catch {
-      console.log('Error', 'connection failed');
+      //console.log('Error', 'connection failed');
       return client.disconnect();
     }
-    console.log('Client connected to pong', {
-      login: client.data.user.login,
-      socketId: client.id,
-      userId: client.data.userId,
-    });
+    //console.log('Client connected to pong', {
+    //   login: client.data.user.login,
+    //   socketId: client.id,
+    //   userId: client.data.userId,
+    // });
   }
 
   async handleDisconnect(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
     this.gameService.removeConnection(client);
     console.log('Client disconnected', client.id);
+    client.disconnect();
   }
 
   @SubscribeMessage('sync')
   async sync(client: Socket) {
     client.emit('sync', Date.now());
-    console.log('sync', client.id);
+    // console.log('sync', client.id);
   }
-  // @SubscribeMessage('checkforgame')
-  // checkforgame(client: Socket) {
-  //   let gameid = this.gameService.checkforgame(client.data.user.login);
-  //   this.sendMatchId(client.id, gameid);
-  // }
+  @SubscribeMessage('checkforgame')
+  checkforgame(client: Socket) {
+    if (client.data?.user == undefined)
+      return;
+    let id = this.gameService.checkforgame(client.data.user.login);
+    if (id != -1) {
+      this.sendMatchId(client.id, id);
+    }
+    // client.emit('currentGame', gameid);
+  }
 
   // @SubscribeMessage('invite')
   // async handleInvite(client: Socket, login: string)  {
@@ -130,28 +137,34 @@ export class GameGateway
       return;
     client.emit('myUser', client.data.user);
   }
-
-  @SubscribeMessage('findMatch')
-  async findMatch(client: Socket) {
+  @SubscribeMessage('getQueues')
+  async getQueues(client: Socket) {
     if (client.data?.user == undefined)
       return;
-    this.gameService.getMatchmakingGame(client, false);
-    // console.log('find', client.id );
+    this.gameService.getQueuesInfo(client);
   }
-
-  @SubscribeMessage('findPUMatch')
-  async findPUMatch(client: Socket) {
+  @SubscribeMessage('findMatch')
+  async findMatch(client: Socket, PU: boolean) {
     if (client.data?.user == undefined)
       return;
-    this.gameService.getMatchmakingGame(client, true);
+    this.gameService.getMatchmakingGame(client, PU);
+    // console.log('find', client.id );
   }
   async sendMatchId(sockId: string, gameId: number) {
     this.wss.to(sockId).emit('matchId', gameId);
   }
+  @SubscribeMessage('cancelQueuing')
+  async cancelQueuing(client: Socket, PU: boolean) {
+    if (client.data?.user == undefined)
+      return;
+    this.gameService.cancelMatchmaking(client, PU);
+  }
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
-    if (client.data?.user == undefined)
+    console.log('handlestart', client.data?.user?.login, gameId);
+    
+    if (client.data?.user?.login == undefined)
       return;
     this.gameService.startGame(gameId, client);
   }
@@ -165,8 +178,8 @@ export class GameGateway
     this.wss.to(sockId).emit('matchUsers', users);
   }
 
-  async redirectToLobby(client: Socket) {
-    client.emit('redirectToLobby');
+  async redirectToLobby(sockId: string) {
+    this.wss.to(sockId).emit('redirectToLobby');
   }
   async sendSpecMode(client: Socket) {
     client.emit('specMode');
@@ -283,10 +296,10 @@ export class GameGateway
   }
 
   @SubscribeMessage('message')
-  async handleMessage(client: Socket, payload: string)  {
+  async handleMessage(client: Socket, message: {gameId: number, text: string})  {
     if (client.data?.user == undefined)
       return;
-    this.gameService.sendMessage(client.data.user.login, payload);
+    this.gameService.sendMessage(client.data.user.login, message);
   }
   sendMessage(
     sockIds: string[],

@@ -35,7 +35,7 @@ export class TwoFactorAuthenticationService {
   public async getQrCodeDataUrl(otpauthUrl: string) {
     return toDataURL(otpauthUrl, (err, dataUrl) => {
       if (err) throw err;
-      console.log('DEBUG: ', dataUrl);
+      //console.log('DEBUG: ', dataUrl);
     });
   }
 

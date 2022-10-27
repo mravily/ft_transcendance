@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
 import { ChatModule } from './features/chat/chat.module';
 import { PongModule } from './features/pong/pong.module';
 import { LandingPageComponent } from './features/landing-page/landing-page.component';
+import { PongService } from './features/pong/services/pong.service';
+import { ChatService } from './features/chat/services/chat.service';
 
 @NgModule({
 	declarations: [AppComponent, TfaComponent, LandingPageComponent],
@@ -27,7 +29,7 @@ import { LandingPageComponent } from './features/landing-page/landing-page.compo
 		NgOtpInputModule,
 		RouterModule
 	],
-	providers: [CookieService],
+	providers: [CookieService, PongService, ChatService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

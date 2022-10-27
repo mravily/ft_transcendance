@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
 import { IChannel, IMessage,IAccount } from 'src/app/interfaces';
-import { PongService } from '../../pong/services/pong.service';
 import { ChatService } from '../services/chat.service';
 
 @Component({
@@ -19,6 +18,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   create: boolean = false;
 
   contacts!: Observable<IChannel[]>;
+  channels: IChannel[] = [];
+
   selectedChannel!: IChannel;
   curMessage!: string;
   // newMemberLogin!: string;
@@ -60,21 +61,26 @@ export class ChatComponent implements OnInit, OnDestroy {
       }
     }));
     this.contacts = this.chatServ.getChannelsObs().pipe(
-      map((channels: IChannel[]) => 
-        channels.map((channel: IChannel) => {
+      map((channels: IChannel[]) => {
+        this.channels = channels;
+        if (this.selectedChannel && !channels.map(chan => chan.channelName).includes(this.selectedChannel.channelName))
+          this.selectedChannel.messages = undefined;
+        return channels.map((channel: IChannel) => {
           channel.imgUrl = this.getRoomPhoto(channel);
           channel.realName = this.getRealName(channel);
           return channel;
         })
+      }
       )
     );
     this.subs.push(this.chatServ.getBlockersObs().subscribe((blockers: string[]) => {
       this.myUser.blockedFrom = blockers;
     }));
     this.subs.push(this.chatServ.getErrorObs().subscribe((error: string) => {
-      console.log(error);
+      //console.log(error);
     }));
     this.subs.push(this.chatServ.getMyUserObs().subscribe((user: IAccount) => {
+      console.log(user);      
       this.myUser = user;
     }));
     this.searchForm = this.builder.group({
@@ -86,31 +92,33 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.chatServ.searchUsers(search);
     });
     this.userSearchResult$ = this.chatServ.getSearchUsersObs();
-    // this.subs.push(this.chatServ.getInviteObs().subscribe((login: string) => {
-    //   console.log('invite', login);
-    //   // if (confirm(login + ' wants to play with you'))
-    //   this.chatServ.acceptInvite(login);
-    // }));
     this.subs.push(this.chatServ.getMatchFoundObs().subscribe((gameId: number) => {
-      console.log('game found', gameId);
+      //console.log('game found', gameId);
       this.router.navigate(['play', gameId]);
     }));
+    console.log('geting myuser');
+    
     this.chatServ.getMyUser();
     this.chatServ.getMyChannels({page: 0, limit: 100});
 
   }
 
   ngAfterViewChecked() {
-    if (this.mContainer) {
+    if (this.mContainer)
       this.mContainer.nativeElement.scrollTop = this.mContainer.nativeElement.scrollHeight;
-    }
+    // this.chatServ.getMyUser();
   }
 
   ngOnDestroy() {
     this.subs.forEach((sub: Subscription) => sub.unsubscribe());
     this.searchSubcription.unsubscribe();
   }
-
+  isOnChan(login: string): boolean {
+    if (this.selectedChannel && this.selectedChannel.users) {
+      return this.selectedChannel.users.map((user) => user.login).includes(login);
+    }
+    return false;
+  }
   amICreator() {
     if (this.selectedChannel && this.myUser)
       return this.selectedChannel.creator == this.myUser.login;
@@ -167,7 +175,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
   onDMclick(login: string) {
     this.create = false;
-    this.selectedChannel.messages = undefined;
+    if (this.selectedChannel)
+      this.selectedChannel.messages = undefined;
     this.chatServ.getDMinfo(login);
   }
   onLeave() {
@@ -226,7 +235,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   onInvite(login: string, powerup: boolean) {
     this.chatServ.inviteUser(login, powerup);
   }
-  onAcceptInvite(login: string) {
-    this.chatServ.acceptInvite(login);
-  }
+  // onAcceptInvite(login: string) {
+  //   this.chatServ.acceptInvite(login);
+  // }
 }

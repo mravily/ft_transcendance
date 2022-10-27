@@ -1,11 +1,7 @@
 import { PrismaService } from '../prisma.service';
 import { IMatch } from '../interfaces';
 
-export async function setMatch(this: PrismaService,
-                              winnerId: string,
-                              looserId:string,
-                              winnerScore: number,
-                              looserScore: number): Promise<number> {
+export async function setMatch(this: PrismaService, winnerId: string, looserId:string, winnerScore: number, looserScore: number): Promise<number> {
   try {
     const match = await this.prisma.match.create({
       data: {
@@ -15,42 +11,20 @@ export async function setMatch(this: PrismaService,
         looserScore: looserScore
       },
     });
+    await this.prisma.user.update({
+      where: {id: winnerId},
+      data: { score: {increment: 2} },
+    });
+    await this.prisma.user.update({
+      where: {id: looserId},
+      data: { score: {decrement: 1} },
+    });
     return match.id;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
-
-// export async function setMatchWinner(this: PrismaService, matchId: number, userId: string, score: number) {
-//   try {
-//     await this.prisma.match.update({
-//       where: { id: matchId },
-//       data: {
-//         winnerid: userId,
-//         winnerScore: score
-//       },
-//     });
-//   }
-//   catch (error) {
-//     console.log(error.message);
-//   }
-// }
-
-// export async function setMatchLooser(this: PrismaService, matchId: number, userId: string, score: number) {
-//     try {
-//       await this.prisma.match.update({
-//         where: { id: matchId },
-//         data: {
-//           looserid: userId,
-//           looserScore: score
-//         },
-//       });
-//     }
-//     catch (error) {
-//       console.log(error.message);
-//     }
-//   }
 
 export async function getNoWinnedMatchs(this: PrismaService, login: string): Promise<number> {
   try {
@@ -59,7 +33,7 @@ export async function getNoWinnedMatchs(this: PrismaService, login: string): Pro
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -70,7 +44,7 @@ export async function getNolostMatchs(this: PrismaService, login: string): Promi
     });
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -113,7 +87,7 @@ export async function getMatchHistory(this: PrismaService, login: string): Promi
     return matches;
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -128,7 +102,7 @@ export async function getRatio(this: PrismaService, login: string): Promise<[num
     return [wins, lost];
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }
 
@@ -143,6 +117,6 @@ export async function getRatioById(this: PrismaService, id: string): Promise<[nu
     return [wins, lost];
   }
   catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
   }
 }

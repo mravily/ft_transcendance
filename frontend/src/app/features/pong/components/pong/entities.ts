@@ -1,5 +1,5 @@
 import { PowerUpEvent } from '../../models/pong.models';
-import { PlayingPongMatch, PongMatch } from './pong.component';
+import { PongMatch } from './PongMatch.class';
 
 enum powerType {
   double_paddle,
@@ -60,19 +60,20 @@ class DoublePaddle extends Entity {
   }
 
   update() {
-    this.y = this.y + (this.mainpaddle.y - this.y) * 0.1;
+    this.y = this.mainpaddle.y;
   }
 }
 
 export class Paddle extends Entity{
   
-  private baseSpeed = 20;
+  private baseSpeed = 10;
   private speed:number = 20;
   private powerUps: Map<powerType, number> = new Map();
   private double_paddle!: DoublePaddle | undefined;
   private coef_height: number = 1;
   private coef_speed: number = 1;
   coef_force: number = 1;
+  private realspeed: number = 0;
 
   constructor(private w:number,private h:number,x:number,y:number, public isPlayer: boolean){
     super(w,h,x,y);
@@ -97,32 +98,31 @@ export class Paddle extends Entity{
     }    
   }
   update_dir()  {
-    let dir = -(PlayingPongMatch.upIsPressed?1:0) + (PlayingPongMatch.downIsPressed?1:0);
+    let dir = -(PongMatch.upIsPressed?1:0) + (PongMatch.downIsPressed?1:0);
     this.yVel = dir;
   }
   
   update(canvas: HTMLCanvasElement, wallOffset: number) {
     this.height = this.h * this.coef_height;
     this.speed = this.baseSpeed * this.coef_speed;
+    this.realspeed += 0.2 * (this.yVel * this.speed - this.realspeed);
     this.width = this.w * this.coef_force;
 
     if (this.isPlayer)
       this.update_dir();
     
-    if( this.yVel == -1 ){
-      if(this.y + this.yVel * this.speed <= wallOffset){
-        this.yVel = 0
-      }
-    }else if( this.yVel == 1 ){
-      if(this.y + this.yVel * this.speed + this.height >= canvas.height - wallOffset){
-        this.yVel = 0;
-      }
+    if( this.realspeed < 0 && this.y + this.realspeed <= wallOffset)  {
+      this.yVel = 0
+      this.realspeed = 0;
+    }else if( this.realspeed > 0 && this.y + this.height + this.realspeed >= canvas.height - wallOffset)  {
+      this.yVel = 0;
+      this.realspeed = 0;
     }
     if (this.double_paddle !== undefined) {
       this.double_paddle.update();
     }
     
-    this.y += this.yVel * this.speed;
+    this.y += this.realspeed;
   }
   collides(ball: Ball): boolean {
     if (this.double_paddle !== undefined
@@ -181,7 +181,7 @@ export class Paddle extends Entity{
 
 export class Ball extends Entity{
   
-  private speed:number = 10;
+  private speed:number = 13;
   
   constructor(w:number,h:number,x:number,y:number, private pong: PongMatch){
     super(w,h,x,y);
@@ -189,9 +189,11 @@ export class Ball extends Entity{
   
   update(player: Paddle, opponentPlayer: Paddle, canvasWidth:number, canvasHeight:number, wallOffset: number){
     //check top canvas bounds
-    if(this.y <= wallOffset || this.y + this.height >= canvasHeight - wallOffset){
-        this.yVel = -this.yVel;
-    }    
+    if(this.y <= wallOffset)
+      this.yVel = Math.abs(this.yVel);
+    if (this.y + this.height >= canvasHeight - wallOffset){
+      this.yVel = -Math.abs(this.yVel);
+    }
     // //check left canvas bounds
     // if(this.x <= wallOffset)  {  
     //     this.x = canvasWidth / 2 - this.width / 2;
