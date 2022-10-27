@@ -63,6 +63,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }));
     this.subs.push(this.chatServ.getInvitedObs().subscribe((invited: any) => {
       this.invited = invited;
+      console.log('invited', invited);
     }));
     this.pongServ.checkforgame();
     // this.subs.push(this.chatServ.getInvitesObs().subscribe((login: string) => {

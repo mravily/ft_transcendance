@@ -146,6 +146,7 @@ export class GameMatch {
     gameLoop() {
       // console.log("gameLoop");
       if (this.isRunning == false) {
+        console.log('end');
         clearInterval(this.idInterval);
         return;
       };
