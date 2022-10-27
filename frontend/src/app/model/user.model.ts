@@ -18,7 +18,7 @@ export class IAccount {
 	n_friends?: number;
 	blockUsers?: any[];
 	createdAt?: Date;
-	isOnline?: boolean;
+	isOnline?: number;
 	isAdmin?: boolean;
 	twoFA?: boolean;
 	secret?: string;

@@ -22,7 +22,7 @@ export class friendsList {
 	displayName!: string
 	imgUrl!: string 
 	score!: number
-	isOnline!: boolean
+	isOnline!: number
 	win!: Number
 	lost!: Number
 }
@@ -48,7 +48,7 @@ export class IProfileFriends {
     win!: number
     lost!: number
 	rank!: number
-    isOnline!: boolean
+    isOnline!: number
     isAccepted!: boolean
     score!: number
     isSent!: boolean

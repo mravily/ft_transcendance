@@ -8,7 +8,7 @@ CREATE TABLE "User" (
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "score" INTEGER NOT NULL,
-    "isOnline" BOOLEAN NOT NULL,
+    "isOnline" INTEGER NOT NULL,
     "isAdmin" BOOLEAN NOT NULL,
     "token" TEXT,
     "twoFA" BOOLEAN NOT NULL,

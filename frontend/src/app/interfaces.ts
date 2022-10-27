@@ -17,7 +17,7 @@ export interface IAccount {
     blockUsers?: string[];
     blockedFrom?: string[];
     createdAt?: Date;
-    isOnline?: boolean;
+    isOnline?: number;
     isAdmin?: boolean;
     twoFA?: boolean;
     secret?: string;
