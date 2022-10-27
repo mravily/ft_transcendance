@@ -1,10 +1,8 @@
-import { Req, Session, Request } from "@nestjs/common";
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { PrismaService } from "../prisma.service";
 import { parse } from 'cookie';
 import { AuthService } from '../auth/auth.service';
-// import { Request } from "express";
 
 @WebSocketGateway({namespace: '/sidebar', cors: {origin: '*'}})
 export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {

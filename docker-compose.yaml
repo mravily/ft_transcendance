@@ -20,9 +20,9 @@ services:
       dockerfile: Dockerfile
       context: ./backend
     container_name: NestJS
-    ports:
+    # ports:
       # - $NEST_PORT
-      - 9229:9229
+      # - 9229:9229
     depends_on:
       postgres:
         condition: service_healthy
@@ -31,9 +31,7 @@ services:
     volumes:
       - ./backend:/app/
       - /app/node_modules
-      - type: bind
-        source: ./backend/upload
-        target: /upload
+      - postgres:/upload
 
   postgres:
     image: $POSTGRES_IMG

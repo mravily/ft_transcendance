@@ -15,7 +15,6 @@ export class UploadsController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File, @Session() session: Record<string, any>) {
-    // console.log(file.mimetype);
     if (file.mimetype.includes('image')){
       this.db.uploadPhoto(session.userid, file);
     }

@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { IProfileFriends } from '../models/profile.user.model';
@@ -42,8 +43,14 @@ export class ProfileService {
 	return this.http.get<IAccount>('api/profile/' + login);
   }
 
-  getPrivateProfile(): Observable<IAccount> {
-	return this.http.get<IAccount>('api/profile/private');
+  getPrivateProfile(socket: Socket): Observable<IAccount> {
+    socket.emit('settings');
+    return socket.fromEvent<IAccount>('settings');
+    // return this.http.get<IAccount>('api/profile/private');
+  }
+
+  initSocket(): Socket {
+    return new Socket({url: '/profile', options: {withCredentials: false}});
   }
 
   sendFriendRequest(login: string) {
