@@ -12,10 +12,10 @@ export class ProfileController {
     this.db.updateUserAccount(session.userid, account);
   }
 
-  @Get('private')
-  getProfile(@Session() session: Record<string, any>): Promise<IAccount> {
-    return this.db.getUserProfile(session.userid);
-  }
+  // @Get('private')
+  // getProfile(@Session() session: Record<string, any>): Promise<IAccount> {
+  //   return this.db.getUserProfile(session.userid);
+  // }
 
   @Get('overview')
   getOverview(@Session() session: Record<string, any>): Promise<IAccount> {

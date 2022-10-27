@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   WebSocketGateway,
   WebSocketServer,
