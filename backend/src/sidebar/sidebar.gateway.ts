@@ -23,7 +23,7 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
                 return;
             }
             const userId = await this.authService.getUseridFromToken(token);
-            console.log('userId...', userId);
+            console.log('Sidebar userId: ', userId);
             if (!userId) {
                 console.log('User not found');
                 client.disconnect();

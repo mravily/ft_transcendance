@@ -20,7 +20,7 @@ model User {
   lastName String
   email String @unique
   score Int
-  isOnline Boolean
+  isOnline Int
   isAdmin Boolean
   token String? @unique
   twoFA Boolean

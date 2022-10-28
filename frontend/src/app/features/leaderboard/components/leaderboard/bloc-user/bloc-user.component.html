@@ -13,12 +13,15 @@
 	</div>
 	<div class="three"><h5>{{ rank }}</h5></div>
 	<div class="four">
-		<span *ngIf="user.isOnline" class="badge badge-lg badge-dot">
+		<span *ngIf="user.isOnline==1" class="badge badge-lg badge-dot">
 			<i class="bg-success"></i>Online
 		 </span>
-		 <span *ngIf="!user.isOnline" class="badge badge-lg badge-dot">
+		 <span *ngIf="user.isOnline==0" class="badge badge-lg badge-dot">
 			 <i class="bg-danger"></i>Offline
 		  </span>
+		  <span *ngIf="user.isOnline==2" class="badge badge-lg badge-dot">
+			<i class="bg-primary bg-gradient"></i>InGame
+		 </span>
 	</div>
 	
 	<!-- <button class="style btn btn-success btn-sm">Congratulate</button> -->

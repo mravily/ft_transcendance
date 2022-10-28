@@ -7,7 +7,15 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(private db: PrismaService, private authService: AuthService, private jwtService: JwtService) { 
+
+  jwt: string;
+  payload: any;
+
+  constructor(
+    private db: PrismaService,
+    private authService: AuthService,
+    private jwtService: JwtService
+    ) {
     super({
       clientID: process.env.FORTYTWO_CLIENT_ID,
       clientSecret: process.env.FORTYTWO_CLIENT_SECRET,
@@ -18,7 +26,13 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(
-    request: { session: { userid: string; jwt: any; firstTime: boolean } },
+    request: {
+      session: {
+        userid: string;
+        jwt: any;
+        firstTime: boolean
+      }
+    },
     // request: { session: { userid: string } },
     accessToken: string,
     refreshToken: string,
@@ -37,11 +51,12 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         profile.photos[0].value,
       );
       request.session.userid = id;
-      this.payload = { userid: id };
+      this.payload = { userid: id } ;
       this.jwt = this.jwtService.sign(this.payload);
       request.session.jwt = this.jwt;
       return cb(null, profile);
-    } catch (err) {
+    }
+    catch (err) {
       return cb(err, profile);
     }
   }

@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { IAccount, IPhoto } from '../interfaces';
+import { IAccount, IPhoto, UserStatus } from '../interfaces';
 
 export async function setUser(
   this: PrismaService,
@@ -13,7 +13,7 @@ export async function setUser(
   try {
     const user = await this.prisma.user.upsert({
       where: { login: login },
-      update: { isOnline: true },
+      update: { isOnline: UserStatus.Online },
       create: {
         login: login,
         nickName: nickname,
@@ -23,7 +23,7 @@ export async function setUser(
         score: 0,
         twoFA: false,
         isSecret: false,
-        isOnline: true,
+        isOnline: UserStatus.Online,
         isAdmin: false,
         imgUrl: imgUrl,
         n_messages: 0,
@@ -373,7 +373,7 @@ export async function updateUserScore(this: PrismaService, login: string, points
   }
 }
 
-export async function updateUserStatus(this: PrismaService, userId: string, status: boolean) {
+export async function updateUserStatus(this: PrismaService, userId: string, status: number) {
   try {
     await this.prisma.user.update({
       where: { id: userId },

@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { UserStatus } from '../interfaces';
 import { PrismaService } from '../prisma.service';
 import { AuthService } from './auth.service';
 
@@ -37,7 +38,7 @@ export class AuthController {
 
   @Get('sign-out')
   loggingOut(@Req() req, @Session() session: Record<string, any>) {
-    this.db.updateUserStatus(session.userid, false);
+    this.db.updateUserStatus(session.userid, UserStatus.Offline);
     session.destroy();
   }
 }

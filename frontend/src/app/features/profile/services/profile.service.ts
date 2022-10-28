@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { SocketAddress } from 'net';
 import { Socket } from 'ngx-socket-io';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { IProfileFriends } from '../models/profile.user.model';
 
@@ -17,22 +18,20 @@ export class ProfileService {
 		let fileData = new FormData();
 		fileData.append('file', file);
 		this.http.post('api/upload', fileData).subscribe({
-			next: (response) => console.log(response),
-			error: (error) => console.log(error),
+			// next: (response) => console.log(response),
+			// error: (error) => console.log(error),
 			});
   }
 
-  sendForm(settingsForm: FormGroup) {
-	this.http.post('api/profile/update', {
-		firstName: settingsForm.get('firstName')!.value,
-		lastName: settingsForm.get('lastName')!.value,
-		email: settingsForm.get('email')!.value,
-		login: settingsForm.get('login')!.value,
-		nickName: settingsForm.get('nickname')!.value,
-	}).subscribe({
-		next: (response) => console.log(response),
-		error: (error) => console.log(error),
-		});
+  sendForm(settingsForm: FormGroup, socket: Socket): Observable<IAccount> {
+    socket.emit('update', {
+      	firstName: settingsForm.get('firstName')!.value,
+      	lastName: settingsForm.get('lastName')!.value,
+      	email: settingsForm.get('email')!.value,
+      	login: settingsForm.get('login')!.value,
+      	nickName: settingsForm.get('nickname')!.value,
+      });
+      return socket.fromEvent<IAccount>('update');
   }
 
   getOverview(): Observable<IAccount> {
@@ -43,10 +42,10 @@ export class ProfileService {
 	return this.http.get<IAccount>('api/profile/' + login);
   }
 
-  getPrivateProfile(socket: Socket): Observable<IAccount> {
+  getPrivateProfile(socket: Socket) {
     socket.emit('settings');
     return socket.fromEvent<IAccount>('settings');
-    // return this.http.get<IAccount>('api/profile/private');
+    // return this.data$;
   }
 
   initSocket(): Socket {

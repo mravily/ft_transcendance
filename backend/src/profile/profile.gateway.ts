@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { parse } from 'cookie';
 import { PrismaService } from '../prisma.service';
 import { AuthService } from '../auth/auth.service';
+import { IAccount } from '../interfaces';
 
 @WebSocketGateway({ namespace: '/profile' })
 export class ProfileGateway
@@ -34,7 +35,7 @@ export class ProfileGateway
             return;
         }
         const userId = await this.authService.getUseridFromToken(token);
-        console.log('userId...', userId);
+        console.log('Profile userid: ', userId);
         if (!userId) {
             console.log('User not found');
             client.disconnect();
@@ -56,8 +57,13 @@ export class ProfileGateway
   @SubscribeMessage('settings')
   async getSettings(client: Socket) {
     client.emit('settings', await this.db.getUserProfile(client.data.userId));
-    setInterval(async () => {
-      client.emit('settings', await this.db.getUserProfile(client.data.userId));
-    }, 5000);
+  }
+
+  @SubscribeMessage('update')
+  async updateProfile(client:Socket, account: IAccount) {
+    this.db.updateUserAccount(client.data.userId, account).then(tmp =>
+    this.db.getUserProfile(client.data.userId)).then(tmp => {
+    client.emit('update', tmp);})
+
   }
 }

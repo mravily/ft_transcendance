@@ -3,6 +3,12 @@ import { Type } from 'class-transformer';
 
 // https://github.com/typestack/class-validator#validation-decorators
 
+export enum UserStatus {
+    Offline,
+    Online,
+    InGame,
+}
+
 export class IAccount {
     @IsString()
     login: string;
@@ -58,7 +64,7 @@ export class IAccount {
     createdAt?: Date;
     @IsOptional()
     @IsBoolean()
-    isOnline?: boolean;
+    isOnline?: number;
     @IsOptional()
     @IsBoolean()
     isAdmin?: boolean;

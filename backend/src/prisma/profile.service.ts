@@ -6,7 +6,7 @@ export interface IProfileFriends {
     login: string,
     win: number,
     lost: number,
-    isOnline: boolean,
+    isOnline: number,
     isAccepted: boolean,
     score: number,
     avatar: string,

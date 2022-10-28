@@ -7,10 +7,10 @@ import { PrismaService } from "../prisma.service";
 export class ProfileController {
   constructor(private db: PrismaService) {}
 
-  @Post('update')
-  updateProfile(@Session() session: Record<string, any>, @Body() account: IAccount) {
-    this.db.updateUserAccount(session.userid, account);
-  }
+  // @Post('update')
+  // updateProfile(@Session() session: Record<string, any>, @Body() account: IAccount) {
+  //   this.db.updateUserAccount(session.userid, account);
+  // }
 
   // @Get('private')
   // getProfile(@Session() session: Record<string, any>): Promise<IAccount> {

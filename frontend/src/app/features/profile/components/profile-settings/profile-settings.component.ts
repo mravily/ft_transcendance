@@ -35,6 +35,7 @@ export class ProfileSettingsComponent implements OnInit {
 				email: [v.email, [Validators.pattern(this.urlRegex)]],
 				login: [v.login],
 				nickname: [v.nickName],
+				avatar: [v.avatar],
 			});
 		});
 	}
@@ -55,13 +56,7 @@ export class ProfileSettingsComponent implements OnInit {
 	onSubmitForm() {
 		if (this.selectedFile)
 			this.profileService.upload(this.selectedFile);
-		this.profileService.sendForm(this.settingsForm);
-		// this.reload();
-	}
-
-	reload() {
-		this.router.navigateByUrl('/RefreshComponent', { skipLocationChange: true }).then(() => {
-			this.router.navigate(['/profile/settings']);
-		}); 
+		this.user$ = this.profileService.sendForm(this.settingsForm, this.socket);
+		// this.profileService.getPrivateProfile(this.socket);
 	}
 }

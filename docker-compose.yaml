@@ -38,7 +38,7 @@ services:
     container_name: PostgresSQL
     restart: always
     # ports:
-      # - $PORT_DB:$PORT_DB
+    #   - $PORT_DB:$PORT_DB
     env_file:
       - .env
     volumes:
