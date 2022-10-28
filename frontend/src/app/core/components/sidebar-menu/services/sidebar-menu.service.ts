@@ -32,6 +32,10 @@ export class SidebarMenuService {
 		this.subject.next(true);
 	}
 
+	resetUpdate() {
+		this.subject.next(false);
+	}
+
 	getUpdate(): Observable<boolean> {
 		return this.subject.asObservable();
 	}
@@ -42,6 +46,7 @@ export class SidebarMenuService {
 	}
 
 	reloadSocket() {
+		this.socket.disconnect();
 		this.socket = new Socket({
 			url: '/sidebar',
 			options: {

@@ -20,14 +20,16 @@ export class SidebarMenuComponent implements OnInit {
 		private sidebarServices:SidebarMenuService,
 		private router: Router) {
 			this.subscription = this.sidebarServices.getUpdate().subscribe( msg => {
-				if (msg == true)
+				if (msg == true) {
+					this.sidebarServices.resetUpdate();
 					this.reload();
+				}
 			});
-			this.data$ = this.sidebarServices.data
 			// console.log(this.data$);
 		}
 		
 		ngOnInit(): void {
+			this.data$ = this.sidebarServices.data
 			this.sidebarServices.getData();
 		}
 
