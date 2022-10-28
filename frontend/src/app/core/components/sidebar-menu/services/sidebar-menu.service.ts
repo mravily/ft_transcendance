@@ -31,4 +31,15 @@ export class SidebarMenuService {
 		this.http.get('api/auth/sign-out').subscribe();
 		this.cookieService.deleteAll();
 	}
+
+	reloadSocket() {
+		this.socket = new Socket({
+			url: '/sidebar',
+			options: {
+				withCredentials: false,
+			}
+		});
+		this.socket.emit('event');
+		this.data = this.socket.fromEvent<IAccount>('event');
+	}
 }

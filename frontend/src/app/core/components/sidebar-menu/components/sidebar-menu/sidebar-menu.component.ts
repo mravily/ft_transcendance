@@ -31,8 +31,9 @@ export class SidebarMenuComponent implements OnInit {
 		}
 
 		reload() {
-				this.sidebarServices.getData();
-				// this.data$ = this.sidebarServices.data;
+			this.sidebarServices.reloadSocket();
+			this.data$ = this.sidebarServices.data;
+			// this.sidebarServices.getData();
 		}
 		
 		isLogin() {

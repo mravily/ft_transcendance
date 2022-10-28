@@ -15,6 +15,7 @@ import { toDataURL } from 'qrcode';
 import { PrismaService } from '../prisma.service';
 import { IAccount } from '../interfaces';
 import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('tfa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,7 +24,8 @@ export class TwoFactorAuthenticationController {
     private readonly tfaService: TwoFactorAuthenticationService,
     private db: PrismaService,
     private authService: AuthService,
-  ) {}
+    private jwtService: JwtService,
+    ) {}
 
   @Post('generate')
   async register(
@@ -52,8 +54,10 @@ export class TwoFactorAuthenticationController {
   ) {
     const isValid = await this.tfaService.isTfaCodeValid(token, session.userid);
     if (isValid) {
+      const payload = { userid: session.userid };
+      const jwt: string = this.jwtService.sign(payload);
       // const tokens = await this.authService.getTokens(session.userid);
-      res.cookie('access', session.userid, { maxAge: 900000000000000 });
+      res.cookie('access', jwt, { maxAge: 900000000000000 });
     }
     return this.tfaService.isTfaCodeValid(token, session.userid);
   }

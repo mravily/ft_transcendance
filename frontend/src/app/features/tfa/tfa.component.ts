@@ -6,6 +6,7 @@ import * as e from 'express';
 import { response } from 'express';
 import { CookieService } from 'ngx-cookie-service';
 import { async, catchError, filter, Observable, of, tap, throwError } from 'rxjs';
+import { SidebarMenuService } from 'src/app/core/components/sidebar-menu/services/sidebar-menu.service';
 import { TfaService } from './services/tfa.service';
 
 
@@ -28,7 +29,11 @@ export class TfaComponent implements OnInit {
 		containerClass: 'd-flex justify-content-between'
 	}
 
-	constructor(private tfaServices: TfaService, private router: Router) { }
+	constructor(
+		private tfaServices: TfaService,
+		private router: Router,
+		private sidebarService: SidebarMenuService,
+		) { }
 
 	ngOnInit() {
 	}
@@ -51,6 +56,7 @@ export class TfaComponent implements OnInit {
 	this.tfaServices.verifyAuth(this.otp).pipe().subscribe(v => {
 	  this.isValid = v;
 	  	if (v) this.router.navigateByUrl('view');
+		  this.sidebarService.reloadSocket();
 		});
 	}
 	
