@@ -56,8 +56,8 @@ export class TfaComponent implements OnInit {
 	this.tfaServices.verifyAuth(this.otp).pipe().subscribe(v => {
 	  this.isValid = v;
 	  	if (v) this.router.navigateByUrl('view');
-		  this.sidebarService.reloadSocket();
-		});
+		  this.sidebarService.sendUpdate();
+	});
 	}
 	
 }

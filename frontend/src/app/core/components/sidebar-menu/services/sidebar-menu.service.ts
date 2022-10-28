@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { Socket } from 'ngx-socket-io';
 
 @Injectable({providedIn: 'root'})
 export class SidebarMenuService {
+	private subject = new Subject<boolean>();
 	socket!: Socket;
 	data!: Observable<IAccount>;
 	
@@ -25,6 +26,14 @@ export class SidebarMenuService {
 	getData() {
 		this.socket.emit('event');
 		// this.data = this.socket.fromEvent<IAccount>('event');
+	}
+
+	sendUpdate() {
+		this.subject.next(true);
+	}
+
+	getUpdate(): Observable<boolean> {
+		return this.subject.asObservable();
 	}
 
 	signOut() {

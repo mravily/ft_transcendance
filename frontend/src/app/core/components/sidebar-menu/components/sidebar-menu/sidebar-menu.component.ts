@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { IAccount } from 'src/app/model/user.model';
 import { SidebarMenuService } from '../../services/sidebar-menu.service';
 
@@ -13,21 +13,22 @@ import { SidebarMenuService } from '../../services/sidebar-menu.service';
 
 export class SidebarMenuComponent implements OnInit {
 
+	private subscription: Subscription;
 	data$!: Observable<IAccount>;
-	time!: NodeJS.Timer;
-	isSocket: boolean = false;
 
 	constructor(private cookieService: CookieService,
 		private sidebarServices:SidebarMenuService,
 		private router: Router) {
-				
+			this.subscription = this.sidebarServices.getUpdate().subscribe( msg => {
+				if (msg == true)
+					this.reload();
+			});
+			this.data$ = this.sidebarServices.data
 			// console.log(this.data$);
 		}
 		
 		ngOnInit(): void {
-			this.data$ = this.sidebarServices.data
 			this.sidebarServices.getData();
-				// this.time = setInterval(() => { this.data$ = this.sidebarServices.data;}, 5000);
 		}
 
 		reload() {
@@ -41,6 +42,5 @@ export class SidebarMenuComponent implements OnInit {
 		}
 
 		ngOnDestroy() {
-			// clearInterval(this.time);
 		}
 	}
