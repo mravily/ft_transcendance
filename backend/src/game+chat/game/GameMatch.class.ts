@@ -1,6 +1,6 @@
 import { GamePaddle, GameStatus } from './game.interface';
 import { Ball, Paddle, PowerUp } from './entities';
-import { IAccount, IMatch } from '../../interfaces';
+import { IAccount, IMatch, UserStatus } from '../../interfaces';
 import { PrismaService } from '../../prisma.service';
 import { GameGateway } from './game.gateway';
 import { Socket } from 'socket.io';
@@ -32,6 +32,12 @@ export class GameMatch {
           this.wsg.sendGameStatus(socket.id,
             this.getGameStatus(socket.data.user.login),
           );
+          this.wsg.sendPaddlePos(i, this.socketIds, [], {
+            y: i?         this.player2.y:         this.player1.y,
+            yVel: i?      this.player2.yVel:      this.player1.yVel,
+            realSpeed: i? this.player2.realspeed: this.player1.realspeed,
+            timeStamp: this.cur,
+          } as GamePaddle);
         }
       }
       else  {
@@ -124,6 +130,8 @@ export class GameMatch {
     }
   
     async start(): Promise<void> {
+      this.db.updateUserStatus(this.playerIds[0], UserStatus.InGame);
+      this.db.updateUserStatus(this.playerIds[1], UserStatus.InGame);
       if (this.isRunning) return;
       this.isRunning = true;
       this.sendGameStatus();
@@ -162,8 +170,10 @@ export class GameMatch {
       let winner = (this.player1Score > this.player2Score) ? 0 : 1;
       let scores = [this.player1Score, this.player2Score];
       this.db.setMatch(this.playerIds[winner], this.playerIds[1 - winner], scores[winner], scores[1 - winner]);
-
+      
       this.wsg.sendEnd(this.socketIds, this.socketIdsSpec, this.player1Score, this.player2Score);
+      this.db.updateUserStatus(this.playerIds[0], UserStatus.Online);
+      this.db.updateUserStatus(this.playerIds[1], UserStatus.Online);
       setTimeout(() => {
         this.socketIds.forEach(id => this.wsg.redirectToLobby(id));
         this.socketIdsSpec.forEach(id => this.wsg.redirectToLobby(id));
@@ -211,6 +221,7 @@ export class GameMatch {
         this.canvasHeight,
         this.wallOffset,
       );
+      
       if (this.player1Score >= 10 || this.player2Score >= 10) {
         this.end();
       }
@@ -263,28 +274,36 @@ export class GameMatch {
     setPlayerPos(login: string, paddle: GamePaddle): void {
       if (login == this.playerLogins[0])
       {
+        console.log("player1 sets ", paddle);
+        
         this.player1.y = paddle.y;
         this.player1.yVel = paddle.yVel;
+        this.player1.realspeed = paddle.realSpeed;
         this.wsg.sendPaddlePos(0, this.socketIds, this.socketIdsSpec, {
           y: this.player1.y,
           yVel: this.player1.yVel,
           timeStamp: paddle.timeStamp,
-        });
-        while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
+          realSpeed: paddle.realSpeed,
+        } as GamePaddle);
+        while (paddle.timeStamp + this.period <= this.cur) {
           this.player1.update(this.canvasHeight, this.wallOffset, this);
           paddle.timeStamp += this.period;
         }
       }
       else if (login == this.playerLogins[1])
       {
+        console.log("player2 sets ", paddle);
+
         this.player2.y = paddle.y;
         this.player2.yVel = paddle.yVel;
+        this.player2.realspeed = paddle.realSpeed;
         this.wsg.sendPaddlePos(1, this.socketIds, this.socketIdsSpec, {
           y: this.player2.y,
           yVel: this.player2.yVel,
           timeStamp: paddle.timeStamp,
-        });
-        while (paddle.yVel != 0 && paddle.timeStamp + this.period <= this.cur) {
+          realSpeed: paddle.realSpeed,
+        } as GamePaddle);
+        while (paddle.timeStamp + this.period <= this.cur) {
           this.player2.update(this.canvasHeight, this.wallOffset, this);
           paddle.timeStamp += this.period;
         }

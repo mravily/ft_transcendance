@@ -68,7 +68,7 @@ export class Paddle extends Entity{
   private coef_height: number = 1;
   public coef_force: number = 1;
   private coef_speed: number = 1;
-  private realspeed: number = 0;
+  realspeed: number = 0;
   
   constructor(private w:number, private h:number,x:number,y:number){
     super(w,h,x,y);

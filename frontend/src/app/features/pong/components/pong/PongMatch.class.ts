@@ -46,8 +46,9 @@ export class PongMatch {
         this.otherSubcriptions.push(this.wss.paddleEvent.subscribe((pad: PaddlePos) => {
             this.opponentPlayer.y = pad.y;
             this.opponentPlayer.yVel = pad.yVel;
+            this.opponentPlayer.realspeed = pad.realSpeed;
 
-            while (pad.yVel != 0 && pad.timeStamp + this.period <= this.cur) {
+            while (pad.timeStamp + this.period <= this.cur) {
                 this.opponentPlayer.update(this.gameCanvas.nativeElement, this.wallOffset);
                 pad.timeStamp += this.period;
             }
@@ -155,6 +156,8 @@ export class PongMatch {
             return;
         this.cur = this.myNow();
         this.idInterval = setInterval(() => this.gameLoop(), 1000 / 62);
+        if (this.player.isPlayer)
+            this.wss.sendPaddlePos(this.player.y, this.player.yVel, this.player.realspeed, this.cur);
     }
     myNow() {
         return Date.now() + this.clockdiff;
@@ -224,8 +227,9 @@ export class PongMatch {
             this.wss.myPaddleEvent.subscribe((pad: PaddlePos) => {
                 this.player.y = pad.y;
                 this.player.yVel = pad.yVel;
+                this.player.realspeed = pad.realSpeed;
 
-                while (pad.yVel != 0 && pad.timeStamp <= this.cur) {
+                while (pad.timeStamp <= this.cur) {
                     this.player.update(this.gameCanvas.nativeElement, this.wallOffset);
                     pad.timeStamp += this.period;
                 }
@@ -237,6 +241,6 @@ export class PongMatch {
         if (!this.player.isPlayer)
             return;
         this.player.update_dir();
-        this.wss.sendPaddlePos(this.player.y, this.player.yVel, this.cur);
+        this.wss.sendPaddlePos(this.player.y, this.player.yVel, this.player.realspeed, this.cur);
     }
 }
