@@ -14,7 +14,6 @@ export class LeaderboardGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: Server;
-  myInterval: any;
   private readonly logger = new Logger(LeaderboardGateway.name);
 
   constructor(private db: PrismaService) {}
@@ -24,7 +23,8 @@ export class LeaderboardGateway
   }
 
   async handleDisconnect(socket: Socket) {
-    clearInterval(this.myInterval);
+    clearInterval(socket.data.myTopInterval);
+    clearInterval(socket.data.myUsersInterval);
     this.logger.log(`Socket disconnected: ${socket.id}`);
   }
 
@@ -32,7 +32,7 @@ export class LeaderboardGateway
   async sendTop10(client: Socket) {
     const top10 = await this.db.getTopTen();
     client.emit('top-ten', top10);
-    setInterval(async () => {
+    client.data.myTopInterval = setInterval(async () => {
       const top10 = await this.db.getTopTen();
       client.emit('top-ten', top10);
     }, 5000);
@@ -42,7 +42,7 @@ export class LeaderboardGateway
   async sendAllUsers(client: Socket) {
     const allUsers = await this.db.getUsersRanking();
     client.emit('allUsers', allUsers);
-    this.myInterval = setInterval(async () => {
+    client.data.myUsersInterval = setInterval(async () => {
       const allUsers = await this.db.getUsersRanking();
       client.emit('allUsers', allUsers);
     }, 5000);

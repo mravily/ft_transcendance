@@ -11,7 +11,6 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
         private db: PrismaService,
         ) {}
     @WebSocketServer() server: Server;
-    myInterval: any;
 
     async handleConnection(client: Socket) {
         // console.log('Sidebar connected', client.id);
