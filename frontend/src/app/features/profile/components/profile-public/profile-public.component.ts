@@ -73,11 +73,11 @@ export class ProfilePublicComponent implements OnInit {
 	}
 
 	onClickBlockUser() {
-		if(this.actionBlock == 'Block') {
-		  this.actionBlock = 'Unblock';
+		if(this.actionBlock == 'UnBlock') {
+		  this.actionBlock = 'Block';
 		  this.profileService.unBlockUser(this.userID);
 		} else {
-		  this.actionBlock = 'Block';
+		  this.actionBlock = 'UnBlock';
 		  this.profileService.blockUser(this.userID);   
 		}
 		this.reload();

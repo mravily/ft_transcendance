@@ -40,7 +40,7 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
     }
 
     async handleDisconnect(client: Socket) {
-        clearInterval(this.myInterval);
+        clearInterval(client.data.myInterval);
         console.log('Sidebar disconected', client.id);
         client.disconnect();
     }
@@ -53,7 +53,7 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
     @SubscribeMessage('event')
     async getInfo(@ConnectedSocket() client: Socket) {
         client.emit('event', await this.db.getSidebar(client.data.userId));
-        this.myInterval = setInterval(async () => {
+        client.data.myInterval = setInterval(async () => {
             client.emit('event', await this.db.getSidebar(client.data.userId)),
             5000
         });

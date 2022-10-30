@@ -95,6 +95,14 @@ export async function leaveChannel(this: PrismaService, login: string, channel_n
         }
       }
     });
+    await this.prisma.makeAdmin.delete({
+      where: {
+        channelId_login: {
+          login: login,
+          channelId: channel_name,
+        }
+      }
+    });
   }
   catch (error) {
     //console.log(error.message);

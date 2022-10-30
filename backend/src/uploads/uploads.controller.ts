@@ -14,9 +14,10 @@ export class UploadsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File, @Session() session: Record<string, any>) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Session() session: Record<string, any>) {
     if (file.mimetype.includes('image')){
-      this.db.uploadPhoto(session.userid, file);
+      await this.db.uploadPhoto(session.userid, file);
+      
     }
   }
 }

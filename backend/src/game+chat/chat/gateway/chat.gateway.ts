@@ -307,7 +307,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     if (!channel.admins.map(user => user.login).includes(socket.data.user.login)
-        || channel.admins.map(user => user.login).includes(delMemberInfo.login)) {
+        || channel.creator == delMemberInfo.login) {
       return this.server.to(socket.id).emit('Error', new UnauthorizedException());
     }
     if (!channel.users.map(user => user.login).includes(delMemberInfo.login)) {
@@ -593,6 +593,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async onGetMyUser(socket: Socket) {
     if (socket.data?.user == undefined)
       return;
+    socket.data.user = await this.db.getUserAccount(socket.data.userId); 
     socket.emit('myUser', socket.data.user);
   }
 
