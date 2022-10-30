@@ -122,6 +122,11 @@ export class GameService {
     }
     return res;
   }
+  
+  getInvited(login: string) {
+    return this.invites.get(login);
+  }
+
   invitePlayer(client: Socket, login: string, powerup: boolean) {
     this.invites.set(client.data.user.login, [login, powerup]);
   }

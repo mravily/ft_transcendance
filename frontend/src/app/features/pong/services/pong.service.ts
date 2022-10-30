@@ -63,8 +63,8 @@ export class PongService {
     this.socket.emit('cancelQueuing', PU);
   }
 
-  sendPaddlePos(y: number, yVel: number, timestamp: number): void {
-    this.socket.emit('paddle', {y: y, yVel: yVel, timeStamp: timestamp});
+  sendPaddlePos(y: number, yVel: number, realSpeed: number, timestamp: number): void {
+    this.socket.emit('paddle', {y: y, yVel: yVel, realSpeed: realSpeed, timeStamp: timestamp} as PaddlePos);
   }
 
   sendStartGame(gameId: number): void {

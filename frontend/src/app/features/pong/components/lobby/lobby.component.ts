@@ -14,7 +14,6 @@ import { PongService } from '../../services/pong.service';
 export class LobbyComponent implements OnInit, OnDestroy {
   searchUser!: string;
 
-
   @ViewChild('findMatch')
   findMatchButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('findPUMatch')
@@ -23,6 +22,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   buttonText: string = "Find Opponent";
   PUbuttonText: string = "Find Opponent";
   invites$: Observable<string[]>; 
+  invited: any; 
   // friends: any[];
   searchForm!: FormGroup;
   searchResult$!: Observable<IAccount[]>;
@@ -61,6 +61,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
         this.PUbuttonText = queuing.joined ? "Cancel" : "Find Opponent";
       }
     }));
+    this.subs.push(this.chatServ.getInvitedObs().subscribe((invited: any) => {
+      this.invited = invited;
+      console.log('invited', invited);
+    }));
     this.pongServ.checkforgame();
     // this.subs.push(this.chatServ.getInvitesObs().subscribe((login: string) => {
     //   console.log('invite', login);
@@ -68,6 +72,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     //   this.chatServ.acceptInvite(login);
     // }));
     this.chatServ.getInvites();
+    this.chatServ.getInvited();
     this.pongServ.getQueuingStatus();
   }
   ngOnDestroy() {

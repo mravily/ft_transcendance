@@ -12,6 +12,7 @@ export interface PaddlePos {
     timeStamp: number;
     y: number;
     yVel: number;
+    realSpeed: number;
 }
 
 export interface PowerUpEvent {

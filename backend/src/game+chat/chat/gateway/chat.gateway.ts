@@ -607,6 +607,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.gameServ.invitePlayer(socket, inviteInfo.login, inviteInfo.powerup);
     let invites: string[] = await this.gameServ.getInvites(inviteInfo.login);
     this.sendTo(inviteInfo.login, 'invites', invites);
+    this.getInvited(socket);
   }
   @SubscribeMessage('acceptInvite')
   async acceptInvite(socket: Socket, login: string)  {
@@ -628,5 +629,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return;
     let invites: string[] = this.gameServ.getInvites(socket.data.user.login);
     socket.emit('invites', invites);
+  }
+  @SubscribeMessage('getInvited')
+  async getInvited(socket: Socket)  {
+    if (socket.data?.user == undefined)
+      return;
+    socket.emit('invited', this.gameServ.getInvited(socket.data.user.login));
   }
 }

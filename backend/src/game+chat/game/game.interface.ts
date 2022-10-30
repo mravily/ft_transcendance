@@ -16,6 +16,7 @@ export interface GamePaddle {
     timeStamp: number;
     y: number;
     yVel: number;
+    realSpeed: number;
 }
 
 export interface PowerUpEvent {

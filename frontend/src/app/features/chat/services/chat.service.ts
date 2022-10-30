@@ -10,7 +10,7 @@ import { PageI } from '../models/chat.model';
 export class ChatService {
   socket!: Socket;
   
-  constructor() { 
+  constructor() {
     this.socket = new Socket({ url: '/chat', options: {
       transports: ['websocket'],
       withCredentials: false,
@@ -145,8 +145,14 @@ export class ChatService {
   getInvitesObs(): Observable<string[]> {
     return this.socket.fromEvent<string[]>('invites');
   }
+  getInvitedObs(): Observable<any> {
+    return this.socket.fromEvent<any>('invited');
+  }
   getInvites() {
     this.socket.emit('getInvites');
+  }
+  getInvited() {
+    this.socket.emit('getInvited');
   }
 
 

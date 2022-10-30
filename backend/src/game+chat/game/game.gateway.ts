@@ -189,7 +189,7 @@ export class GameGateway
   @SubscribeMessage('paddle')
   async handlePaddle(client: Socket, payload: GamePaddle) {
     if (client.data?.user == undefined)
-      return;
+      return;      
     this.gameService.setPlayerPos(client.data.user.login, payload);
   }
 
