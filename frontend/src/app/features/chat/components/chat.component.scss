@@ -41,6 +41,10 @@ html	{
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+
+		&.notRead	{
+			background-color: rgb(255, 240, 206);
+		}
 		
 		img {
 			height: 50px;

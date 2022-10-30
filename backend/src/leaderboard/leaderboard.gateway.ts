@@ -35,7 +35,7 @@ export class LeaderboardGateway
     client.data.myTopInterval = setInterval(async () => {
       const top10 = await this.db.getTopTen();
       client.emit('top-ten', top10);
-    }, 5000);
+    }, 1000);
   }
 
   @SubscribeMessage('allUsers')
@@ -45,6 +45,6 @@ export class LeaderboardGateway
     client.data.myUsersInterval = setInterval(async () => {
       const allUsers = await this.db.getUsersRanking();
       client.emit('allUsers', allUsers);
-    }, 5000);
+    }, 1000);
   }
 }

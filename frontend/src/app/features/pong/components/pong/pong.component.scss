@@ -31,12 +31,12 @@ body{
     color: white;
   }
 
-  .player {
+  .user {
     padding: 4px;
     width: 100%;
     align-items: center;
 
-    &.player:first-child {
+    &.player {
       img {
         border: 3px solid rgb(214, 181, 34);
       }

@@ -41,6 +41,11 @@ export class ChatComponent implements OnInit, OnDestroy {
           message.channelId == this.selectedChannel.channelName) {
         this.selectedChannel.messages.push(message);
       }
+      else  {
+        let chan = this.channels.find((chan) => chan.channelName == message.channelId);
+        if (chan)
+          chan.read = false;
+      }
     }));
     this.subs.push(this.chatServ.getMessagesObs().subscribe((messages: IMessage[]) => {
       if (this.selectedChannel && messages[0].channelId == this.selectedChannel.channelName)
@@ -49,6 +54,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subs.push(this.chatServ.getChannelInfoObs().subscribe((channel: IChannel) => {
       this.selectedChannel = channel;
       this.create = false;
+      let chan = this.channels.find((chan) => chan.channelName == channel.channelName);
+      if (chan)
+        chan.read = true;
     }));
     this.subs.push(this.chatServ.getChannelUpdateObs().subscribe((channel: IChannel) => {
       // console.log(channel);
@@ -68,6 +76,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         return channels.map((channel: IChannel) => {
           channel.imgUrl = this.getRoomPhoto(channel);
           channel.realName = this.getRealName(channel);
+          channel.read = true;
           return channel;
         })
       }

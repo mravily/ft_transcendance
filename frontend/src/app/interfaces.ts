@@ -48,6 +48,7 @@ export interface IChannel {
     messages?: IMessage[];
     
     // description?: string; // à rajouter par Juan
+    read?: boolean;
 }
 
 export interface IPhoto {

@@ -25,7 +25,13 @@ export class PowerUp {
   }
   draw(context: CanvasRenderingContext2D) {
     context.fillStyle = PowerUp.colors[this.type];
-    context.fillRect(this.x,this.y,this.size,this.size);
+    if (this.type == powerType.small_paddle || this.type == powerType.slow_paddle) {
+      context.beginPath();
+      context.arc(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, 0, 2 * Math.PI, true);
+      context.fill();
+    }
+    else
+      context.fillRect(this.x,this.y,this.size,this.size);
   }
 }
 class Entity{

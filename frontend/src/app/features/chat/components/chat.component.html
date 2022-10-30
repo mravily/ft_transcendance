@@ -82,9 +82,9 @@
 
   <div class="contacts">
     
-    <div class="contact" (click)="create = !create"><h5 style="margin-left: 20px">+  Add new room</h5></div>
+    <div class="contact" (click)="create = !create;"><h5 style="margin-left: 20px">+  Add new room</h5></div>
 
-    <div class="contact" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
+    <div class="contact" [ngClass]="{notRead: contact.read === false}" *ngFor="let contact of contacts | async" (click)="onContactClick(contact.channelName)">
       <img [src]="contact.imgUrl">
       
       <div class="contactW">

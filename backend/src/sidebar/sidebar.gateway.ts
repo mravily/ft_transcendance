@@ -53,8 +53,7 @@ export class SidebarGateway implements OnGatewayConnection, OnGatewayDisconnect,
     async getInfo(@ConnectedSocket() client: Socket) {
         client.emit('event', await this.db.getSidebar(client.data.userId));
         client.data.myInterval = setInterval(async () => {
-            client.emit('event', await this.db.getSidebar(client.data.userId)),
-            5000
-        });
+            client.emit('event', await this.db.getSidebar(client.data.userId));
+        }, 1000);
     }
 }
