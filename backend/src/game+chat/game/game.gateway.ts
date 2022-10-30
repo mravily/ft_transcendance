@@ -162,7 +162,7 @@ export class GameGateway
 
   @SubscribeMessage('startGame')
   async handleStart(client: Socket, gameId: number) {
-    console.log('handlestart', client.data?.user?.login, gameId);
+    // console.log('handlestart', client.data?.user?.login, gameId);
     
     if (client.data?.user?.login == undefined)
       return;

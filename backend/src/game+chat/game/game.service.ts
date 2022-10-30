@@ -32,7 +32,7 @@ export class GameService {
     
     if (!this.games.has(gameId)) {
       this.gameIdByLogin.delete(client.data.user.login);
-      console.log("no game", client.data.user.login, gameId, this.games.keys());
+      // console.log("no game", client.data.user.login, gameId, this.games.keys());
       return this.wsg.redirectToLobby(client.id);
     }
     
@@ -48,7 +48,7 @@ export class GameService {
   }
 
   checkforgame(login: string) {
-    console.log('checking game for', login);
+    // console.log('checking game for', login);
     if (this.gameIdByLogin.has(login))
       return this.gameIdByLogin.get(login);
     return -1;
@@ -152,7 +152,7 @@ export class GameService {
         this.games.delete(gameId);
       }
     }
-    console.log("running games remaining", this.games.size);
+    // console.log("running games remaining", this.games.size);
   }
 
   setPlayerPos(login: string, paddle: GamePaddle) {

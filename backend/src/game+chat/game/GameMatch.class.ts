@@ -9,7 +9,7 @@ export class GameMatch {
     startGame(socket: Socket): void {
       let i = this.playerLogins.indexOf(socket.data.user.login);
       
-      console.log("connection of", socket.data.user.login, this.playerLogins);
+      // console.log("connection of", socket.data.user.login, this.playerLogins);
 
       if (i != -1)  {
         if (!this.socketIds.includes(socket.id)) {
@@ -19,7 +19,7 @@ export class GameMatch {
           this.playerIds[i] = socket.data.userId;
           console.log(socket.data.user.login, (i==0) ? 'player1' : 'player2', 'ready to start');
         }
-        console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
+        // console.log("starting game", i, this.socketIds, this.playerLogins, socket.id);
         if (!this.idInterval) {
           if (this.socketIds.includes(''))
             this.wsg.sendStart([socket.id], -1);
@@ -152,7 +152,7 @@ export class GameMatch {
     }
   
     gameLoop() {
-      console.log("gameLoop");
+      // console.log("gameLoop");
       if (this.isRunning == false) {
         console.log('end');
         clearInterval(this.idInterval);
@@ -274,7 +274,7 @@ export class GameMatch {
     setPlayerPos(login: string, paddle: GamePaddle): void {
       if (login == this.playerLogins[0])
       {
-        console.log("player1 sets ", paddle);
+        // console.log("player1 sets ", paddle);
         
         this.player1.y = paddle.y;
         this.player1.yVel = paddle.yVel;
@@ -292,7 +292,7 @@ export class GameMatch {
       }
       else if (login == this.playerLogins[1])
       {
-        console.log("player2 sets ", paddle);
+        // console.log("player2 sets ", paddle);
 
         this.player2.y = paddle.y;
         this.player2.yVel = paddle.yVel;
