@@ -74,7 +74,7 @@ export class PongComponent implements OnInit, AfterViewInit, OnDestroy {
     this.game = new PongMatch(this.gameId, this.pongService, this.gameCanvas);
     // console.log(this.game);
     
-    setTimeout(() => this.game.ready(), 500);
+    setTimeout(() => this.game.ready(), 100);
   }
 
   ready() {
