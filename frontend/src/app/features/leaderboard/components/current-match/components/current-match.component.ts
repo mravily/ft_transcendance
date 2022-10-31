@@ -15,7 +15,7 @@ export class CurrentMatchComponent implements OnInit {
 	
   	constructor(private pongService: PongService) {
 		this.matches$ = pongService.liveGamesEvent;
-		pongService.liveGamesEvent.subscribe(v => console.log('v', v));
+		// pongService.liveGamesEvent.subscribe(v => console.log('v', v));
 	}
 
   	ngOnInit(): void {
