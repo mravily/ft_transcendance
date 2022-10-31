@@ -61,9 +61,7 @@ export class ProfileGateway
 
   @SubscribeMessage('update')
   async updateProfile(client:Socket, account: IAccount) {
-    this.db.updateUserAccount(client.data.userId, account).then(tmp =>
-    this.db.getUserProfile(client.data.userId)).then(tmp => {
-    client.emit('update', tmp);})
-
+    await this.db.updateUserAccount(client.data.userId, account);
+    setTimeout(() => this.db.getUserProfile(client.data.userId).then(tmp => client.emit('update', tmp)), 500);
   }
 }
